@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Assign Licenses — Learnlight</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#092f42;
+    --teal:#0276b1;
+    --teal-dark:#02618f;
+    --border:#dfe4e6;
+    --border-light:#ebeef0;
+    --bg-page:#f5f6f7;
+    --bg-white:#ffffff;
+    --bg-blue-light:#e3f4fd;
+    --blue-100:#b7e4fb;
+    --text-secondary:#5d7682;
+    --text-disabled:#b3bec4;
+    --text-error:#ca2b34;
+    --bg-error:#fef5f5;
+    --red-200:#f3a5aa;
+    --green-200:#4ac97f;
+    --radius-card:8px;
+    --radius-int:6px;
+    --shadow-card:2px 2px 8px rgba(9,30,66,0.10);
+    --shadow-header:0 2px 4px rgba(9,30,66,0.10);
+    --shadow-btn:0 1px 2px rgba(9,30,66,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Fira Sans',sans-serif;
+    background:var(--bg-page);
+    color:var(--navy);
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit;}
+  input,select{font-family:inherit;}
+  a{text-decoration:none;cursor:pointer;}
+
+  .app{min-height:100vh;display:flex;flex-direction:column;}
+
+  /* ===== Top nav ===== */
+  .topnav{
+    background:var(--bg-white);
+    box-shadow:var(--shadow-header);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 24px;height:60px;flex:0 0 60px;
+    position:relative;z-index:5;
+  }
+  .topnav-left{display:flex;align-items:center;gap:28px;}
+  .logo{font-size:20px;font-weight:700;color:var(--teal);letter-spacing:-0.3px;}
+  .navlink{font-size:14px;font-weight:500;color:var(--navy);display:flex;align-items:center;gap:4px;}
+  .topnav-right{display:flex;align-items:center;gap:12px;}
+  .org-switch{
+    border:1px solid var(--border);border-radius:var(--radius-int);
+    padding:7px 12px;font-size:14px;font-weight:500;color:var(--navy);
+    display:flex;align-items:center;gap:8px;background:var(--bg-white);
+  }
+  .avatar{
+    width:32px;height:32px;border-radius:50%;background:var(--bg-blue-light);
+    color:var(--teal);font-size:13px;font-weight:700;display:flex;align-items:center;
+    justify-content:center;border:1px solid var(--blue-100);
+  }
+
+  /* ===== Page shell ===== */
+  .page{
+    flex:1;max-width:1312px;width:100%;margin:0 auto;padding:32px 24px 40px;
+  }
+  .breadcrumb{font-size:13px;color:var(--teal);font-weight:500;display:inline-flex;align-items:center;gap:4px;margin-bottom:8px;}
+  .breadcrumb:hover{text-decoration:underline;}
+  .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:38px;}
+  h1{font-size:26px;font-weight:600;margin:0 0 4px;color:var(--navy);}
+  .subtitle{font-size:14px;color:var(--text-secondary);margin:0;}
+
+  /* ===== Progress tracker ===== */
+  .tracker{display:flex;gap:8px;flex-wrap:wrap;}
+  .pill{
+    display:flex;align-items:center;gap:6px;height:40px;padding:0 16px;border-radius:6px;
+    font-size:14px;font-weight:600;border:1px solid var(--border);background:var(--bg-white);
+    color:var(--navy);white-space:nowrap;transition:background .15s,border-color .15s,color .15s;
+  }
+  .pill.collapsed{padding:0 13px;}
+  .pill.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .pill.completed{border-color:var(--teal);color:var(--teal);cursor:pointer;}
+  .pill.completed:hover{background:var(--bg-blue-light);}
+  .pill.disabled{color:var(--text-disabled);cursor:default;}
+  .pill svg{flex:0 0 auto;}
+
+  /* ===== Cards / generic ===== */
+  .card{
+    background:var(--bg-white);border-radius:var(--radius-card);box-shadow:var(--shadow-card);
+  }
+  .row-between{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .muted{color:var(--text-secondary);font-size:13px;}
+  .link{color:var(--teal);font-size:14px;font-weight:600;background:none;border:none;padding:0;}
+  .link:hover{text-decoration:underline;}
+  .link:disabled{color:var(--text-disabled);cursor:default;text-decoration:none;}
+  h3{font-size:14px;font-weight:600;margin:0;color:var(--navy);}
+  h4{font-size:14px;font-weight:600;margin:0;color:var(--navy);}
+  label{font-size:13px;font-weight:500;color:var(--navy);display:block;margin-bottom:6px;}
+  .req{color:var(--text-error);}
+
+  input[type=text],input[type=email],input[type=date],select{
+    width:100%;height:40px;border:1px solid var(--border);border-radius:var(--radius-int);
+    padding:0 12px;font-size:14px;color:var(--navy);background:var(--bg-white);outline:none;
+  }
+  input::placeholder{color:var(--text-disabled);}
+  input:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(2,118,177,0.12);}
+  input.invalid{border-color:var(--text-error);}
+  select{appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" stroke="%235d7682" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>');background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+
+  .field-error{font-size:12px;color:var(--text-error);margin-top:-2px;margin-bottom:10px;min-height:0;display:none;}
+  .field-error.show{display:block;}
+  .field-gap{margin-bottom:14px;}
+
+  /* ===== Buttons ===== */
+  .btn{
+    height:36px;padding:0 16px;border-radius:var(--radius-int);font-size:14px;font-weight:600;
+    border:1px solid transparent;display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+    box-shadow:var(--shadow-btn);transition:background .15s,opacity .15s;
+  }
+  .btn-primary{background:var(--teal);color:#fff;}
+  .btn-primary:hover{background:var(--teal-dark);}
+  .btn-primary:disabled{background:var(--border);color:var(--text-disabled);cursor:not-allowed;box-shadow:none;}
+  .btn-secondary{background:#fff;color:var(--navy);border-color:var(--border);}
+  .btn-secondary:hover{background:var(--bg-page);}
+  .btn-ghost{background:transparent;color:var(--navy);border-color:var(--border);}
+  .btn-sm{height:32px;padding:0 14px;font-size:13px;}
+
+  /* ===== Chips ===== */
+  .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    height:32px;border-radius:16px;border:1px solid var(--teal);color:var(--teal);
+    font-size:13px;font-weight:500;padding:0 12px;display:inline-flex;align-items:center;gap:8px;
+    background:#fff;cursor:default;
+  }
+  .chip.removable{padding-right:8px;}
+  .chip .x{cursor:pointer;font-size:15px;line-height:1;color:var(--teal);opacity:.7;}
+  .chip .x:hover{opacity:1;}
+  .chip-filter{cursor:pointer;user-select:none;}
+  .chip-filter.selected{background:var(--teal);color:#fff;}
+  .chip-toggle{cursor:pointer;user-select:none;}
+  .chip-toggle.selected{background:var(--teal);color:#fff;}
+  .chip-toggle.disabled{border-color:var(--border);color:var(--text-disabled);cursor:not-allowed;background:var(--bg-page);}
+  .chip-add{border-style:solid;color:var(--teal);cursor:pointer;background:#fff;}
+  .chip-add:hover{background:var(--bg-blue-light);}
+  .skipped-row{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--red-200);
+    border-radius:var(--radius-int);font-size:13px;cursor:pointer;transition:background .12s,border-color .12s;
+  }
+  .skipped-row:hover{border-color:var(--text-error);}
+  .skipped-row .check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--red-200);flex:0 0 auto;display:flex;align-items:center;justify-content:center;}
+  .skipped-row .email{flex:1;color:var(--navy);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .skipped-row .x{color:var(--text-error);opacity:.7;flex:0 0 auto;display:flex;}
+  .skipped-row .x:hover{opacity:1;}
+  .skipped-row.selected{background:var(--bg-blue-light);border-color:var(--teal);}
+  .skipped-row.selected .check{background:var(--teal);border-color:var(--teal);}
+  .chip.static{cursor:default;}
+
+  /* ===== Step 1 ===== */
+  .tabs{display:flex;justify-content:center;gap:32px;border-bottom:1px solid var(--border);margin-bottom:32px;}
+  .tab{
+    background:none;border:none;padding:0 0 12px;font-size:14px;font-weight:600;color:var(--text-secondary);
+    border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;
+  }
+  .tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+
+  .step1-panels{display:flex;justify-content:center;}
+  .step1-cards{display:flex;gap:16px;align-items:flex-start;}
+  .form-card{width:418px;padding:24px;}
+  .form-card h3{margin-bottom:20px;}
+  .list-card{width:296px;padding:24px;min-height:60px;}
+  .list-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--green-200);flex:0 0 auto;}
+  .dot.zero{background:var(--text-disabled);}
+  .empty-hint{font-size:13px;color:var(--text-disabled);}
+
+  .bulk-placeholder{width:634px;padding:48px 40px;text-align:center;}
+  .bulk-placeholder svg{margin-bottom:16px;}
+  .bulk-placeholder h3{font-size:16px;margin-bottom:8px;}
+  .bulk-placeholder p{font-size:14px;color:var(--text-secondary);margin:0 0 20px;max-width:380px;margin-left:auto;margin-right:auto;}
+
+  /* ===== Step 2 ===== */
+  .step2-wrap{display:flex;justify-content:center;gap:16px;align-items:flex-start;}
+  .program-card{width:418px;padding:24px;flex:0 0 auto;}
+  .filter-group{margin-top:18px;}
+  .filter-label{display:block;font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--text-secondary);text-transform:uppercase;margin-bottom:8px;}
+
+  .roster-card{width:320px;padding:24px;flex:0 0 auto;}
+  .seat-counter{font-size:12px;color:var(--text-secondary);margin:6px 0 12px;}
+  .seat-counter.error{color:var(--text-error);}
+  .roster-empty{font-size:13px;color:var(--text-disabled);padding:4px 0 8px;}
+  .roster-list{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto;}
+  .roster-row{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--border-light);
+    border-radius:var(--radius-int);font-size:13px;transition:background .12s,border-color .12s;
+  }
+  .roster-row .check{
+    width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .roster-row .email{flex:1;color:var(--navy);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .roster-row .badge{font-size:11px;color:var(--text-secondary);background:var(--bg-page);padding:2px 8px;border-radius:10px;white-space:nowrap;flex:0 0 auto;}
+  .roster-row.selectable{cursor:pointer;}
+  .roster-row.selectable:hover{border-color:var(--teal);}
+  .roster-row.selected{background:var(--bg-blue-light);border-color:var(--teal);}
+  .roster-row.selected .check{background:var(--teal);border-color:var(--teal);}
+  .roster-row.disabled{opacity:.55;}
+  .roster-row.disabled .email{color:var(--text-secondary);}
+
+  .info-box{border-radius:var(--radius-int);padding:12px 16px;margin-top:18px;background:var(--bg-blue-light);}
+  .info-box strong{display:block;font-size:14px;color:var(--navy);margin-bottom:2px;}
+  .info-box span{font-size:13px;color:var(--text-secondary);}
+  .info-box.error{background:var(--bg-error);}
+  .info-box.error strong{color:var(--text-error);}
+  .info-box.error p{font-size:13px;color:var(--text-secondary);margin:4px 0 0;}
+
+  .date-row{
+    display:flex;align-items:center;justify-content:space-between;margin-top:12px;
+    background:var(--bg-page);border-radius:var(--radius-int);padding:10px 16px;font-size:14px;
+  }
+  .date-row input[type=date]{height:32px;width:170px;}
+
+  .select-learners{margin-top:24px;}
+  .seat-count{font-size:12px;color:var(--text-secondary);margin:6px 0 12px;}
+  .cap-note{font-size:12px;color:var(--text-error);margin-top:8px;display:none;}
+  .cap-note.show{display:block;}
+
+  /* ===== Step 3 ===== */
+  .step3-wrap{display:flex;justify-content:center;}
+  .review-card{width:418px;padding:24px;}
+  .program-summary{background:var(--bg-blue-light);border-radius:var(--radius-int);padding:16px;margin-top:16px;}
+  .program-summary .title-line{font-size:14px;font-weight:600;color:var(--navy);}
+  .program-summary .seats-line{font-size:13px;color:var(--text-secondary);}
+  .program-summary .date-line{font-size:13px;color:var(--text-secondary);margin:2px 0 12px;}
+  .skipped-section{margin-top:24px;}
+  .skipped-section p{font-size:13px;color:var(--text-secondary);margin:6px 0 12px;}
+  .all-assigned{font-size:13px;color:var(--text-secondary);margin-top:24px;display:flex;align-items:center;gap:8px;}
+
+  /* ===== Footer bar ===== */
+  .widget-footer{
+    background:var(--bg-white);border-top:1px solid var(--border);
+    padding:16px 24px;display:flex;align-items:center;justify-content:space-between;
+    flex:0 0 auto;
+  }
+  .footer-right{display:flex;gap:10px;}
+
+  /* ===== Success screen ===== */
+  .success-wrap{display:flex;justify-content:center;padding:60px 0;}
+  .success-card{width:480px;text-align:center;padding:48px 32px;}
+  .success-card h2{font-size:20px;margin:16px 0 8px;}
+  .success-card p{font-size:14px;color:var(--text-secondary);margin:0 0 28px;}
+  .success-actions{display:flex;justify-content:center;gap:10px;}
+
+  /* ===== Modal ===== */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(9,30,66,0.45);display:flex;align-items:center;justify-content:center;
+    z-index:50;padding:24px;
+  }
+  .modal{background:#fff;border-radius:var(--radius-card);width:560px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(9,30,66,0.25);}
+  .modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .modal-head h3{font-size:16px;}
+  .modal-close{background:none;border:none;cursor:pointer;color:var(--text-secondary);font-size:18px;line-height:1;padding:4px;}
+  .modal-body{padding:20px 24px;overflow-y:auto;}
+  .modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+  .catalog-group{margin-bottom:18px;}
+  .catalog-group-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:8px;}
+  .catalog-service-title{font-size:15px;font-weight:600;color:var(--navy);margin:18px 0 10px;}
+  .catalog-service-title:first-child{margin-top:0;}
+  .funded-badge{font-size:10px;font-weight:700;letter-spacing:.02em;color:var(--teal);background:var(--bg-blue-light);padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+  .catalog-search{width:100%;height:40px;border:1px solid var(--border);border-radius:var(--radius-int);padding:0 12px;font-size:14px;outline:none;margin-bottom:18px;}
+  .catalog-search:focus{border-color:var(--teal);}
+  .catalog-filters-row{display:flex;gap:28px;margin-bottom:16px;flex-wrap:wrap;}
+  .catalog-row{
+    display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border-light);
+    border-radius:var(--radius-int);margin-bottom:8px;
+  }
+  .catalog-row .name{font-size:14px;font-weight:500;color:var(--navy);}
+  .catalog-row .meta{font-size:12px;color:var(--text-secondary);}
+  .catalog-row .meta.zero{color:var(--text-error);}
+  .catalog-row .pick{font-size:13px;font-weight:600;color:var(--teal);background:none;border:1px solid var(--teal);border-radius:6px;padding:5px 12px;cursor:pointer;}
+  .catalog-row .pick:hover{background:var(--bg-blue-light);}
+  .catalog-row .pick:disabled{border-color:var(--border);color:var(--text-disabled);cursor:not-allowed;}
+
+  /* Toast */
+  #toastRoot{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;}
+  .toast{
+    background:var(--navy);color:#fff;font-size:13px;font-weight:500;padding:10px 18px;border-radius:8px;
+    box-shadow:0 8px 20px rgba(9,30,66,0.3);opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;
+  }
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  .icon-inline{display:inline-flex;vertical-align:middle;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topnav">
+    <div class="topnav-left">
+      <span class="logo">learnlight</span>
+      <span class="navlink">Analytics ▾</span>
+      <span class="navlink" style="color:var(--teal);font-weight:600;">Learners</span>
+    </div>
+    <div class="topnav-right">
+      <div class="org-switch">ACME Corporation
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#5d7682" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="avatar">AL</div>
+    </div>
+  </div>
+
+  <div class="page">
+    <a class="breadcrumb">‹ Back to Learners</a>
+    <div class="title-row">
+      <div>
+        <h1>Assign Licenses</h1>
+        <p class="subtitle">Add learners, choose their programs, and confirm before sending.</p>
+      </div>
+      <div class="tracker" id="tracker"></div>
+    </div>
+
+    <div id="stepBody"></div>
+  </div>
+
+  <div class="widget-footer" id="footer"></div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+/* =====================================================
+   DATA
+===================================================== */
+const CATALOG = {
+  Digital: {
+    Languages: [
+      { id:'digital-languages-en', subject:'English', hours:null, seats:1000, start:'2026-08-01', end:'2028-07-31', funded:true },
+      { id:'digital-languages-de', subject:'German',  hours:null, seats:5,    start:'2026-07-30', end:'2027-07-30' },
+      { id:'digital-languages-it', subject:'Italian', hours:null, seats:5,    start:'2026-08-10', end:'2027-08-10' },
+      { id:'digital-languages-es', subject:'Spanish', hours:null, seats:5,    start:'2026-08-01', end:'2027-08-01' },
+    ],
+  },
+  Coach: {
+    Languages: [
+      { id:'coach-languages-en24', subject:'English', hours:24, seats:10, start:'2026-07-28', end:'2027-07-28' },
+      { id:'coach-languages-en40', subject:'English', hours:40, seats:10, start:'2026-07-28', end:'2027-07-28' },
+      { id:'coach-languages-fr24', subject:'French',  hours:24, seats:20, start:'2026-07-28', end:'2027-08-28' },
+    ],
+    Interpersonal: [
+      { id:'coach-interpersonal-peak', subject:'Coaching for Peak Performance', hours:6, seats:5, start:'2026-08-15', end:'2026-12-31' },
+    ],
+  },
+};
+// Flat lookup so any entry can be found by its id alone — subjects aren't unique
+// keys anymore (e.g. "English" exists as both a 24h and a 40h Coach program).
+const ENTRY_INDEX = {};
+Object.keys(CATALOG).forEach(service=>{
+  Object.keys(CATALOG[service]).forEach(portfolio=>{
+    CATALOG[service][portfolio].forEach(entry=>{ ENTRY_INDEX[entry.id] = { ...entry, service, portfolio }; });
+  });
+});
+function getEntry(entryId){ return ENTRY_INDEX[entryId]; }
+function entryLabel(entry){ return entry.hours ? `${entry.subject} · ${entry.hours}h` : entry.subject; }
+function getEntriesFor(service, portfolio, subjectName){
+  return CATALOG[service][portfolio].filter(e=>e.subject===subjectName);
+}
+function distinctSubjects(service, portfolio){
+  const seen = new Set(); const out = [];
+  CATALOG[service][portfolio].forEach(e=>{ if(!seen.has(e.subject)){ seen.add(e.subject); out.push(e.subject); } });
+  return out;
+}
+const GROUPS = ['No Group Assigned','Marketing Team','Sales Team','Customer Success','Engineering'];
+
+/* =====================================================
+   STATE
+===================================================== */
+let learners = [];        // {id, email, firstName, lastName, group}
+let nextId = 1;
+let currentStep = 1;
+let activeTab = 'individual';
+
+let program = { service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, startDate:null };
+let assignedIds = new Set();
+let assignComplete = false;
+
+// Additional program groups created from the "Skipped Learners" flow in Review & Send.
+// Each: {id, entryId, service, portfolio, subject, hours, funded, seats, start, end, startDate, assignedIds:Set}
+let extraGroups = [];
+let nextGroupId = 1;
+let modalState = null; // state for the "Assign to a Program" modal
+let skippedSelection = new Set(); // learner ids selected in the Skipped Learners list
+let catalogFilters = { services:new Set(), portfolios:new Set(), search:'' }; // "Browse All Available Programs" modal
+
+/* =====================================================
+   HELPERS
+===================================================== */
+function fmtDate(iso){
+  const d = new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function todayISO(){
+  // fixed "today" to match design reference
+  return '2026-08-11';
+}
+function emailValid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function esc(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showToast(msg){
+  const root = document.getElementById('toastRoot');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  root.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),200); }, 2600);
+}
+function iconCheck(color){
+  return `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.2l2.8 2.8L10 3" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function iconX(color){
+  return `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1l-8 8" stroke="${color}" stroke-width="1.4" stroke-linecap="round"/></svg>`;
+}
+
+/* ---- Program-group accounting (supports the primary program + any
+   extra groups created from the Skipped Learners flow) ---- */
+function groupKey(g){ return g.entryId; }
+
+function allGroups(){
+  const list = [];
+  if(program.entryId){
+    list.push({ id:'primary', entryId:program.entryId, service:program.service, portfolio:program.portfolio, subject:program.subject,
+      hours:program.hours, funded:program.funded, seats:program.seats, start:program.start, end:program.end,
+      startDate:program.startDate, assignedIds:assignedIds });
+  }
+  extraGroups.forEach(g=>list.push(g));
+  return list;
+}
+
+function assignedAnywhere(){
+  const set = new Set();
+  allGroups().forEach(g=>g.assignedIds.forEach(id=>set.add(id)));
+  return set;
+}
+
+// How many seats for this entry are already used by groups OTHER than excludeGroupId.
+function seatsUsedByOthers(entryId, excludeGroupId){
+  let used = 0;
+  allGroups().forEach(g=>{ if(g.entryId===entryId && g.id!==excludeGroupId) used += g.assignedIds.size; });
+  return used;
+}
+
+// Remaining seats available to a given group (existing or hypothetical) for this entry.
+function capFor(entryId, excludeGroupId){
+  return getEntry(entryId).seats - seatsUsedByOthers(entryId, excludeGroupId);
+}
+
+// Which existing group (if any) an entry would merge into.
+function findTargetGroupId(entryId){
+  const match = allGroups().find(g=>g.entryId===entryId);
+  return match ? match.id : null;
+}
+
+/* =====================================================
+   RENDER: TRACKER
+===================================================== */
+const STEP_LABELS = {1:'Add Learners', 2:'Select Programs', 3:'Review & Send'};
+
+function renderTracker(){
+  const el = document.getElementById('tracker');
+  let html = '';
+  for(let i=1;i<=3;i++){
+    if(i === currentStep){
+      html += `<div class="pill active">${i}. ${STEP_LABELS[i]}</div>`;
+    } else if(i < currentStep){
+      if(i === currentStep-1){
+        html += `<div class="pill completed" onclick="goToStep(${i})">${iconCheck('#0276b1')} ${STEP_LABELS[i]}</div>`;
+      } else {
+        html += `<div class="pill completed collapsed" onclick="goToStep(${i})">${iconCheck('#0276b1')} ${i}</div>`;
+      }
+    } else {
+      html += `<div class="pill disabled">${i}. ${STEP_LABELS[i]}</div>`;
+    }
+  }
+  el.innerHTML = html;
+}
+
+function goToStep(step){
+  if(step >= currentStep) return;
+  currentStep = step;
+  assignComplete = false;
+  renderAll();
+}
+
+/* =====================================================
+   RENDER: FOOTER
+===================================================== */
+function renderFooter(){
+  const el = document.getElementById('footer');
+  if(assignComplete){ el.style.display='none'; return; }
+  el.style.display='flex';
+
+  if(currentStep === 1){
+    const disabled = learners.length === 0;
+    el.innerHTML = `
+      <button class="btn btn-ghost" onclick="showToast('Nothing to cancel yet — nothing has been sent.')">Cancel</button>
+      <div class="footer-right">
+        <button class="btn btn-primary" ${disabled?'disabled':''} onclick="goNext()">Next →</button>
+      </div>`;
+  } else if(currentStep === 2){
+    const valid = program.entryId && program.seats > 0 && assignedIds.size > 0;
+    el.innerHTML = `
+      <button class="btn btn-ghost" onclick="showToast('Nothing to cancel yet — nothing has been sent.')">Cancel</button>
+      <div class="footer-right">
+        <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+        <button class="btn btn-primary" ${valid?'':'disabled'} onclick="goNext()">Next →</button>
+      </div>`;
+  } else {
+    const total = assignedAnywhere().size;
+    el.innerHTML = `
+      <button class="btn btn-ghost" onclick="showToast('Nothing to cancel yet — nothing has been sent.')">Cancel</button>
+      <div class="footer-right">
+        <button class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
+        <button class="btn btn-primary" ${total===0?'disabled':''} onclick="doAssign()">Assign ${total} License${total===1?'':'s'} →</button>
+      </div>`;
+  }
+}
+
+function goNext(){
+  if(currentStep === 1 && learners.length === 0) return;
+  if(currentStep === 2){
+    const valid = program.entryId && program.seats > 0 && assignedIds.size > 0;
+    if(!valid) return;
+  }
+  currentStep++;
+  renderAll();
+}
+
+/* =====================================================
+   STEP 1 — ADD LEARNERS
+===================================================== */
+function renderStep1(){
+  const body = document.getElementById('stepBody');
+  body.innerHTML = `
+    <div class="tabs">
+      <button class="tab ${activeTab==='individual'?'active':''}" onclick="setTab('individual')">Add Individually</button>
+      <button class="tab ${activeTab==='bulk'?'active':''}" onclick="setTab('bulk')">Bulk Import (Excel)</button>
+    </div>
+    <div class="step1-panels">
+      ${activeTab === 'individual' ? renderIndividualPanel() : renderBulkPanel()}
+    </div>
+  `;
+  if(activeTab === 'individual'){ bindStep1Form(); }
+}
+
+function setTab(tab){ activeTab = tab; renderStep1(); }
+
+function renderIndividualPanel(){
+  return `
+    <div class="step1-cards">
+      <div class="card form-card">
+        <h3>Add one at a time</h3>
+        <label>email <span class="req">*</span></label>
+        <input id="inpEmail" type="email" placeholder="email" class="field-gap" />
+        <div class="field-error" id="emailError">Enter a valid email address.</div>
+        <label>First Name</label>
+        <input id="inpFirst" type="text" placeholder="First Name" class="field-gap" />
+        <label>Last Name</label>
+        <input id="inpLast" type="text" placeholder="Last Name" class="field-gap" />
+        <label>Group</label>
+        <select id="inpGroup" class="field-gap" style="margin-bottom:20px;">
+          ${GROUPS.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('')}
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="addLearner()">Add To List
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="card list-card">
+        <div class="list-head">
+          <span class="dot ${learners.length===0?'zero':''}"></span>
+          <strong id="learnerCountLabel">${learners.length} learner${learners.length===1?'':'s'} ready</strong>
+        </div>
+        <div class="chip-row" id="learnerChips">
+          ${learners.length===0
+            ? `<span class="empty-hint">Learners you add will show up here.</span>`
+            : learners.map(l=>`<span class="chip removable">${esc(l.email)} <span class="x" onclick="removeLearner(${l.id})">${iconX('#0276b1')}</span></span>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderBulkPanel(){
+  return `
+    <div class="card bulk-placeholder">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="#b3bec4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>Bulk import is coming soon</h3>
+      <p>For now, add your learners one at a time from the Add Individually tab. We'll let you know as soon as Excel import is ready.</p>
+      <button class="btn btn-secondary btn-sm" onclick="setTab('individual')">Add Individually instead</button>
+    </div>
+  `;
+}
+
+function bindStep1Form(){
+  const emailInput = document.getElementById('inpEmail');
+  emailInput.addEventListener('keydown', e => { if(e.key==='Enter') addLearner(); });
+  emailInput.addEventListener('input', ()=>{
+    emailInput.classList.remove('invalid');
+    document.getElementById('emailError').classList.remove('show');
+  });
+}
+
+function addLearner(){
+  const emailInput = document.getElementById('inpEmail');
+  const email = emailInput.value.trim();
+  const errEl = document.getElementById('emailError');
+
+  if(!email || !emailValid(email)){
+    emailInput.classList.add('invalid');
+    errEl.textContent = !email ? 'Email is required.' : 'Enter a valid email address.';
+    errEl.classList.add('show');
+    emailInput.focus();
+    return;
+  }
+  if(learners.some(l=>l.email.toLowerCase() === email.toLowerCase())){
+    emailInput.classList.add('invalid');
+    errEl.textContent = 'This learner is already on the list.';
+    errEl.classList.add('show');
+    emailInput.focus();
+    return;
+  }
+
+  learners.push({
+    id: nextId++,
+    email,
+    firstName: document.getElementById('inpFirst').value.trim(),
+    lastName: document.getElementById('inpLast').value.trim(),
+    group: document.getElementById('inpGroup').value,
+  });
+  renderStep1();
+  renderFooter();
+  document.getElementById('inpEmail').focus();
+}
+
+function removeLearner(id){
+  learners = learners.filter(l=>l.id!==id);
+  assignedIds.delete(id);
+  extraGroups.forEach(g=>g.assignedIds.delete(id));
+  extraGroups = extraGroups.filter(g=>g.assignedIds.size > 0);
+  renderStep1();
+  renderFooter();
+}
+
+/* =====================================================
+   STEP 2 — SELECT PROGRAMS
+===================================================== */
+function renderStep2(){
+  const body = document.getElementById('stepBody');
+  const services = Object.keys(CATALOG);
+  const portfolios = program.service ? Object.keys(CATALOG[program.service]) : [];
+  const subjectNames = (program.service && program.portfolio) ? distinctSubjects(program.service, program.portfolio) : [];
+
+  body.innerHTML = `
+    <div class="step2-wrap">
+      <div class="card program-card">
+        <div class="row-between">
+          <h3>Choose a Program</h3>
+          <button class="link" onclick="openCatalogModal()">See Everything Available</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">By Service</span>
+          <div class="chip-row">
+            ${services.map(s=>`<span class="chip chip-filter ${program.service===s?'selected':''}" onclick="setService('${s}')">${s}</span>`).join('')}
+          </div>
+        </div>
+
+        ${program.service ? `
+        <div class="filter-group">
+          <span class="filter-label">By Portfolio</span>
+          <div class="chip-row">
+            ${portfolios.map(p=>`<span class="chip chip-filter ${program.portfolio===p?'selected':''}" onclick="setPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}
+          </div>
+        </div>` : ''}
+
+        ${program.portfolio ? `
+        <div class="filter-group">
+          <span class="filter-label">Subject</span>
+          <select id="subjectSelect" onchange="setSubjectName(this.value)">
+            <option value="">Select a subject</option>
+            ${subjectNames.map(name=>{
+              const funded = getEntriesFor(program.service, program.portfolio, name).some(e=>e.funded);
+              return `<option value="${esc(name)}" ${program.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
+            }).join('')}
+          </select>
+        </div>` : ''}
+
+        ${renderHoursRow()}
+        ${renderAvailabilityBox()}
+        ${renderDateRow()}
+      </div>
+
+      ${renderLearnerRoster()}
+    </div>
+  `;
+}
+
+function renderHoursRow(){
+  if(!program.subjectName) return '';
+  const entries = getEntriesFor(program.service, program.portfolio, program.subjectName);
+  const hoursOptions = [...new Set(entries.map(e=>e.hours).filter(h=>h!=null))];
+  if(hoursOptions.length === 0) return '';
+  return `<div class="filter-group">
+    <span class="filter-label">Hours</span>
+    <div class="chip-row">${hoursOptions.map(h=>`<span class="chip chip-filter ${program.hours===h?'selected':''}" onclick="setHours(${h})">${h}h</span>`).join('')}</div>
+  </div>`;
+}
+
+function renderAvailabilityBox(){
+  if(!program.entryId) return '';
+  const remaining = capFor(program.entryId, 'primary');
+  if(remaining <= 0){
+    return `<div class="info-box error">
+      <strong>No seats available for ${esc(program.subject)}</strong>
+      <p>Choose a different program, or contact your Learnlight admin to add seats.</p>
+    </div>`;
+  }
+  return `<div class="info-box">
+    <strong>${remaining} available${program.funded?' <span class="funded-badge">FUNDED</span>':''}</strong>
+    <span>${fmtDate(program.start)} – ${fmtDate(program.end)}</span>
+  </div>`;
+}
+
+function renderDateRow(){
+  if(!program.entryId || capFor(program.entryId, 'primary') <= 0) return '';
+  return `<div class="date-row" id="dateRow">
+    <span>Starts ${fmtDate(program.startDate)}</span>
+    <button class="link" onclick="toggleDateEdit()">Change</button>
+  </div>`;
+}
+
+function toggleDateEdit(){
+  const row = document.getElementById('dateRow');
+  row.innerHTML = `
+    <input type="date" id="startDateInput" value="${program.startDate}" min="${program.start}" max="${program.end}" />
+    <button class="link" onclick="saveDate()">Save</button>
+  `;
+  document.getElementById('startDateInput').focus();
+}
+function saveDate(){
+  const val = document.getElementById('startDateInput').value;
+  if(val) program.startDate = val;
+  renderStep2();
+}
+
+// Is this learner already assigned to a different program (created via the
+// Skipped Learners flow on Review & Send)? Returns a display label, or null.
+function elsewhereGroupLabel(id){
+  const g = extraGroups.find(g=>g.assignedIds.has(id));
+  return g ? `${entryLabel(g)} · ${g.service}` : null;
+}
+
+function renderLearnerRoster(){
+  const hasSubject = !!program.entryId;
+  const cap = hasSubject ? capFor(program.entryId, 'primary') : null;
+  const zeroSeats = hasSubject && cap <= 0;
+  const eligible = learners.filter(l=>!elsewhereGroupLabel(l.id));
+
+  let statusLine;
+  if(!hasSubject){
+    statusLine = `<div class="seat-counter">Pick a program on the left, then choose who gets it here.</div>`;
+  } else if(zeroSeats){
+    statusLine = `<div class="seat-counter error">No seats available for this program.</div>`;
+  } else {
+    statusLine = `<div class="seat-counter">${assignedIds.size} of ${cap} seat${cap===1?'':'s'} selected</div>`;
+  }
+
+  let overCapNote = '';
+  if(hasSubject && !zeroSeats && eligible.length > cap){
+    overCapNote = `<div class="cap-note show">Only ${cap} of ${eligible.length} learners can be selected here — the rest will land in Skipped Learners.</div>`;
+  }
+
+  const rows = learners.length === 0
+    ? `<div class="roster-empty">No learners added yet — head back to Step 1 to add some.</div>`
+    : `<div class="roster-list">${learners.map(l=>{
+        const elsewhere = elsewhereGroupLabel(l.id);
+        const selected = assignedIds.has(l.id);
+        const canInteract = hasSubject && !zeroSeats && !elsewhere;
+        const capped = canInteract && !selected && assignedIds.size >= cap;
+        const rowClasses = ['roster-row'];
+        if(selected) rowClasses.push('selected');
+        if(elsewhere || capped || !canInteract) rowClasses.push('disabled');
+        if(canInteract && !capped) rowClasses.push('selectable');
+        return `<div class="${rowClasses.join(' ')}"
+            ${canInteract && !capped ? `onclick="toggleAssign(${l.id})"` : ''}
+            ${capped ? `title="Seat limit reached — remove another learner to select this one"` : ''}>
+          <span class="check">${selected?iconCheck('#fff'):''}</span>
+          <span class="email">${esc(l.email)}</span>
+          ${elsewhere ? `<span class="badge">Assigned to ${esc(elsewhere)}</span>` : ''}
+        </div>`;
+      }).join('')}</div>`;
+
+  const selectAllBtn = (hasSubject && !zeroSeats && eligible.length > 0)
+    ? `<button class="link" onclick="selectAllLearners()">Select All</button>` : '';
+
+  return `<div class="card roster-card">
+    <div class="row-between"><h3>Learners in this batch (${learners.length})</h3>${selectAllBtn}</div>
+    ${statusLine}
+    ${overCapNote}
+    ${rows}
+    <button class="chip chip-add" style="margin-top:12px;" onclick="openQuickAddModal()">+ Add more Learners</button>
+  </div>`;
+}
+
+function setService(s){
+  program.service = s; program.portfolio = null; program.subjectName = null;
+  program.entryId = null; program.subject = null; program.hours = null; program.funded = false; program.seats = null;
+  assignedIds.clear();
+  renderStep2(); renderFooter();
+}
+function setPortfolio(p){
+  program.portfolio = p; program.subjectName = null;
+  program.entryId = null; program.subject = null; program.hours = null; program.funded = false; program.seats = null;
+  assignedIds.clear();
+  renderStep2(); renderFooter();
+}
+function resolveProgramEntry(entry){
+  program.entryId = entry.id;
+  program.subject = entry.subject;
+  program.hours = entry.hours;
+  program.funded = !!entry.funded;
+  program.seats = entry.seats;
+  program.start = entry.start;
+  program.end = entry.end;
+  program.startDate = todayISO() > entry.start ? todayISO() : entry.start;
+}
+function setSubjectName(name){
+  program.subjectName = name || null;
+  program.entryId = null; program.subject = null; program.hours = null; program.funded = false; program.seats = null;
+  if(name){
+    const entries = getEntriesFor(program.service, program.portfolio, name);
+    // Only one entry for this subject (no hours variants) — resolve immediately, no extra click needed.
+    if(entries.length === 1) resolveProgramEntry(entries[0]);
+  }
+  assignedIds.clear();
+  renderStep2(); renderFooter();
+}
+function setHours(hours){
+  const entries = getEntriesFor(program.service, program.portfolio, program.subjectName);
+  const entry = entries.find(e=>e.hours===hours);
+  if(entry) resolveProgramEntry(entry);
+  assignedIds.clear();
+  renderStep2(); renderFooter();
+}
+
+function toggleAssign(id){
+  if(elsewhereGroupLabel(id)) return;
+  if(assignedIds.has(id)){ assignedIds.delete(id); }
+  else {
+    const cap = capFor(program.entryId, 'primary');
+    if(assignedIds.size >= cap) return;
+    assignedIds.add(id);
+  }
+  renderStep2(); renderFooter();
+}
+
+function selectAllLearners(){
+  const cap = capFor(program.entryId, 'primary');
+  const eligible = learners.filter(l=>!elsewhereGroupLabel(l.id));
+  assignedIds.clear();
+  let count = 0;
+  for(const l of eligible){
+    if(count >= cap) break;
+    assignedIds.add(l.id);
+    count++;
+  }
+  if(eligible.length > cap){
+    showToast(`Only ${cap} seat${cap===1?'':'s'} available — ${eligible.length-cap} learner${(eligible.length-cap)===1?'':'s'} left unselected.`);
+  }
+  renderStep2(); renderFooter();
+}
+
+/* Quick add learner modal (from step 2) */
+function openQuickAddModal(){
+  const root = document.getElementById('modalRoot');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal" style="width:420px;">
+        <div class="modal-head"><h3>Add a learner</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+        <div class="modal-body">
+          <label>email <span class="req">*</span></label>
+          <input id="qaEmail" type="email" placeholder="email" class="field-gap" />
+          <div class="field-error" id="qaEmailError">Enter a valid email address.</div>
+          <label>First Name</label>
+          <input id="qaFirst" type="text" placeholder="First Name" class="field-gap" />
+          <label>Last Name</label>
+          <input id="qaLast" type="text" placeholder="Last Name" />
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="quickAddLearner()">Add To List</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function quickAddLearner(){
+  const email = document.getElementById('qaEmail').value.trim();
+  const errEl = document.getElementById('qaEmailError');
+  if(!email || !emailValid(email)){
+    document.getElementById('qaEmail').classList.add('invalid');
+    errEl.classList.add('show');
+    return;
+  }
+  if(learners.some(l=>l.email.toLowerCase()===email.toLowerCase())){
+    errEl.textContent = 'This learner is already on the list.';
+    errEl.classList.add('show');
+    return;
+  }
+  const l = { id: nextId++, email, firstName: document.getElementById('qaFirst').value.trim(), lastName: document.getElementById('qaLast').value.trim(), group: GROUPS[0] };
+  learners.push(l);
+  if(program.entryId && assignedIds.size < capFor(program.entryId, 'primary')) assignedIds.add(l.id);
+  closeModal();
+  renderStep2(); renderFooter();
+}
+
+/* Catalog browser modal */
+function getAllEntries(){
+  const out = [];
+  Object.keys(CATALOG).forEach(service=>{
+    Object.keys(CATALOG[service]).forEach(portfolio=>{
+      CATALOG[service][portfolio].forEach(entry=>out.push({ ...entry, service, portfolio }));
+    });
+  });
+  return out;
+}
+function filteredCatalogEntries(){
+  return getAllEntries().filter(e=>{
+    if(catalogFilters.services.size > 0 && !catalogFilters.services.has(e.service)) return false;
+    if(catalogFilters.portfolios.size > 0 && !catalogFilters.portfolios.has(e.portfolio)) return false;
+    if(catalogFilters.search){
+      const s = catalogFilters.search.toLowerCase();
+      const hay = `${e.subject} ${e.hours||''} ${e.funded?'funded':''}`.toLowerCase();
+      if(!hay.includes(s)) return false;
+    }
+    return true;
+  });
+}
+function openCatalogModal(){
+  catalogFilters = { services:new Set(), portfolios:new Set(), search:'' };
+  renderCatalogModalShell();
+}
+function renderCatalogModalShell(){
+  const services = Object.keys(CATALOG);
+  const portfolioSet = new Set();
+  services.forEach(s=>Object.keys(CATALOG[s]).forEach(p=>portfolioSet.add(p)));
+  const portfolios = [...portfolioSet];
+
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal" style="width:640px;">
+        <div class="modal-head"><h3>Browse All Available Programs</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0 0 16px;">Filter or search, then select one to use it below.</p>
+          <div class="catalog-filters-row">
+            <div>
+              <span class="filter-label">Service</span>
+              <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${catalogFilters.services.has(s)?'selected':''}" onclick="toggleCatalogFilter('services','${s}')">${s}</span>`).join('')}</div>
+            </div>
+            <div>
+              <span class="filter-label">Portfolio</span>
+              <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${catalogFilters.portfolios.has(p)?'selected':''}" onclick="toggleCatalogFilter('portfolios','${esc(p)}')">${esc(p)}</span>`).join('')}</div>
+            </div>
+          </div>
+          <input class="catalog-search" type="text" placeholder="Search by subject, hours, funded…" value="${esc(catalogFilters.search)}" oninput="onCatalogSearchInput(this.value)" />
+          <div id="catalogListRoot"></div>
+        </div>
+        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>
+      </div>
+    </div>
+  `;
+  renderCatalogList();
+}
+function toggleCatalogFilter(kind, value){
+  const set = catalogFilters[kind];
+  if(set.has(value)) set.delete(value); else set.add(value);
+  renderCatalogModalShell();
+}
+function onCatalogSearchInput(v){ catalogFilters.search = v; renderCatalogList(); } // updates the list only — keeps focus in the search box
+function renderCatalogList(){
+  const entries = filteredCatalogEntries();
+  if(entries.length === 0){
+    document.getElementById('catalogListRoot').innerHTML = `<div class="muted" style="text-align:center;padding:28px 0;">No programs match your filters.</div>`;
+    return;
+  }
+  const bySer = {};
+  entries.forEach(e=>{ (bySer[e.service] = bySer[e.service] || {}); (bySer[e.service][e.portfolio] = bySer[e.service][e.portfolio] || []).push(e); });
+
+  let html = '';
+  Object.keys(bySer).forEach(service=>{
+    html += `<div class="catalog-service-title">${service}</div>`;
+    Object.keys(bySer[service]).forEach(portfolio=>{
+      html += `<div class="catalog-group"><div class="catalog-group-title">${portfolio}</div>`;
+      bySer[service][portfolio].forEach(entry=>{
+        const remaining = capFor(entry.id, 'primary');
+        html += `<div class="catalog-row">
+          <div>
+            <div class="name">${esc(entryLabel(entry))}${entry.funded?'<span class="funded-badge">FUNDED</span>':''}</div>
+            <div class="meta ${remaining<=0?'zero':''}">${fmtDate(entry.start)} – ${fmtDate(entry.end)} · ${remaining<=0?'No seats available':`${remaining} available`}</div>
+          </div>
+          <button class="pick" ${remaining<=0?'disabled':''} onclick="pickFromCatalog('${entry.id}')">Select</button>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+  });
+  document.getElementById('catalogListRoot').innerHTML = html;
+}
+function pickFromCatalog(entryId){
+  const entry = getEntry(entryId);
+  setService(entry.service);
+  setPortfolio(entry.portfolio);
+  program.subjectName = entry.subject;
+  resolveProgramEntry(entry);
+  assignedIds.clear();
+  closeModal();
+  renderStep2(); renderFooter();
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+
+/* =====================================================
+   STEP 3 — REVIEW & SEND
+===================================================== */
+function renderStep3(){
+  const body = document.getElementById('stepBody');
+  const groups = allGroups().filter(g=>g.assignedIds.size > 0);
+  const totalAssigned = assignedAnywhere();
+  const skipped = learners.filter(l=>!totalAssigned.has(l.id));
+  const skippedIds = new Set(skipped.map(l=>l.id));
+  // keep selection state clean of anyone no longer skipped
+  skippedSelection.forEach(id=>{ if(!skippedIds.has(id)) skippedSelection.delete(id); });
+  const selectedCount = skippedSelection.size;
+  const allSkippedSelected = skipped.length > 0 && skipped.every(l=>skippedSelection.has(l.id));
+
+  const groupCards = groups.map(g=>{
+    const chips = learners.filter(l=>g.assignedIds.has(l.id))
+      .map(l=>`<span class="chip removable">${esc(l.email)} <span class="x" onclick="removeFromGroup('${g.id}',${l.id})">${iconX('#0276b1')}</span></span>`)
+      .join('');
+    return `<div class="program-summary">
+      <div class="row-between">
+        <span class="title-line">${esc(entryLabel(g))} · ${esc(g.service)}${g.funded?'<span class="funded-badge">FUNDED</span>':''}</span>
+        <span class="seats-line">${g.assignedIds.size} Fixed Plan seat${g.assignedIds.size===1?'':'s'}</span>
+      </div>
+      <div class="date-line">${fmtDate(g.startDate)} – ${fmtDate(g.end)}</div>
+      <div class="chip-row">${chips}</div>
+    </div>`;
+  }).join('');
+
+  const skippedRows = skipped.map(l=>{
+    const sel = skippedSelection.has(l.id);
+    return `<div class="skipped-row ${sel?'selected':''}" onclick="toggleSkippedSelect(${l.id})">
+      <span class="check">${sel?iconCheck('#fff'):''}</span>
+      <span class="email">${esc(l.email)}</span>
+      <span class="x" onclick="event.stopPropagation(); removeFromBatch(${l.id})">${iconX('#ca2b34')}</span>
+    </div>`;
+  }).join('');
+
+  body.innerHTML = `
+    <div class="step3-wrap">
+      <div class="card review-card">
+        <h3>Assigning to ${totalAssigned.size} learner${totalAssigned.size===1?'':'s'} · ${groups.length} program${groups.length===1?'':'s'}</h3>
+
+        ${groupCards}
+
+        ${skipped.length > 0 ? `
+        <div class="skipped-section">
+          <div class="row-between">
+            <h4>Skipped Learners (${skipped.length})</h4>
+            <button class="link" onclick="toggleSelectAllSkipped()">${allSkippedSelected?'Clear Selection':'Select All'}</button>
+          </div>
+          <p>Added but not assigned to a program yet. Click one or more to select them, then assign — together or to different programs.</p>
+          <div class="roster-list" style="margin-bottom:12px;">${skippedRows}</div>
+          <button class="btn btn-secondary btn-sm" ${selectedCount===0?'disabled':''} onclick="openAssignSkippedModal()">
+            Assign ${selectedCount>0?selectedCount+' ':''}Learner${selectedCount===1?'':'s'} to a Program →
+          </button>
+        </div>` : (groups.length > 0 ? `
+        <div class="all-assigned">${iconCheck('#4ac97f')} Every learner you added is assigned to a program.</div>
+        ` : '')}
+      </div>
+    </div>
+  `;
+}
+
+function toggleSkippedSelect(id){
+  if(skippedSelection.has(id)) skippedSelection.delete(id);
+  else skippedSelection.add(id);
+  renderStep3(); renderFooter();
+}
+function toggleSelectAllSkipped(){
+  const skipped = learners.filter(l=>!assignedAnywhere().has(l.id));
+  const allSelected = skipped.length > 0 && skipped.every(l=>skippedSelection.has(l.id));
+  skippedSelection = allSelected ? new Set() : new Set(skipped.map(l=>l.id));
+  renderStep3(); renderFooter();
+}
+
+function removeFromGroup(groupId, learnerId){
+  if(groupId === 'primary'){
+    assignedIds.delete(learnerId);
+  } else {
+    const g = extraGroups.find(x=>x.id === groupId);
+    if(g){
+      g.assignedIds.delete(learnerId);
+      if(g.assignedIds.size === 0){ extraGroups = extraGroups.filter(x=>x.id !== groupId); }
+    }
+  }
+  renderStep3(); renderFooter();
+}
+function removeFromBatch(id){
+  learners = learners.filter(l=>l.id!==id);
+  skippedSelection.delete(id);
+  renderStep3(); renderFooter();
+}
+
+/* ---- Assign-skipped-learners-to-a-program modal ---- */
+function openAssignSkippedModal(){
+  const skipped = learners.filter(l=>!assignedAnywhere().has(l.id));
+  const selected = skipped.filter(l=>skippedSelection.has(l.id));
+  if(selected.length === 0) return;
+  modalState = { service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null,
+    pool: selected.map(l=>l.id), selected: new Set() };
+  renderAssignModal();
+}
+
+function renderAssignModal(){
+  const root = document.getElementById('modalRoot');
+  const services = Object.keys(CATALOG);
+  const portfolios = modalState.service ? Object.keys(CATALOG[modalState.service]) : [];
+  const subjectNames = (modalState.service && modalState.portfolio) ? distinctSubjects(modalState.service, modalState.portfolio) : [];
+  const poolLearners = learners.filter(l=>modalState.pool.includes(l.id));
+
+  let hoursHtml = '', availabilityHtml = '', selectHtml = '';
+  if(modalState.subjectName){
+    const entries = getEntriesFor(modalState.service, modalState.portfolio, modalState.subjectName);
+    const hoursOptions = [...new Set(entries.map(e=>e.hours).filter(h=>h!=null))];
+    if(hoursOptions.length > 0){
+      hoursHtml = `<div class="filter-group">
+        <span class="filter-label">Hours</span>
+        <div class="chip-row">${hoursOptions.map(h=>`<span class="chip chip-filter ${modalState.hours===h?'selected':''}" onclick="setModalHours(${h})">${h}h</span>`).join('')}</div>
+      </div>`;
+    }
+  }
+  if(modalState.entryId){
+    const targetId = findTargetGroupId(modalState.entryId);
+    const remaining = capFor(modalState.entryId, targetId);
+    if(remaining <= 0){
+      availabilityHtml = `<div class="info-box error">
+        <strong>No seats left for ${esc(modalState.subject)}</strong>
+        <p>All seats for this program are already assigned. Choose a different one.</p>
+      </div>`;
+    } else {
+      availabilityHtml = `<div class="info-box">
+        <strong>${remaining} available${modalState.funded?' <span class="funded-badge">FUNDED</span>':''}</strong>
+        <span>${fmtDate(modalState.start)} – ${fmtDate(modalState.end)}</span>
+      </div>`;
+      if(modalState.selected.size === 0){
+        poolLearners.slice(0, remaining).forEach(l=>modalState.selected.add(l.id));
+      }
+      const chips = poolLearners.map(l=>{
+        const sel = modalState.selected.has(l.id);
+        const disabled = !sel && modalState.selected.size >= remaining;
+        return `<span class="chip chip-toggle ${sel?'selected':''} ${disabled?'disabled':''}"
+          ${disabled?`title="Seat limit reached"`:''}
+          onclick="${disabled?'':`toggleModalSelect(${l.id})`}">${esc(l.email)}</span>`;
+      }).join('');
+      selectHtml = `<div class="select-learners">
+        <div class="row-between"><h3>Assign Learners (max ${remaining})</h3><button class="link" onclick="modalSelectAll()">Select All</button></div>
+        <div class="seat-count">${modalState.selected.size} of ${remaining} seat${remaining===1?'':'s'} selected</div>
+        <div class="chip-row">${chips}</div>
+      </div>`;
+    }
+  }
+
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeAssignModal()">
+      <div class="modal">
+        <div class="modal-head"><h3>Assign to a Program</h3><button class="modal-close" onclick="closeAssignModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0 0 16px;">Choose a program for the ${modalState.pool.length} learner${modalState.pool.length===1?'':'s'} you selected. It doesn't need to match the program above.</p>
+          <div class="filter-group" style="margin-top:0;">
+            <span class="filter-label">By Service</span>
+            <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${modalState.service===s?'selected':''}" onclick="setModalService('${s}')">${s}</span>`).join('')}</div>
+          </div>
+          ${modalState.service ? `
+          <div class="filter-group">
+            <span class="filter-label">By Portfolio</span>
+            <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${modalState.portfolio===p?'selected':''}" onclick="setModalPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}</div>
+          </div>` : ''}
+          ${modalState.portfolio ? `
+          <div class="filter-group">
+            <span class="filter-label">Subject</span>
+            <select onchange="setModalSubjectName(this.value)">
+              <option value="">Select a subject</option>
+              ${subjectNames.map(name=>{
+                const funded = getEntriesFor(modalState.service, modalState.portfolio, name).some(e=>e.funded);
+                return `<option value="${esc(name)}" ${modalState.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
+              }).join('')}
+            </select>
+          </div>` : ''}
+          ${hoursHtml}
+          ${availabilityHtml}
+          ${selectHtml}
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
+          <button class="btn btn-primary" ${(!modalState.entryId || modalState.selected.size===0)?'disabled':''} onclick="confirmAssignModal()">Assign ${modalState.selected.size} Learner${modalState.selected.size===1?'':'s'}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setModalService(s){
+  modalState.service = s; modalState.portfolio = null; modalState.subjectName = null;
+  modalState.entryId = null; modalState.subject = null; modalState.hours = null; modalState.funded = false; modalState.selected = new Set();
+  renderAssignModal();
+}
+function setModalPortfolio(p){
+  modalState.portfolio = p; modalState.subjectName = null;
+  modalState.entryId = null; modalState.subject = null; modalState.hours = null; modalState.funded = false; modalState.selected = new Set();
+  renderAssignModal();
+}
+function resolveModalEntry(entry){
+  modalState.entryId = entry.id; modalState.subject = entry.subject; modalState.hours = entry.hours; modalState.funded = !!entry.funded;
+  modalState.start = entry.start; modalState.end = entry.end;
+  modalState.startDate = todayISO() > entry.start ? todayISO() : entry.start;
+  modalState.selected = new Set();
+}
+function setModalSubjectName(name){
+  modalState.subjectName = name || null;
+  modalState.entryId = null; modalState.subject = null; modalState.hours = null; modalState.funded = false; modalState.selected = new Set();
+  if(name){
+    const entries = getEntriesFor(modalState.service, modalState.portfolio, name);
+    if(entries.length === 1) resolveModalEntry(entries[0]);
+  }
+  renderAssignModal();
+}
+function setModalHours(hours){
+  const entries = getEntriesFor(modalState.service, modalState.portfolio, modalState.subjectName);
+  const entry = entries.find(e=>e.hours===hours);
+  if(entry) resolveModalEntry(entry);
+  renderAssignModal();
+}
+function toggleModalSelect(id){
+  if(modalState.selected.has(id)){ modalState.selected.delete(id); }
+  else {
+    const targetId = findTargetGroupId(modalState.entryId);
+    const remaining = capFor(modalState.entryId, targetId);
+    if(modalState.selected.size >= remaining) return;
+    modalState.selected.add(id);
+  }
+  renderAssignModal();
+}
+function modalSelectAll(){
+  const targetId = findTargetGroupId(modalState.entryId);
+  const remaining = capFor(modalState.entryId, targetId);
+  const poolLearners = learners.filter(l=>modalState.pool.includes(l.id));
+  modalState.selected = new Set(poolLearners.slice(0, remaining).map(l=>l.id));
+  if(poolLearners.length > remaining){
+    showToast(`Only ${remaining} seat${remaining===1?'':'s'} available — ${poolLearners.length-remaining} learner${(poolLearners.length-remaining)===1?'':'s'} left unselected.`);
+  }
+  renderAssignModal();
+}
+function confirmAssignModal(){
+  const primaryEntryId = program.entryId;
+
+  if(modalState.entryId === primaryEntryId){
+    modalState.selected.forEach(id=>assignedIds.add(id));
+  } else {
+    let group = extraGroups.find(g=>g.entryId===modalState.entryId);
+    if(!group){
+      const entry = getEntry(modalState.entryId);
+      group = { id:'g'+(nextGroupId++), entryId:modalState.entryId, service:modalState.service, portfolio:modalState.portfolio,
+        subject:modalState.subject, hours:modalState.hours, funded:modalState.funded,
+        seats:entry.seats, start:entry.start, end:entry.end, startDate:modalState.startDate, assignedIds:new Set() };
+      extraGroups.push(group);
+    }
+    modalState.selected.forEach(id=>group.assignedIds.add(id));
+  }
+  modalState.selected.forEach(id=>skippedSelection.delete(id));
+  showToast(`Assigned ${modalState.selected.size} learner${modalState.selected.size===1?'':'s'} to ${esc(modalState.subject)} · ${modalState.service}.`);
+  closeAssignModal();
+  renderStep3(); renderFooter();
+}
+function closeAssignModal(){ modalState = null; closeModal(); }
+
+/* =====================================================
+   ASSIGN / SUCCESS
+===================================================== */
+function doAssign(){
+  if(assignedAnywhere().size === 0) return;
+  assignComplete = true;
+  renderAll();
+}
+
+function renderSuccess(){
+  const body = document.getElementById('stepBody');
+  const groups = allGroups().filter(g=>g.assignedIds.size > 0);
+  const total = assignedAnywhere().size;
+
+  const detail = groups.length <= 1
+    ? `<p>${total} learner${total===1?'':'s'} now ${total===1?'has':'have'} access to ${groups[0] ? esc(groups[0].subject)+' · '+esc(groups[0].service) : 'their program'}.</p>`
+    : `<p>${total} learners now have access across ${groups.length} programs:</p>
+       <ul style="text-align:left;list-style:none;padding:0;margin:0 0 8px;display:inline-block;">
+         ${groups.map(g=>`<li style="font-size:13px;color:var(--text-secondary);padding:4px 0;">• ${esc(g.subject)} · ${esc(g.service)} — ${g.assignedIds.size} learner${g.assignedIds.size===1?'':'s'}</li>`).join('')}
+       </ul>`;
+
+  body.innerHTML = `
+    <div class="success-wrap">
+      <div class="card success-card">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="23" fill="#e9f8ee" stroke="#4ac97f"/>
+          <path d="M15 24.5l6 6 12-13" stroke="#2f9e56" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h2>Licenses assigned</h2>
+        ${detail}
+        <div class="success-actions">
+          <button class="btn btn-secondary" onclick="showToast('Heading back to Learners.')">Back to Learners</button>
+          <button class="btn btn-primary" onclick="resetFlow()">Assign more licenses</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function resetFlow(){
+  learners = learners.filter(l=>!assignedAnywhere().has(l.id));
+  assignedIds.clear();
+  extraGroups = [];
+  skippedSelection = new Set();
+  program = { service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, startDate:null };
+  currentStep = 1;
+  assignComplete = false;
+  renderAll();
+}
+
+/* =====================================================
+   MASTER RENDER
+===================================================== */
+function renderAll(){
+  renderTracker();
+  if(assignComplete){
+    renderSuccess();
+  } else if(currentStep === 1){
+    renderStep1();
+  } else if(currentStep === 2){
+    renderStep2();
+  } else {
+    renderStep3();
+  }
+  renderFooter();
+}
+
+renderAll();
+</script>
+</body>
+</html>
