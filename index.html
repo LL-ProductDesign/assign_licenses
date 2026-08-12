@@ -68,7 +68,7 @@
 
   /* ===== Page shell ===== */
   .page{
-    flex:1;max-width:1312px;width:100%;margin:0 auto;padding:32px 24px 40px;
+    flex:1;max-width:1312px;width:100%;margin:0 auto;padding:32px 24px 100px;
   }
   .breadcrumb{font-size:13px;color:var(--teal);font-weight:500;display:inline-flex;align-items:center;gap:4px;margin-bottom:8px;}
   .breadcrumb:hover{text-decoration:underline;}
@@ -97,6 +97,8 @@
   .row-between{display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .muted{color:var(--text-secondary);font-size:13px;}
   .link{color:var(--teal);font-size:14px;font-weight:600;background:none;border:none;padding:0;}
+  .link-sm{color:var(--teal);font-size:12px;font-weight:600;background:none;border:none;padding:0;cursor:pointer;}
+  .link-sm:hover{text-decoration:underline;}
   .link:hover{text-decoration:underline;}
   .link:disabled{color:var(--text-disabled);cursor:default;text-decoration:none;}
   h3{font-size:14px;font-weight:600;margin:0;color:var(--navy);}
@@ -244,6 +246,12 @@
   .cap-note{font-size:12px;color:var(--text-error);margin-top:8px;display:none;}
   .cap-note.show{display:block;}
 
+  .recap-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-light);font-size:13px;}
+  .recap-row:last-child{border-bottom:none;}
+  .recap-row .name{font-weight:600;color:var(--navy);}
+  .recap-row .count{color:var(--text-secondary);}
+  .recap-warning{font-size:12px;color:var(--text-error);margin-top:10px;}
+
   /* ===== Step 3 ===== */
   .step3-wrap{display:flex;justify-content:center;}
   .review-card{width:418px;padding:24px;}
@@ -268,7 +276,8 @@
   .widget-footer{
     background:var(--bg-white);border-top:1px solid var(--border);
     padding:16px 24px;display:flex;align-items:center;justify-content:space-between;
-    flex:0 0 auto;
+    position:fixed;bottom:0;left:0;right:0;z-index:20;
+    box-shadow:0 -2px 8px rgba(9,30,66,0.08);
   }
   .footer-right{display:flex;gap:10px;}
 
@@ -319,6 +328,87 @@
   .toast.show{opacity:1;transform:translateY(0);}
 
   .icon-inline{display:inline-flex;vertical-align:middle;}
+
+  /* ===== Single-page layout (no wizard) ===== */
+  .toolbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+  .toolbar-row .subtitle{margin:0;}
+
+  .bulk-bar{
+    display:flex;align-items:center;justify-content:space-between;background:var(--bg-blue-light);
+    border:1px solid var(--blue-100);border-radius:var(--radius-int);padding:10px 16px;margin-bottom:16px;
+    font-size:13px;color:var(--navy);
+  }
+  .bulk-bar strong{font-weight:600;}
+  .bulk-bar-actions{display:flex;align-items:center;gap:16px;}
+
+  .builder-wrap{display:flex;justify-content:center;gap:16px;align-items:flex-start;}
+  .learners-col{width:360px;flex:0 0 auto;position:sticky;top:24px;}
+  .groups-col{width:460px;display:flex;flex-direction:column;gap:14px;flex:0 0 auto;}
+
+  .group-card{
+    background:var(--bg-white);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px 22px;
+    border:2px dashed transparent;outline:none;transition:border-color .12s,background .12s;
+  }
+  .group-card.drop-hover{border-color:var(--teal);background:var(--bg-blue-light);}
+  .group-card .filter-group{margin-top:14px;}
+  .group-card .filter-group:first-of-type{margin-top:0;}
+  .group-avail-line{font-size:12px;color:var(--text-secondary);margin-top:10px;background:var(--bg-page);padding:7px 10px;border-radius:6px;}
+  .group-avail-line.error{color:var(--text-error);background:var(--bg-error);}
+  .group-chip-row{margin-top:12px;}
+  .group-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .group-drop-hint{font-size:12px;color:var(--text-disabled);}
+  .group-card-actions{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  .group-card.collapsed{padding-bottom:16px;}
+  .empty-hint-card{
+    background:var(--bg-blue-light);border:1px dashed var(--blue-100);border-radius:var(--radius-card);
+    padding:16px 18px;font-size:13px;color:var(--navy);margin-bottom:14px;line-height:1.5;
+  }
+  .new-group-btn{
+    border:1.5px dashed var(--border);border-radius:var(--radius-card);background:transparent;color:var(--teal);
+    font-size:14px;font-weight:600;padding:16px;cursor:pointer;text-align:center;
+  }
+  .new-group-btn:hover{background:var(--bg-blue-light);border-color:var(--blue-100);}
+
+  .learners-card{padding:20px 22px;}
+  .learners-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+  .learner-count-line{font-size:12px;color:var(--text-secondary);margin-bottom:12px;}
+
+  .learner-row{
+    display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--border-light);border-radius:var(--radius-int);
+    margin-bottom:8px;cursor:grab;transition:background .12s,border-color .12s;
+  }
+  .learner-row:active{cursor:grabbing;}
+  .learner-row.dragging{opacity:.4;}
+  .learner-row input[type=checkbox]{margin-top:2px;flex:0 0 auto;}
+  .learner-row-body{flex:1;min-width:0;}
+  .learner-row .l-email{font-size:13px;font-weight:500;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .learner-row .l-badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+  .learner-row .l-unassigned{font-size:11px;color:var(--text-disabled);margin-top:4px;}
+  .learner-remove{flex:0 0 auto;cursor:pointer;opacity:.5;padding:2px;}
+  .learner-remove:hover{opacity:1;}
+
+  .assign-badge{
+    display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--teal);
+    background:var(--bg-blue-light);border:1px solid var(--blue-100);padding:2px 6px 2px 8px;border-radius:10px;
+  }
+  .assign-badge .x{cursor:pointer;opacity:.6;display:flex;}
+  .assign-badge .x:hover{opacity:1;}
+
+  .learners-list-wrap{max-height:calc(100vh - 300px);overflow-y:auto;padding-right:6px;margin-right:-6px;
+    scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+  .learners-list-wrap::-webkit-scrollbar{width:6px;}
+  .learners-list-wrap::-webkit-scrollbar-track{background:transparent;}
+  .learners-list-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+  .learners-list-wrap.drop-hover{outline:2px dashed var(--text-error);outline-offset:2px;border-radius:var(--radius-int);}
+
+  .stats-text{font-size:13px;color:var(--text-secondary);}
+  .stats-text strong{color:var(--navy);font-weight:600;}
+
+  /* Add Learners modal */
+  .add-modal-tabs{display:flex;gap:24px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+  .add-modal-tabs .tab{background:none;border:none;padding:0 0 10px;font-size:14px;font-weight:600;color:var(--text-secondary);border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;}
+  .add-modal-tabs .tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+  .add-modal-ready{margin-top:18px;padding-top:16px;border-top:1px solid var(--border-light);}
 </style>
 </head>
 <body>
@@ -340,18 +430,20 @@
 
   <div class="page">
     <a class="breadcrumb">‹ Back to Learners</a>
-    <div class="title-row">
+    <div class="toolbar-row">
       <div>
         <h1>Assign Licenses</h1>
-        <p class="subtitle">Add learners, choose their programs, and confirm before sending.</p>
+        <p class="subtitle">Add learners and set up programs in any order, then drag learners onto a program — or a few — to assign them.</p>
       </div>
-      <div class="tracker" id="tracker"></div>
     </div>
 
-    <div id="stepBody"></div>
+    <div class="builder-wrap">
+      <div class="learners-col" id="learnersCol"></div>
+      <div class="groups-col" id="groupsCol"></div>
+    </div>
   </div>
 
-  <div class="widget-footer" id="footer"></div>
+  <div class="widget-footer" id="footerRoot"></div>
 </div>
 
 <div id="modalRoot"></div>
@@ -381,8 +473,6 @@ const CATALOG = {
     ],
   },
 };
-// Flat lookup so any entry can be found by its id alone — subjects aren't unique
-// keys anymore (e.g. "English" exists as both a 24h and a 40h Coach program).
 const ENTRY_INDEX = {};
 Object.keys(CATALOG).forEach(service=>{
   Object.keys(CATALOG[service]).forEach(portfolio=>{
@@ -391,9 +481,7 @@ Object.keys(CATALOG).forEach(service=>{
 });
 function getEntry(entryId){ return ENTRY_INDEX[entryId]; }
 function entryLabel(entry){ return entry.hours ? `${entry.subject} · ${entry.hours}h` : entry.subject; }
-function getEntriesFor(service, portfolio, subjectName){
-  return CATALOG[service][portfolio].filter(e=>e.subject===subjectName);
-}
+function getEntriesFor(service, portfolio, subjectName){ return CATALOG[service][portfolio].filter(e=>e.subject===subjectName); }
 function distinctSubjects(service, portfolio){
   const seen = new Set(); const out = [];
   CATALOG[service][portfolio].forEach(e=>{ if(!seen.has(e.subject)){ seen.add(e.subject); out.push(e.subject); } });
@@ -403,1067 +491,718 @@ const GROUPS = ['No Group Assigned','Marketing Team','Sales Team','Customer Succ
 
 /* =====================================================
    STATE
+   A learner can now belong to MULTIPLE program groups at once —
+   membership is additive, not exclusive. There is no wizard;
+   everything below renders on one page.
 ===================================================== */
-let learners = [];        // {id, email, firstName, lastName, group}
+let learners = [];      // {id, email, firstName, lastName, group}
 let nextId = 1;
-let currentStep = 1;
-let activeTab = 'individual';
-
-let program = { service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, startDate:null };
-let assignedIds = new Set();
-let assignComplete = false;
-
-// Additional program groups created from the "Skipped Learners" flow in Review & Send.
-// Each: {id, entryId, service, portfolio, subject, hours, funded, seats, start, end, startDate, assignedIds:Set}
-let extraGroups = [];
+let groups = [];        // {id, service, portfolio, entryId, subject, hours, funded, seats, start, end, startDate, assignedIds:Set}
 let nextGroupId = 1;
-let modalState = null; // state for the "Assign to a Program" modal
-let skippedSelection = new Set(); // learner ids selected in the Skipped Learners list
-let catalogFilters = { services:new Set(), portfolios:new Set(), search:'' }; // "Browse All Available Programs" modal
+let selectedIds = new Set();   // checked rows in the Learners panel, for bulk actions
+let addModalOpen = false;
+let addModalTab = 'individual';
+let pendingCardPickerGroupId = null; // set when "+ Add Learners" on a card redirects to the Add Learners modal (no learners exist yet)
+let bulkAssignState = null;    // cascade state for the "Assign Selected to a Program" modal
 
 /* =====================================================
    HELPERS
 ===================================================== */
-function fmtDate(iso){
-  const d = new Date(iso+'T00:00:00');
-  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-}
-function todayISO(){
-  // fixed "today" to match design reference
-  return '2026-08-11';
-}
+function fmtDate(iso){ const d = new Date(iso+'T00:00:00'); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function todayISO(){ return '2026-08-11'; }
 function emailValid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 function esc(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function showToast(msg){
   const root = document.getElementById('toastRoot');
   const el = document.createElement('div');
-  el.className = 'toast';
-  el.textContent = msg;
+  el.className = 'toast'; el.textContent = msg;
   root.appendChild(el);
   requestAnimationFrame(()=>el.classList.add('show'));
-  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),200); }, 2600);
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),200); }, 2800);
 }
-function iconCheck(color){
-  return `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.2l2.8 2.8L10 3" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-}
-function iconX(color){
-  return `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1l-8 8" stroke="${color}" stroke-width="1.4" stroke-linecap="round"/></svg>`;
-}
+function iconCheck(color){ return `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.2l2.8 2.8L10 3" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
+function iconX(color){ return `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1l-8 8" stroke="${color}" stroke-width="1.4" stroke-linecap="round"/></svg>`; }
 
-/* ---- Program-group accounting (supports the primary program + any
-   extra groups created from the Skipped Learners flow) ---- */
-function groupKey(g){ return g.entryId; }
-
-function allGroups(){
-  const list = [];
-  if(program.entryId){
-    list.push({ id:'primary', entryId:program.entryId, service:program.service, portfolio:program.portfolio, subject:program.subject,
-      hours:program.hours, funded:program.funded, seats:program.seats, start:program.start, end:program.end,
-      startDate:program.startDate, assignedIds:assignedIds });
-  }
-  extraGroups.forEach(g=>list.push(g));
-  return list;
-}
-
-function assignedAnywhere(){
-  const set = new Set();
-  allGroups().forEach(g=>g.assignedIds.forEach(id=>set.add(id)));
-  return set;
-}
-
-// How many seats for this entry are already used by groups OTHER than excludeGroupId.
-function seatsUsedByOthers(entryId, excludeGroupId){
-  let used = 0;
-  allGroups().forEach(g=>{ if(g.entryId===entryId && g.id!==excludeGroupId) used += g.assignedIds.size; });
-  return used;
-}
-
-// Remaining seats available to a given group (existing or hypothetical) for this entry.
-function capFor(entryId, excludeGroupId){
-  return getEntry(entryId).seats - seatsUsedByOthers(entryId, excludeGroupId);
-}
-
-// How many MORE learners can be added to this entry on top of everyone already
-// using it (across every group). Different from capFor: capFor gives a ceiling to
-// compare a group's own total size against; this gives room for new additions on
-// top of an already-populated group (used by the Skipped Learners quick-assign and
-// the "assign to a different program" modal, both of which add to existing groups).
+/* ---- Seat accounting ---- */
 function remainingSeatsToAdd(entryId){
   let used = 0;
-  allGroups().forEach(g=>{ if(g.entryId===entryId) used += g.assignedIds.size; });
+  groups.forEach(g=>{ if(g.entryId===entryId) used += g.assignedIds.size; });
   return getEntry(entryId).seats - used;
 }
-
-/* =====================================================
-   RENDER: TRACKER
-===================================================== */
-const STEP_LABELS = {1:'Add Learners', 2:'Select Programs', 3:'Review & Send'};
-
-function renderTracker(){
-  const el = document.getElementById('tracker');
-  let html = '';
-  for(let i=1;i<=3;i++){
-    if(i === currentStep){
-      html += `<div class="pill active">${i}. ${STEP_LABELS[i]}</div>`;
-    } else if(i < currentStep){
-      if(i === currentStep-1){
-        html += `<div class="pill completed" onclick="goToStep(${i})">${iconCheck('#0276b1')} ${STEP_LABELS[i]}</div>`;
-      } else {
-        html += `<div class="pill completed collapsed" onclick="goToStep(${i})">${iconCheck('#0276b1')} ${i}</div>`;
-      }
-    } else {
-      html += `<div class="pill disabled">${i}. ${STEP_LABELS[i]}</div>`;
-    }
-  }
-  el.innerHTML = html;
-}
-
-function goToStep(step){
-  if(step >= currentStep) return;
-  currentStep = step;
-  assignComplete = false;
-  renderAll();
-}
-
-/* =====================================================
-   RENDER: FOOTER
-===================================================== */
-function renderFooter(){
-  const el = document.getElementById('footer');
-  if(assignComplete){ el.style.display='none'; return; }
-  el.style.display='flex';
-
-  if(currentStep === 1){
-    const disabled = learners.length === 0;
-    el.innerHTML = `
-      <button class="btn btn-ghost" onclick="showToast('Nothing to cancel yet — nothing has been sent.')">Cancel</button>
-      <div class="footer-right">
-        <button class="btn btn-primary" ${disabled?'disabled':''} onclick="goNext()">Next →</button>
-      </div>`;
-  } else if(currentStep === 2){
-    const valid = program.entryId && program.seats > 0 && assignedIds.size > 0;
-    el.innerHTML = `
-      <button class="btn btn-ghost" onclick="showToast('Nothing to cancel yet — nothing has been sent.')">Cancel</button>
-      <div class="footer-right">
-        <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
-        <button class="btn btn-primary" ${valid?'':'disabled'} onclick="goNext()">Next →</button>
-      </div>`;
-  } else {
-    const total = assignedAnywhere().size;
-    el.innerHTML = `
-      <button class="btn btn-ghost" onclick="showToast('Nothing to cancel yet — nothing has been sent.')">Cancel</button>
-      <div class="footer-right">
-        <button class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
-        <button class="btn btn-primary" ${total===0?'disabled':''} onclick="doAssign()">Assign ${total} License${total===1?'':'s'} →</button>
-      </div>`;
-  }
-}
-
-function goNext(){
-  if(currentStep === 1 && learners.length === 0) return;
-  if(currentStep === 2){
-    const valid = program.entryId && program.seats > 0 && assignedIds.size > 0;
-    if(!valid) return;
-  }
-  currentStep++;
-  renderAll();
-}
-
-/* =====================================================
-   STEP 1 — ADD LEARNERS
-===================================================== */
-function renderStep1(){
-  const body = document.getElementById('stepBody');
-  body.innerHTML = `
-    <div class="tabs">
-      <button class="tab ${activeTab==='individual'?'active':''}" onclick="setTab('individual')">Add Individually</button>
-      <button class="tab ${activeTab==='bulk'?'active':''}" onclick="setTab('bulk')">Bulk Import (Excel)</button>
-    </div>
-    <div class="step1-panels">
-      ${activeTab === 'individual' ? renderIndividualPanel() : renderBulkPanel()}
-    </div>
-  `;
-  if(activeTab === 'individual'){ bindStep1Form(); }
-}
-
-function setTab(tab){ activeTab = tab; renderStep1(); }
-
-function renderIndividualPanel(){
-  return `
-    <div class="step1-cards">
-      <div class="card form-card">
-        <h3>Add one at a time</h3>
-        <label>email <span class="req">*</span></label>
-        <input id="inpEmail" type="email" placeholder="email" class="field-gap" />
-        <div class="field-error" id="emailError">Enter a valid email address.</div>
-        <label>First Name</label>
-        <input id="inpFirst" type="text" placeholder="First Name" class="field-gap" />
-        <label>Last Name</label>
-        <input id="inpLast" type="text" placeholder="Last Name" class="field-gap" />
-        <label>Group</label>
-        <select id="inpGroup" class="field-gap" style="margin-bottom:20px;">
-          ${GROUPS.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('')}
-        </select>
-        <button class="btn btn-primary btn-sm" onclick="addLearner()">Add To List
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-      <div class="card list-card">
-        <div class="list-head">
-          <span class="dot ${learners.length===0?'zero':''}"></span>
-          <strong id="learnerCountLabel">${learners.length} learner${learners.length===1?'':'s'} ready</strong>
-        </div>
-        <div class="chip-row" id="learnerChips">
-          ${learners.length===0
-            ? `<span class="empty-hint">Learners you add will show up here.</span>`
-            : learners.map(l=>`<span class="chip removable">${esc(l.email)} <span class="x" onclick="removeLearner(${l.id})">${iconX('#0276b1')}</span></span>`).join('')}
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function renderBulkPanel(){
-  return `
-    <div class="card bulk-placeholder">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="#b3bec4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <h3>Bulk import is coming soon</h3>
-      <p>For now, add your learners one at a time from the Add Individually tab. We'll let you know as soon as Excel import is ready.</p>
-      <button class="btn btn-secondary btn-sm" onclick="setTab('individual')">Add Individually instead</button>
-    </div>
-  `;
-}
-
-function bindStep1Form(){
-  const emailInput = document.getElementById('inpEmail');
-  emailInput.addEventListener('keydown', e => { if(e.key==='Enter') addLearner(); });
-  emailInput.addEventListener('input', ()=>{
-    emailInput.classList.remove('invalid');
-    document.getElementById('emailError').classList.remove('show');
-  });
-}
-
-function addLearner(){
-  const emailInput = document.getElementById('inpEmail');
-  const email = emailInput.value.trim();
-  const errEl = document.getElementById('emailError');
-
-  if(!email || !emailValid(email)){
-    emailInput.classList.add('invalid');
-    errEl.textContent = !email ? 'Email is required.' : 'Enter a valid email address.';
-    errEl.classList.add('show');
-    emailInput.focus();
-    return;
-  }
-  if(learners.some(l=>l.email.toLowerCase() === email.toLowerCase())){
-    emailInput.classList.add('invalid');
-    errEl.textContent = 'This learner is already on the list.';
-    errEl.classList.add('show');
-    emailInput.focus();
-    return;
-  }
-
-  learners.push({
-    id: nextId++,
-    email,
-    firstName: document.getElementById('inpFirst').value.trim(),
-    lastName: document.getElementById('inpLast').value.trim(),
-    group: document.getElementById('inpGroup').value,
-  });
-  renderStep1();
-  renderFooter();
-  document.getElementById('inpEmail').focus();
-}
-
-function removeLearner(id){
-  learners = learners.filter(l=>l.id!==id);
-  assignedIds.delete(id);
-  extraGroups.forEach(g=>g.assignedIds.delete(id));
-  extraGroups = extraGroups.filter(g=>g.assignedIds.size > 0);
-  skippedSelection.delete(id);
-  if(currentStep === 1) renderStep1();
-  else if(currentStep === 2) renderStep2();
-  else if(currentStep === 3) renderStep3();
-  renderFooter();
-}
-
-/* =====================================================
-   STEP 2 — SELECT PROGRAMS
-===================================================== */
-function renderStep2(){
-  const body = document.getElementById('stepBody');
-  const services = Object.keys(CATALOG);
-  const portfolios = program.service ? Object.keys(CATALOG[program.service]) : [];
-  const subjectNames = (program.service && program.portfolio) ? distinctSubjects(program.service, program.portfolio) : [];
-
-  body.innerHTML = `
-    <div class="step2-wrap">
-      <div class="card program-card">
-        <div class="row-between">
-          <h3>Choose a Program</h3>
-          <button class="link" onclick="openCatalogModal()">See Everything Available</button>
-        </div>
-
-        <div class="filter-group">
-          <span class="filter-label">By Service</span>
-          <div class="chip-row">
-            ${services.map(s=>`<span class="chip chip-filter ${program.service===s?'selected':''}" onclick="setService('${s}')">${s}</span>`).join('')}
-          </div>
-        </div>
-
-        ${program.service ? `
-        <div class="filter-group">
-          <span class="filter-label">By Portfolio</span>
-          <div class="chip-row">
-            ${portfolios.map(p=>`<span class="chip chip-filter ${program.portfolio===p?'selected':''}" onclick="setPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}
-          </div>
-        </div>` : ''}
-
-        ${program.portfolio ? `
-        <div class="filter-group">
-          <span class="filter-label">Subject</span>
-          <select id="subjectSelect" onchange="setSubjectName(this.value)">
-            <option value="">Select a subject</option>
-            ${subjectNames.map(name=>{
-              const funded = getEntriesFor(program.service, program.portfolio, name).some(e=>e.funded);
-              return `<option value="${esc(name)}" ${program.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
-            }).join('')}
-          </select>
-        </div>` : ''}
-
-        ${renderHoursRow()}
-        ${renderAvailabilityBox()}
-        ${renderDateRow()}
-      </div>
-
-      ${renderLearnerRoster()}
-    </div>
-  `;
-}
-
-function renderHoursRow(){
-  if(!program.subjectName) return '';
-  const entries = getEntriesFor(program.service, program.portfolio, program.subjectName);
-  const hoursOptions = [...new Set(entries.map(e=>e.hours).filter(h=>h!=null))];
-  if(hoursOptions.length === 0) return '';
-  return `<div class="filter-group">
-    <span class="filter-label">Hours</span>
-    <div class="chip-row">${hoursOptions.map(h=>`<span class="chip chip-filter ${program.hours===h?'selected':''}" onclick="setHours(${h})">${h}h</span>`).join('')}</div>
-  </div>`;
-}
-
-function renderAvailabilityBox(){
-  if(!program.entryId) return '';
-  const remaining = capFor(program.entryId, 'primary');
-  if(remaining <= 0){
-    return `<div class="info-box error">
-      <strong>No seats available for ${esc(program.subject)}</strong>
-      <p>Choose a different program, or contact your ACME admin to add seats.</p>
-    </div>`;
-  }
-  return `<div class="info-box">
-    <strong>${remaining} available${program.funded?' <span class="funded-badge">FUNDED</span>':''}</strong>
-    <span>${fmtDate(program.start)} – ${fmtDate(program.end)}</span>
-  </div>`;
-}
-
-function renderDateRow(){
-  if(!program.entryId || capFor(program.entryId, 'primary') <= 0) return '';
-  return `<div class="date-row" id="dateRow">
-    <span>Starts ${fmtDate(program.startDate)}</span>
-    <button class="link" onclick="toggleDateEdit()">Change</button>
-  </div>`;
-}
-
-function toggleDateEdit(){
-  const row = document.getElementById('dateRow');
-  row.innerHTML = `
-    <input type="date" id="startDateInput" value="${program.startDate}" min="${program.start}" max="${program.end}" />
-    <button class="link" onclick="saveDate()">Save</button>
-  `;
-  document.getElementById('startDateInput').focus();
-}
-function saveDate(){
-  const val = document.getElementById('startDateInput').value;
-  if(val) program.startDate = val;
-  renderStep2();
-}
-
-// Is this learner already assigned to a different program (created via the
-// Skipped Learners flow on Review & Send)? Returns a display label, or null.
-function elsewhereGroupLabel(id){
-  const g = extraGroups.find(g=>g.assignedIds.has(id));
-  return g ? `${entryLabel(g)} · ${g.service}` : null;
-}
-
-function renderLearnerRoster(){
-  const hasSubject = !!program.entryId;
-  const cap = hasSubject ? capFor(program.entryId, 'primary') : null;
-  const zeroSeats = hasSubject && cap <= 0;
-  const eligible = learners.filter(l=>!elsewhereGroupLabel(l.id));
-
-  let statusLine;
-  if(!hasSubject){
-    statusLine = `<div class="seat-counter">Pick a program on the left, then choose who gets it here.</div>`;
-  } else if(zeroSeats){
-    statusLine = `<div class="seat-counter error">No seats available for this program.</div>`;
-  } else {
-    statusLine = `<div class="seat-counter">${assignedIds.size} of ${cap} seat${cap===1?'':'s'} selected</div>`;
-  }
-
-  let overCapNote = '';
-  if(hasSubject && !zeroSeats && eligible.length > cap){
-    overCapNote = `<div class="cap-note show">Only ${cap} of ${eligible.length} learners can be selected here — the rest will land in Skipped Learners.</div>`;
-  }
-
-  const rows = learners.length === 0
-    ? `<div class="roster-empty">No learners added yet — head back to Step 1 to add some.</div>`
-    : `<div class="roster-list">${learners.map(l=>{
-        const elsewhere = elsewhereGroupLabel(l.id);
-        const selected = assignedIds.has(l.id);
-        const canInteract = hasSubject && !zeroSeats && !elsewhere;
-        const capped = canInteract && !selected && assignedIds.size >= cap;
-        const rowClasses = ['roster-row'];
-        if(selected) rowClasses.push('selected');
-        if(elsewhere || capped || !canInteract) rowClasses.push('disabled');
-        if(canInteract && !capped) rowClasses.push('selectable');
-        return `<div class="${rowClasses.join(' ')}"
-            ${canInteract && !capped ? `onclick="toggleAssign(${l.id})"` : ''}
-            ${capped ? `title="Seat limit reached — remove another learner to select this one"` : ''}>
-          <span class="check">${selected?iconCheck('#fff'):''}</span>
-          <span class="email">${esc(l.email)}</span>
-          ${elsewhere ? `<span class="badge">Assigned to ${esc(elsewhere)}</span>` : ''}
-          <span class="roster-remove" title="Remove learner" onclick="event.stopPropagation(); removeLearner(${l.id})">${iconX('#5d7682')}</span>
-        </div>`;
-      }).join('')}</div>`;
-
-  const selectAllBtn = (hasSubject && !zeroSeats && eligible.length > 0)
-    ? `<button class="link" onclick="selectAllLearners()">Select All</button>` : '';
-
-  return `<div class="card roster-card">
-    <div class="row-between"><h3>Learners in this batch (${learners.length})</h3>${selectAllBtn}</div>
-    ${statusLine}
-    ${overCapNote}
-    ${rows}
-    <button class="chip chip-add" style="margin-top:12px;" onclick="openQuickAddModal()">+ Add more Learners</button>
-  </div>`;
-}
-
-function setService(s){
-  program.service = s; program.portfolio = null; program.subjectName = null;
-  program.entryId = null; program.subject = null; program.hours = null; program.funded = false; program.seats = null;
-  assignedIds.clear();
-  renderStep2(); renderFooter();
-}
-function setPortfolio(p){
-  program.portfolio = p; program.subjectName = null;
-  program.entryId = null; program.subject = null; program.hours = null; program.funded = false; program.seats = null;
-  assignedIds.clear();
-  renderStep2(); renderFooter();
-}
-function resolveProgramEntry(entry){
-  program.entryId = entry.id;
-  program.subject = entry.subject;
-  program.hours = entry.hours;
-  program.funded = !!entry.funded;
-  program.seats = entry.seats;
-  program.start = entry.start;
-  program.end = entry.end;
-  program.startDate = todayISO() > entry.start ? todayISO() : entry.start;
-}
-function setSubjectName(name){
-  program.subjectName = name || null;
-  program.entryId = null; program.subject = null; program.hours = null; program.funded = false; program.seats = null;
-  if(name){
-    const entries = getEntriesFor(program.service, program.portfolio, name);
-    // Only one entry for this subject (no hours variants) — resolve immediately, no extra click needed.
-    if(entries.length === 1) resolveProgramEntry(entries[0]);
-  }
-  assignedIds.clear();
-  renderStep2(); renderFooter();
-}
-function setHours(hours){
-  const entries = getEntriesFor(program.service, program.portfolio, program.subjectName);
-  const entry = entries.find(e=>e.hours===hours);
-  if(entry) resolveProgramEntry(entry);
-  assignedIds.clear();
-  renderStep2(); renderFooter();
-}
-
-function toggleAssign(id){
-  if(elsewhereGroupLabel(id)) return;
-  if(assignedIds.has(id)){ assignedIds.delete(id); }
-  else {
-    const cap = capFor(program.entryId, 'primary');
-    if(assignedIds.size >= cap) return;
-    assignedIds.add(id);
-  }
-  renderStep2(); renderFooter();
-}
-
-function selectAllLearners(){
-  const cap = capFor(program.entryId, 'primary');
-  const eligible = learners.filter(l=>!elsewhereGroupLabel(l.id));
-  assignedIds.clear();
-  let count = 0;
-  for(const l of eligible){
-    if(count >= cap) break;
-    assignedIds.add(l.id);
-    count++;
-  }
-  if(eligible.length > cap){
-    showToast(`Only ${cap} seat${cap===1?'':'s'} available — ${eligible.length-cap} learner${(eligible.length-cap)===1?'':'s'} left unselected.`);
-  }
-  renderStep2(); renderFooter();
-}
-
-/* Quick add learner modal (from step 2) */
-function openQuickAddModal(){
-  const root = document.getElementById('modalRoot');
-  root.innerHTML = `
-    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
-      <div class="modal" style="width:420px;">
-        <div class="modal-head"><h3>Add a learner</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
-        <div class="modal-body">
-          <label>email <span class="req">*</span></label>
-          <input id="qaEmail" type="email" placeholder="email" class="field-gap" />
-          <div class="field-error" id="qaEmailError">Enter a valid email address.</div>
-          <label>First Name</label>
-          <input id="qaFirst" type="text" placeholder="First Name" class="field-gap" />
-          <label>Last Name</label>
-          <input id="qaLast" type="text" placeholder="Last Name" />
-        </div>
-        <div class="modal-foot">
-          <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-          <button class="btn btn-primary" onclick="quickAddLearner()">Add To List</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-function quickAddLearner(){
-  const email = document.getElementById('qaEmail').value.trim();
-  const errEl = document.getElementById('qaEmailError');
-  if(!email || !emailValid(email)){
-    document.getElementById('qaEmail').classList.add('invalid');
-    errEl.classList.add('show');
-    return;
-  }
-  if(learners.some(l=>l.email.toLowerCase()===email.toLowerCase())){
-    errEl.textContent = 'This learner is already on the list.';
-    errEl.classList.add('show');
-    return;
-  }
-  const l = { id: nextId++, email, firstName: document.getElementById('qaFirst').value.trim(), lastName: document.getElementById('qaLast').value.trim(), group: GROUPS[0] };
-  learners.push(l);
-  if(program.entryId && assignedIds.size < capFor(program.entryId, 'primary')) assignedIds.add(l.id);
-  closeModal();
-  renderStep2(); renderFooter();
-}
-
-/* Catalog browser modal */
-function getAllEntries(){
-  const out = [];
-  Object.keys(CATALOG).forEach(service=>{
-    Object.keys(CATALOG[service]).forEach(portfolio=>{
-      CATALOG[service][portfolio].forEach(entry=>out.push({ ...entry, service, portfolio }));
-    });
-  });
-  return out;
-}
-function filteredCatalogEntries(){
-  return getAllEntries().filter(e=>{
-    if(catalogFilters.services.size > 0 && !catalogFilters.services.has(e.service)) return false;
-    if(catalogFilters.portfolios.size > 0 && !catalogFilters.portfolios.has(e.portfolio)) return false;
-    if(catalogFilters.search){
-      const s = catalogFilters.search.toLowerCase();
-      const hay = `${e.subject} ${e.hours||''} ${e.funded?'funded':''}`.toLowerCase();
-      if(!hay.includes(s)) return false;
-    }
-    return true;
-  });
-}
-function openCatalogModal(){
-  catalogFilters = { services:new Set(), portfolios:new Set(), search:'' };
-  renderCatalogModalShell();
-}
-function renderCatalogModalShell(){
-  const services = Object.keys(CATALOG);
-  const portfolioSet = new Set();
-  services.forEach(s=>Object.keys(CATALOG[s]).forEach(p=>portfolioSet.add(p)));
-  const portfolios = [...portfolioSet];
-
-  document.getElementById('modalRoot').innerHTML = `
-    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
-      <div class="modal" style="width:640px;">
-        <div class="modal-head"><h3>Browse All Available Programs</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
-        <div class="modal-body">
-          <p class="muted" style="margin:0 0 16px;">Filter or search, then select one to use it below.</p>
-          <div class="catalog-filters-row">
-            <div>
-              <span class="filter-label">Service</span>
-              <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${catalogFilters.services.has(s)?'selected':''}" onclick="toggleCatalogFilter('services','${s}')">${s}</span>`).join('')}</div>
-            </div>
-            <div>
-              <span class="filter-label">Portfolio</span>
-              <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${catalogFilters.portfolios.has(p)?'selected':''}" onclick="toggleCatalogFilter('portfolios','${esc(p)}')">${esc(p)}</span>`).join('')}</div>
-            </div>
-          </div>
-          <input class="catalog-search" type="text" placeholder="Search by subject, hours, funded…" value="${esc(catalogFilters.search)}" oninput="onCatalogSearchInput(this.value)" />
-          <div id="catalogListRoot"></div>
-        </div>
-        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>
-      </div>
-    </div>
-  `;
-  renderCatalogList();
-}
-function toggleCatalogFilter(kind, value){
-  const set = catalogFilters[kind];
-  if(set.has(value)) set.delete(value); else set.add(value);
-  renderCatalogModalShell();
-}
-function onCatalogSearchInput(v){ catalogFilters.search = v; renderCatalogList(); } // updates the list only — keeps focus in the search box
-function renderCatalogList(){
-  const entries = filteredCatalogEntries();
-  if(entries.length === 0){
-    document.getElementById('catalogListRoot').innerHTML = `<div class="muted" style="text-align:center;padding:28px 0;">No programs match your filters.</div>`;
-    return;
-  }
-  const bySer = {};
-  entries.forEach(e=>{ (bySer[e.service] = bySer[e.service] || {}); (bySer[e.service][e.portfolio] = bySer[e.service][e.portfolio] || []).push(e); });
-
-  let html = '';
-  Object.keys(bySer).forEach(service=>{
-    html += `<div class="catalog-service-title">${service}</div>`;
-    Object.keys(bySer[service]).forEach(portfolio=>{
-      html += `<div class="catalog-group"><div class="catalog-group-title">${portfolio}</div>`;
-      bySer[service][portfolio].forEach(entry=>{
-        const remaining = capFor(entry.id, 'primary');
-        html += `<div class="catalog-row">
-          <div>
-            <div class="name">${esc(entryLabel(entry))}${entry.funded?'<span class="funded-badge">FUNDED</span>':''}</div>
-            <div class="meta ${remaining<=0?'zero':''}">${fmtDate(entry.start)} – ${fmtDate(entry.end)} · ${remaining<=0?'No seats available':`${remaining} available`}</div>
-          </div>
-          <button class="pick" ${remaining<=0?'disabled':''} onclick="pickFromCatalog('${entry.id}')">Select</button>
-        </div>`;
-      });
-      html += `</div>`;
-    });
-  });
-  document.getElementById('catalogListRoot').innerHTML = html;
-}
-function pickFromCatalog(entryId){
-  const entry = getEntry(entryId);
-  setService(entry.service);
-  setPortfolio(entry.portfolio);
-  program.subjectName = entry.subject;
-  resolveProgramEntry(entry);
-  assignedIds.clear();
-  closeModal();
-  renderStep2(); renderFooter();
-}
-function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
-
-/* =====================================================
-   STEP 3 — REVIEW & SEND
-===================================================== */
-function renderStep3(){
-  const body = document.getElementById('stepBody');
-  const groups = allGroups().filter(g=>g.assignedIds.size > 0);
-  const totalAssigned = assignedAnywhere();
-  const skipped = learners.filter(l=>!totalAssigned.has(l.id));
-  const skippedIds = new Set(skipped.map(l=>l.id));
-  // keep selection state clean of anyone no longer skipped
-  skippedSelection.forEach(id=>{ if(!skippedIds.has(id)) skippedSelection.delete(id); });
-  const selectedCount = skippedSelection.size;
-  const allSkippedSelected = skipped.length > 0 && skipped.every(l=>skippedSelection.has(l.id));
-
-  const groupCards = groups.map(g=>{
-    const chips = learners.filter(l=>g.assignedIds.has(l.id))
-      .map(l=>`<span class="chip removable" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)">${esc(l.email)} <span class="x" onclick="removeFromGroup('${g.id}',${l.id})">${iconX('#0276b1')}</span></span>`)
-      .join('');
-    return `<div class="program-summary" ondragover="onDropZoneDragOver(event)" ondragleave="onDropZoneDragLeave(event)" ondrop="onProgramCardDrop(event,'${g.id}')">
-      <div class="row-between">
-        <span class="title-line">${esc(entryLabel(g))} · ${esc(g.service)}${g.funded?'<span class="funded-badge">FUNDED</span>':''}</span>
-        <span class="seats-line">${g.assignedIds.size} Fixed Plan seat${g.assignedIds.size===1?'':'s'}</span>
-      </div>
-      <div class="date-line">${fmtDate(g.startDate)} – ${fmtDate(g.end)}</div>
-      <div class="chip-row">${chips}</div>
-    </div>`;
-  }).join('');
-
-  const skippedRows = skipped.map(l=>{
-    const sel = skippedSelection.has(l.id);
-    return `<div class="skipped-row ${sel?'selected':''}" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)" onclick="toggleSkippedSelect(${l.id})">
-      <span class="check">${sel?iconCheck('#fff'):''}</span>
-      <span class="email">${esc(l.email)}</span>
-      <span class="x" onclick="event.stopPropagation(); removeFromBatch(${l.id})">${iconX('#ca2b34')}</span>
-    </div>`;
-  }).join('');
-
-  body.innerHTML = `
-    <div class="step3-wrap">
-      <div class="card review-card">
-        <h3>Assigning to ${totalAssigned.size} learner${totalAssigned.size===1?'':'s'} · ${groups.length} program${groups.length===1?'':'s'}</h3>
-        ${groups.length > 1 ? `<p class="muted" style="margin:-8px 0 16px;">Drag a learner onto a different program card to move them.</p>` : ''}
-
-        ${groupCards}
-
-        ${skipped.length > 0 ? `
-        <div class="skipped-section">
-          <div class="row-between">
-            <h4>Skipped Learners (${skipped.length})</h4>
-            <button class="link" onclick="toggleSelectAllSkipped()">${allSkippedSelected?'Clear Selection':'Select All'}</button>
-          </div>
-          <p>Added but not assigned to a program yet. Click one or more to select them, then assign — together or to different programs. You can also drag a learner here to unassign them.</p>
-          <div class="roster-list" style="margin-bottom:12px;" ondragover="onDropZoneDragOver(event)" ondragleave="onDropZoneDragLeave(event)" ondrop="onSkippedDrop(event)">${skippedRows}</div>
-          <div class="skipped-assign-actions">
-            ${groups.map(g=>{
-              const remaining = remainingSeatsToAdd(g.entryId);
-              if(remaining <= 0) return '';
-              return `<button class="btn btn-secondary btn-sm" ${selectedCount===0?'disabled':''} onclick="quickAssignToGroup('${g.id}')">
-                Assign to ${esc(entryLabel(g))} <span class="muted">(same as above · ${remaining} left)</span>
-              </button>`;
-            }).join('')}
-            <button class="btn btn-secondary btn-sm" ${selectedCount===0?'disabled':''} onclick="openAssignSkippedModal()">
-              Assign ${selectedCount>0?selectedCount+' ':''}Learner${selectedCount===1?'':'s'} to a Different Program →
-            </button>
-          </div>
-        </div>` : (groups.length > 0 ? `
-        <div class="all-assigned">${iconCheck('#4ac97f')} Every learner you added is assigned to a program.</div>
-        ` : '')}
-      </div>
-    </div>
-  `;
-}
-
-function toggleSkippedSelect(id){
-  if(skippedSelection.has(id)) skippedSelection.delete(id);
-  else skippedSelection.add(id);
-  renderStep3(); renderFooter();
-}
-function toggleSelectAllSkipped(){
-  const skipped = learners.filter(l=>!assignedAnywhere().has(l.id));
-  const allSelected = skipped.length > 0 && skipped.every(l=>skippedSelection.has(l.id));
-  skippedSelection = allSelected ? new Set() : new Set(skipped.map(l=>l.id));
-  renderStep3(); renderFooter();
-}
-
-function removeFromGroup(groupId, learnerId){
-  if(groupId === 'primary'){
-    assignedIds.delete(learnerId);
-  } else {
-    const g = extraGroups.find(x=>x.id === groupId);
-    if(g){
-      g.assignedIds.delete(learnerId);
-      if(g.assignedIds.size === 0){ extraGroups = extraGroups.filter(x=>x.id !== groupId); }
-    }
-  }
-  renderStep3(); renderFooter();
-}
-function removeFromBatch(id){
-  learners = learners.filter(l=>l.id!==id);
-  skippedSelection.delete(id);
-  renderStep3(); renderFooter();
-}
-
-/* ---- Drag and drop: move a learner chip onto a different program card
-   (or onto Skipped Learners to unassign) ---- */
-function onLearnerDragStart(e, learnerId){
-  e.dataTransfer.setData('text/plain', String(learnerId));
-  e.dataTransfer.effectAllowed = 'move';
-  e.currentTarget.classList.add('dragging');
-}
-function onLearnerDragEnd(e){
-  e.currentTarget.classList.remove('dragging');
-}
-function onDropZoneDragOver(e){
-  e.preventDefault();
-  e.currentTarget.classList.add('drop-hover');
-}
-function onDropZoneDragLeave(e){
-  e.currentTarget.classList.remove('drop-hover');
-}
-function onProgramCardDrop(e, targetGroupId){
-  e.preventDefault();
-  e.currentTarget.classList.remove('drop-hover');
-  const learnerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
-  if(!learnerId) return;
-  const targetGroup = allGroups().find(g=>g.id===targetGroupId);
-  if(!targetGroup) return;
-  const sourceGroup = allGroups().find(g=>g.assignedIds.has(learnerId));
-  if(sourceGroup && sourceGroup.id === targetGroupId) return; // dropped back onto the same card — no-op
-  const remaining = remainingSeatsToAdd(targetGroup.entryId);
-  if(remaining <= 0){ showToast(`No seats left in ${entryLabel(targetGroup)} · ${targetGroup.service}.`); return; }
-  if(sourceGroup) sourceGroup.assignedIds.delete(learnerId);
-  targetGroup.assignedIds.add(learnerId);
-  skippedSelection.delete(learnerId);
-  renderStep3(); renderFooter();
-}
-function onSkippedDrop(e){
-  e.preventDefault();
-  e.currentTarget.classList.remove('drop-hover');
-  const learnerId = parseInt(e.dataTransfer.getData('text/plain'), 10);
-  if(!learnerId) return;
-  let moved = false;
-  allGroups().forEach(g=>{ if(g.assignedIds.has(learnerId)){ g.assignedIds.delete(learnerId); moved = true; } });
-  if(moved){ renderStep3(); renderFooter(); }
-}
-
-/* ---- Assign-skipped-learners-to-a-program modal ---- */
-function quickAssignToGroup(groupId){
-  const skipped = learners.filter(l=>!assignedAnywhere().has(l.id));
-  const selected = skipped.filter(l=>skippedSelection.has(l.id));
-  if(selected.length === 0) return;
-  const group = allGroups().find(g=>g.id===groupId);
-  if(!group) return;
-  const remaining = remainingSeatsToAdd(group.entryId);
-  if(remaining <= 0){ showToast('No seats left in that program.'); return; }
-  const toAssign = selected.slice(0, remaining);
-  toAssign.forEach(l=>{ group.assignedIds.add(l.id); skippedSelection.delete(l.id); });
-  if(toAssign.length < selected.length){
-    showToast(`Assigned ${toAssign.length} of ${selected.length} — ${selected.length-toAssign.length} left unassigned (seat limit).`);
-  } else {
-    showToast(`Assigned ${toAssign.length} learner${toAssign.length===1?'':'s'} to ${entryLabel(group)} · ${group.service}.`);
-  }
-  renderStep3(); renderFooter();
-}
-
-function openAssignSkippedModal(){
-  const skipped = learners.filter(l=>!assignedAnywhere().has(l.id));
-  const selected = skipped.filter(l=>skippedSelection.has(l.id));
-  if(selected.length === 0) return;
-  modalState = { service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null,
-    pool: selected.map(l=>l.id), selected: new Set() };
-  renderAssignModal();
-}
-
-function renderAssignModal(){
-  const root = document.getElementById('modalRoot');
-  const services = Object.keys(CATALOG);
-  const portfolios = modalState.service ? Object.keys(CATALOG[modalState.service]) : [];
-  const subjectNames = (modalState.service && modalState.portfolio) ? distinctSubjects(modalState.service, modalState.portfolio) : [];
-  const poolLearners = learners.filter(l=>modalState.pool.includes(l.id));
-
-  let hoursHtml = '', availabilityHtml = '', selectHtml = '';
-  if(modalState.subjectName){
-    const entries = getEntriesFor(modalState.service, modalState.portfolio, modalState.subjectName);
-    const hoursOptions = [...new Set(entries.map(e=>e.hours).filter(h=>h!=null))];
-    if(hoursOptions.length > 0){
-      hoursHtml = `<div class="filter-group">
-        <span class="filter-label">Hours</span>
-        <div class="chip-row">${hoursOptions.map(h=>`<span class="chip chip-filter ${modalState.hours===h?'selected':''}" onclick="setModalHours(${h})">${h}h</span>`).join('')}</div>
-      </div>`;
-    }
-  }
-  if(modalState.entryId){
-    const remaining = remainingSeatsToAdd(modalState.entryId);
-    if(remaining <= 0){
-      availabilityHtml = `<div class="info-box error">
-        <strong>No seats left for ${esc(modalState.subject)}</strong>
-        <p>All seats for this program are already assigned. Choose a different one.</p>
-      </div>`;
-    } else {
-      availabilityHtml = `<div class="info-box">
-        <strong>${remaining} available${modalState.funded?' <span class="funded-badge">FUNDED</span>':''}</strong>
-        <span>${fmtDate(modalState.start)} – ${fmtDate(modalState.end)}</span>
-      </div>`;
-      if(modalState.selected.size === 0){
-        poolLearners.slice(0, remaining).forEach(l=>modalState.selected.add(l.id));
-      }
-      const chips = poolLearners.map(l=>{
-        const sel = modalState.selected.has(l.id);
-        const disabled = !sel && modalState.selected.size >= remaining;
-        return `<span class="chip chip-toggle ${sel?'selected':''} ${disabled?'disabled':''}"
-          ${disabled?`title="Seat limit reached"`:''}
-          onclick="${disabled?'':`toggleModalSelect(${l.id})`}">${esc(l.email)}</span>`;
-      }).join('');
-      selectHtml = `<div class="select-learners">
-        <div class="row-between"><h3>Assign Learners (max ${remaining})</h3><button class="link" onclick="modalSelectAll()">Select All</button></div>
-        <div class="seat-count">${modalState.selected.size} of ${remaining} seat${remaining===1?'':'s'} selected</div>
-        <div class="chip-row">${chips}</div>
-      </div>`;
-    }
-  }
-
-  root.innerHTML = `
-    <div class="modal-overlay" onclick="if(event.target===this) closeAssignModal()">
-      <div class="modal">
-        <div class="modal-head"><h3>Assign to a Program</h3><button class="modal-close" onclick="closeAssignModal()">✕</button></div>
-        <div class="modal-body">
-          <p class="muted" style="margin:0 0 16px;">Choose a program for the ${modalState.pool.length} learner${modalState.pool.length===1?'':'s'} you selected. It doesn't need to match the program above.</p>
-          <div class="filter-group" style="margin-top:0;">
-            <span class="filter-label">By Service</span>
-            <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${modalState.service===s?'selected':''}" onclick="setModalService('${s}')">${s}</span>`).join('')}</div>
-          </div>
-          ${modalState.service ? `
-          <div class="filter-group">
-            <span class="filter-label">By Portfolio</span>
-            <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${modalState.portfolio===p?'selected':''}" onclick="setModalPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}</div>
-          </div>` : ''}
-          ${modalState.portfolio ? `
-          <div class="filter-group">
-            <span class="filter-label">Subject</span>
-            <select onchange="setModalSubjectName(this.value)">
-              <option value="">Select a subject</option>
-              ${subjectNames.map(name=>{
-                const funded = getEntriesFor(modalState.service, modalState.portfolio, name).some(e=>e.funded);
-                return `<option value="${esc(name)}" ${modalState.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
-              }).join('')}
-            </select>
-          </div>` : ''}
-          ${hoursHtml}
-          ${availabilityHtml}
-          ${selectHtml}
-        </div>
-        <div class="modal-foot">
-          <button class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
-          <button class="btn btn-primary" ${(!modalState.entryId || modalState.selected.size===0)?'disabled':''} onclick="confirmAssignModal()">Assign ${modalState.selected.size} Learner${modalState.selected.size===1?'':'s'}</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function setModalService(s){
-  modalState.service = s; modalState.portfolio = null; modalState.subjectName = null;
-  modalState.entryId = null; modalState.subject = null; modalState.hours = null; modalState.funded = false; modalState.selected = new Set();
-  renderAssignModal();
-}
-function setModalPortfolio(p){
-  modalState.portfolio = p; modalState.subjectName = null;
-  modalState.entryId = null; modalState.subject = null; modalState.hours = null; modalState.funded = false; modalState.selected = new Set();
-  renderAssignModal();
-}
-function resolveModalEntry(entry){
-  modalState.entryId = entry.id; modalState.subject = entry.subject; modalState.hours = entry.hours; modalState.funded = !!entry.funded;
-  modalState.start = entry.start; modalState.end = entry.end;
-  modalState.startDate = todayISO() > entry.start ? todayISO() : entry.start;
-  modalState.selected = new Set();
-}
-function setModalSubjectName(name){
-  modalState.subjectName = name || null;
-  modalState.entryId = null; modalState.subject = null; modalState.hours = null; modalState.funded = false; modalState.selected = new Set();
-  if(name){
-    const entries = getEntriesFor(modalState.service, modalState.portfolio, name);
-    if(entries.length === 1) resolveModalEntry(entries[0]);
-  }
-  renderAssignModal();
-}
-function setModalHours(hours){
-  const entries = getEntriesFor(modalState.service, modalState.portfolio, modalState.subjectName);
-  const entry = entries.find(e=>e.hours===hours);
-  if(entry) resolveModalEntry(entry);
-  renderAssignModal();
-}
-function toggleModalSelect(id){
-  if(modalState.selected.has(id)){ modalState.selected.delete(id); }
-  else {
-    const remaining = remainingSeatsToAdd(modalState.entryId);
-    if(modalState.selected.size >= remaining) return;
-    modalState.selected.add(id);
-  }
-  renderAssignModal();
-}
-function modalSelectAll(){
-  const remaining = remainingSeatsToAdd(modalState.entryId);
-  const poolLearners = learners.filter(l=>modalState.pool.includes(l.id));
-  modalState.selected = new Set(poolLearners.slice(0, remaining).map(l=>l.id));
-  if(poolLearners.length > remaining){
-    showToast(`Only ${remaining} seat${remaining===1?'':'s'} available — ${poolLearners.length-remaining} learner${(poolLearners.length-remaining)===1?'':'s'} left unselected.`);
-  }
-  renderAssignModal();
-}
-function confirmAssignModal(){
-  const primaryEntryId = program.entryId;
-
-  if(modalState.entryId === primaryEntryId){
-    modalState.selected.forEach(id=>assignedIds.add(id));
-  } else {
-    let group = extraGroups.find(g=>g.entryId===modalState.entryId);
-    if(!group){
-      const entry = getEntry(modalState.entryId);
-      group = { id:'g'+(nextGroupId++), entryId:modalState.entryId, service:modalState.service, portfolio:modalState.portfolio,
-        subject:modalState.subject, hours:modalState.hours, funded:modalState.funded,
-        seats:entry.seats, start:entry.start, end:entry.end, startDate:modalState.startDate, assignedIds:new Set() };
-      extraGroups.push(group);
-    }
-    modalState.selected.forEach(id=>group.assignedIds.add(id));
-  }
-  modalState.selected.forEach(id=>skippedSelection.delete(id));
-  showToast(`Assigned ${modalState.selected.size} learner${modalState.selected.size===1?'':'s'} to ${esc(modalState.subject)} · ${modalState.service}.`);
-  closeAssignModal();
-  renderStep3(); renderFooter();
-}
-function closeAssignModal(){ modalState = null; closeModal(); }
-
-/* =====================================================
-   ASSIGN / SUCCESS
-===================================================== */
-function doAssign(){
-  if(assignedAnywhere().size === 0) return;
-  assignComplete = true;
-  renderAll();
-}
-
-function renderSuccess(){
-  const body = document.getElementById('stepBody');
-  const groups = allGroups().filter(g=>g.assignedIds.size > 0);
-  const total = assignedAnywhere().size;
-
-  const detail = groups.length <= 1
-    ? `<p>${total} learner${total===1?'':'s'} now ${total===1?'has':'have'} access to ${groups[0] ? esc(groups[0].subject)+' · '+esc(groups[0].service) : 'their program'}.</p>`
-    : `<p>${total} learners now have access across ${groups.length} programs:</p>
-       <ul style="text-align:left;list-style:none;padding:0;margin:0 0 8px;display:inline-block;">
-         ${groups.map(g=>`<li style="font-size:13px;color:var(--text-secondary);padding:4px 0;">• ${esc(g.subject)} · ${esc(g.service)} — ${g.assignedIds.size} learner${g.assignedIds.size===1?'':'s'}</li>`).join('')}
-       </ul>`;
-
-  body.innerHTML = `
-    <div class="success-wrap">
-      <div class="card success-card">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <circle cx="24" cy="24" r="23" fill="#e9f8ee" stroke="#4ac97f"/>
-          <path d="M15 24.5l6 6 12-13" stroke="#2f9e56" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <h2>Licenses assigned</h2>
-        ${detail}
-        <div class="success-actions">
-          <button class="btn btn-secondary" onclick="showToast('Heading back to Learners.')">Back to Learners</button>
-          <button class="btn btn-primary" onclick="resetFlow()">Assign more licenses</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function resetFlow(){
-  learners = learners.filter(l=>!assignedAnywhere().has(l.id));
-  assignedIds.clear();
-  extraGroups = [];
-  skippedSelection = new Set();
-  program = { service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, startDate:null };
-  currentStep = 1;
-  assignComplete = false;
-  renderAll();
-}
+function programsOf(learnerId){ return groups.filter(g=>g.assignedIds.has(learnerId)); }
+function isAssigned(learnerId){ return groups.some(g=>g.assignedIds.has(learnerId)); }
+function assignedLearnersCount(){ return learners.filter(l=>isAssigned(l.id)).length; }
+function activeGroups(){ return groups.filter(g=>g.entryId); }
 
 /* =====================================================
    MASTER RENDER
 ===================================================== */
 function renderAll(){
-  renderTracker();
-  if(assignComplete){
-    renderSuccess();
-  } else if(currentStep === 1){
-    renderStep1();
-  } else if(currentStep === 2){
-    renderStep2();
-  } else {
-    renderStep3();
-  }
+  renderGroupsCol();
+  renderLearnersCol();
   renderFooter();
 }
+
+/* =====================================================
+   Selection (checkboxes in the Learners panel) — feeds both
+   the bulk-assign action bar and multi-learner drag payloads.
+===================================================== */
+function renderBulkBarHtml(){
+  if(selectedIds.size === 0) return '';
+  return `
+    <div class="bulk-bar">
+      <span><strong>${selectedIds.size}</strong> selected</span>
+      <div class="bulk-bar-actions">
+        <button class="link" onclick="openBulkAssignModal()">Assign to a Program</button>
+        <button class="link" style="color:var(--text-error);" onclick="removeSelectedRows()">Remove</button>
+        <button class="link" style="color:var(--text-secondary);" onclick="clearSelection()">Clear</button>
+      </div>
+    </div>
+  `;
+}
+function toggleRowSelect(id){
+  if(selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id);
+  renderLearnersCol();
+}
+function clearSelection(){ selectedIds.clear(); renderLearnersCol(); }
+function removeSelectedRows(){
+  const n = selectedIds.size;
+  learners = learners.filter(l=>!selectedIds.has(l.id));
+  groups.forEach(g=>selectedIds.forEach(id=>g.assignedIds.delete(id)));
+  selectedIds.clear();
+  renderAll();
+  showToast(`Removed ${n} learner${n===1?'':'s'}.`);
+}
+
+/* =====================================================
+   PROGRAM CARDS (left column) — create as many as you need;
+   each one is a drop target that ADDS whoever's dropped on it.
+===================================================== */
+function renderGroupsCol(){
+  const col = document.getElementById('groupsCol');
+  const heading = groups.length === 0
+    ? `<div class="empty-hint-card">Create a program here, then add learners to it — by dragging them in, using "+ Add Learners" on the card, or adding them from the Learners panel first.</div>`
+    : '';
+  col.innerHTML = `
+    ${heading}
+    ${groups.map(g=>renderGroupCard(g)).join('')}
+    <button class="new-group-btn" onclick="addGroup()">+ New Program</button>
+  `;
+}
+
+function renderGroupCard(g){
+  const resolved = !!g.entryId;
+  const collapsed = resolved && !g.uiExpanded;
+  const chips = learners.filter(l=>g.assignedIds.has(l.id))
+    .map(l=>`<span class="chip removable" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)">${esc(l.email)} <span class="x" onclick="removeFromGroup('${g.id}',${l.id})">${iconX('#0276b1')}</span></span>`)
+    .join('');
+
+  const headTitle = resolved
+    ? `${esc(entryLabel(g))} · ${esc(g.service)}${g.funded?'<span class="funded-badge">FUNDED</span>':''}`
+    : `Program ${groups.indexOf(g)+1}`;
+
+  const head = `<div class="group-card-head">
+    <h3>${headTitle}</h3>
+    <div style="display:flex;align-items:center;gap:10px;">
+      ${resolved ? `<button class="link-sm" onclick="toggleGroupExpanded('${g.id}')">${collapsed?'Change':'Done'}</button>` : ''}
+      <button class="icon-btn" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);" title="Remove program" onclick="removeGroup('${g.id}')">${iconX('#5d7682')}</button>
+    </div>
+  </div>`;
+
+  const picker = collapsed ? '' : renderGroupPicker(g);
+  const availability = renderGroupAvailability(g);
+  const dateRow = renderGroupDateRow(g);
+  const roster = resolved ? `
+    <div class="group-chip-row chip-row">${chips || `<span class="muted" style="font-size:12px;">No one assigned yet.</span>`}</div>
+    <div class="group-card-actions">
+      <button class="btn btn-secondary btn-sm" onclick="openCardAddLearnersModal('${g.id}')">+ Add Learners</button>
+      <span class="group-drop-hint">or drag learners onto this card</span>
+    </div>` : '';
+
+  return `<div class="group-card ${collapsed?'collapsed':''}" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onGroupCardDrop(event,'${g.id}')">
+    ${head}
+    ${picker}
+    ${availability}
+    ${dateRow}
+    ${roster}
+  </div>`;
+}
+
+function renderGroupPicker(g){
+  const services = Object.keys(CATALOG);
+  const portfolios = g.service ? Object.keys(CATALOG[g.service]) : [];
+  const subjectNames = (g.service && g.portfolio) ? distinctSubjects(g.service, g.portfolio) : [];
+  return `
+    <div class="filter-group">
+      <span class="filter-label">By Service</span>
+      <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${g.service===s?'selected':''}" onclick="setGroupService('${g.id}','${s}')">${s}</span>`).join('')}</div>
+    </div>
+    ${g.service ? `<div class="filter-group">
+      <span class="filter-label">By Portfolio</span>
+      <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${g.portfolio===p?'selected':''}" onclick="setGroupPortfolio('${g.id}','${esc(p)}')">${esc(p)}</span>`).join('')}</div>
+    </div>` : ''}
+    ${g.portfolio ? `<div class="filter-group">
+      <span class="filter-label">Subject</span>
+      <select onchange="setGroupSubjectName('${g.id}', this.value)">
+        <option value="">Select a subject</option>
+        ${subjectNames.map(name=>{
+          const funded = getEntriesFor(g.service, g.portfolio, name).some(e=>e.funded);
+          return `<option value="${esc(name)}" ${g.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
+        }).join('')}
+      </select>
+    </div>` : ''}
+    ${renderGroupHoursRow(g)}
+  `;
+}
+function renderGroupHoursRow(g){
+  if(!g.subjectName) return '';
+  const entries = getEntriesFor(g.service, g.portfolio, g.subjectName);
+  const hoursOptions = [...new Set(entries.map(e=>e.hours).filter(h=>h!=null))];
+  if(hoursOptions.length === 0) return '';
+  return `<div class="filter-group">
+    <span class="filter-label">Hours</span>
+    <div class="chip-row">${hoursOptions.map(h=>`<span class="chip chip-filter ${g.hours===h?'selected':''}" onclick="setGroupHours('${g.id}',${h})">${h}h</span>`).join('')}</div>
+  </div>`;
+}
+function renderGroupAvailability(g){
+  if(!g.entryId) return '';
+  const remaining = remainingSeatsToAdd(g.entryId);
+  if(remaining <= 0 && g.assignedIds.size === 0){
+    return `<div class="group-avail-line error">No seats available for ${esc(g.subject)}.</div>`;
+  }
+  return `<div class="group-avail-line">${remaining} seat${remaining===1?'':'s'} left · ${fmtDate(g.start)} – ${fmtDate(g.end)} · ${g.assignedIds.size} assigned</div>`;
+}
+function renderGroupDateRow(g){
+  if(!g.entryId) return '';
+  const remaining = remainingSeatsToAdd(g.entryId);
+  if(remaining <= 0 && g.assignedIds.size === 0) return '';
+  return `<div class="date-row" id="dateRow-${g.id}"><span>Starts ${fmtDate(g.startDate)}</span><button class="link-sm" onclick="toggleGroupDateEdit('${g.id}')">Change</button></div>`;
+}
+function toggleGroupDateEdit(id){
+  const g = groups.find(x=>x.id===id);
+  const row = document.getElementById('dateRow-'+id);
+  row.innerHTML = `<input type="date" id="dateInput-${id}" value="${g.startDate}" min="${g.start}" max="${g.end}" /><button class="link-sm" onclick="saveGroupDate('${id}')">Save</button>`;
+  document.getElementById('dateInput-'+id).focus();
+}
+function saveGroupDate(id){
+  const g = groups.find(x=>x.id===id);
+  const val = document.getElementById('dateInput-'+id).value;
+  if(val) g.startDate = val;
+  renderGroupsCol(); renderFooter();
+}
+function toggleGroupExpanded(id){
+  const g = groups.find(x=>x.id===id);
+  g.uiExpanded = !g.uiExpanded;
+  renderGroupsCol(); renderFooter();
+}
+
+function addGroup(){
+  groups.push({ id:'g'+(nextGroupId++), service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, startDate:null, assignedIds:new Set(), uiExpanded:true });
+  renderGroupsCol(); renderFooter();
+}
+function removeGroup(id){
+  groups = groups.filter(g=>g.id!==id);
+  renderAll();
+}
+function clearGroupAssignmentsIfAny(g, reason){
+  if(g.assignedIds.size > 0){
+    const n = g.assignedIds.size;
+    g.assignedIds.clear();
+    showToast(`Cleared ${n} learner${n===1?'':'s'} from this card — ${reason}.`);
+  }
+}
+function setGroupService(id,s){
+  const g = groups.find(x=>x.id===id);
+  clearGroupAssignmentsIfAny(g, 'program changed');
+  g.service=s; g.portfolio=null; g.subjectName=null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false;
+  renderGroupsCol(); renderFooter();
+}
+function setGroupPortfolio(id,p){
+  const g = groups.find(x=>x.id===id);
+  clearGroupAssignmentsIfAny(g, 'program changed');
+  g.portfolio=p; g.subjectName=null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false;
+  renderGroupsCol(); renderFooter();
+}
+function resolveGroupEntry(g, entry){
+  // If this card previously pointed at a different program, release those seats —
+  // switching what a card is FOR shouldn't silently carry old assignments into the new one.
+  if(g.entryId && g.entryId !== entry.id){
+    clearGroupAssignmentsIfAny(g, 'program changed');
+  }
+  // If another card already resolved to this exact program, merge into it
+  // instead of creating a second card for the same English · Digital, etc.
+  const existing = groups.find(x=>x.id!==g.id && x.entryId===entry.id);
+  if(existing){
+    g.assignedIds.forEach(id=>existing.assignedIds.add(id));
+    groups = groups.filter(x=>x.id!==g.id);
+    existing.uiExpanded = false;
+    showToast(`${entryLabel(entry)} · ${entry.service} is already set up above — merged into that card.`);
+    return;
+  }
+  g.entryId=entry.id; g.subject=entry.subject; g.hours=entry.hours; g.funded=!!entry.funded;
+  g.seats=entry.seats; g.start=entry.start; g.end=entry.end;
+  g.startDate = todayISO() > entry.start ? todayISO() : entry.start;
+  g.uiExpanded = false;
+}
+function setGroupSubjectName(id,name){
+  const g = groups.find(x=>x.id===id);
+  clearGroupAssignmentsIfAny(g, 'program changed');
+  g.subjectName = name || null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false;
+  if(name){
+    const entries = getEntriesFor(g.service, g.portfolio, name);
+    if(entries.length === 1) resolveGroupEntry(g, entries[0]);
+  }
+  renderGroupsCol(); renderFooter();
+}
+function setGroupHours(id,hours){
+  const g = groups.find(x=>x.id===id);
+  const entries = getEntriesFor(g.service, g.portfolio, g.subjectName);
+  const entry = entries.find(e=>e.hours===hours);
+  if(entry) resolveGroupEntry(g, entry);
+  renderGroupsCol(); renderFooter();
+}
+function removeFromGroup(groupId, learnerId){
+  const g = groups.find(x=>x.id===groupId);
+  if(g) g.assignedIds.delete(learnerId);
+  renderAll();
+}
+
+/* ---- Per-card "+ Add Learners" picker — the click-based alternative to dragging ---- */
+let cardAddModalState = null; // {groupId, selected:Set}
+function openCardAddLearnersModal(groupId){
+  const g = groups.find(x=>x.id===groupId);
+  if(!g) return;
+  const available = learners.filter(l=>!g.assignedIds.has(l.id));
+  if(available.length === 0){
+    if(learners.length === 0){
+      pendingCardPickerGroupId = groupId;
+      openAddLearnersModal();
+    } else {
+      showToast('Everyone added is already in this program.');
+    }
+    return;
+  }
+  cardAddModalState = { groupId, selected: new Set() };
+  renderCardAddLearnersModal();
+}
+function renderCardAddLearnersModal(){
+  const s = cardAddModalState;
+  const g = groups.find(x=>x.id===s.groupId);
+  const available = learners.filter(l=>!g.assignedIds.has(l.id));
+  const remaining = remainingSeatsToAdd(g.entryId);
+
+  const rows = available.map(l=>{
+    const sel = s.selected.has(l.id);
+    const capped = !sel && s.selected.size >= remaining;
+    const progs = programsOf(l.id);
+    const classes = ['roster-row']; if(sel) classes.push('selected'); if(capped) classes.push('disabled'); else classes.push('selectable');
+    return `<div class="${classes.join(' ')}" ${capped?'':`onclick="toggleCardAddSelect(${l.id})"`} ${capped?'title="Seat limit reached"':''}>
+      <span class="check">${sel?iconCheck('#fff'):''}</span>
+      <span class="email">${esc(l.email)}</span>
+      ${progs.length>0 ? `<span class="badge">also in ${progs.length} program${progs.length===1?'':'s'}</span>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeCardAddLearnersModal()">
+      <div class="modal">
+        <div class="modal-head"><h3>Add Learners to ${esc(entryLabel(g))}</h3><button class="modal-close" onclick="closeCardAddLearnersModal()">✕</button></div>
+        <div class="modal-body">
+          <div class="seat-counter">${s.selected.size} of ${remaining} seat${remaining===1?'':'s'} selected</div>
+          <div class="roster-list">${rows}</div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeCardAddLearnersModal()">Cancel</button>
+          <button class="btn btn-primary" ${s.selected.size===0?'disabled':''} onclick="confirmCardAddLearners()">Add ${s.selected.size} Learner${s.selected.size===1?'':'s'}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function toggleCardAddSelect(id){
+  const s = cardAddModalState;
+  const g = groups.find(x=>x.id===s.groupId);
+  const remaining = remainingSeatsToAdd(g.entryId);
+  if(s.selected.has(id)) s.selected.delete(id);
+  else { if(s.selected.size >= remaining) return; s.selected.add(id); }
+  renderCardAddLearnersModal();
+}
+function confirmCardAddLearners(){
+  const s = cardAddModalState;
+  const g = groups.find(x=>x.id===s.groupId);
+  s.selected.forEach(id=>g.assignedIds.add(id));
+  showToast(`Added ${s.selected.size} learner${s.selected.size===1?'':'s'} to ${entryLabel(g)} · ${g.service}.`);
+  closeCardAddLearnersModal();
+  renderAll();
+}
+function closeCardAddLearnersModal(){ cardAddModalState = null; document.getElementById('modalRoot').innerHTML = ''; }
+
+/* =====================================================
+   LEARNERS PANEL (right column)
+===================================================== */
+function renderLearnersCol(){
+  const col = document.getElementById('learnersCol');
+  const allSelected = learners.length > 0 && learners.every(l=>selectedIds.has(l.id));
+  col.innerHTML = `
+    <div class="card learners-card">
+      <div class="learners-card-head">
+        <h3>Learners (${learners.length})</h3>
+        <button class="btn btn-primary btn-sm" onclick="openAddLearnersModal()">+ Add Learners</button>
+      </div>
+      ${learners.length > 0 ? `
+      <div class="learner-count-line row-between">
+        <span>${assignedLearnersCount()} assigned · ${learners.length - assignedLearnersCount()} not yet assigned</span>
+        <button class="link-sm" onclick="toggleSelectAllLearners()">${allSelected?'Clear':'Select All'}</button>
+      </div>` : ''}
+      ${renderBulkBarHtml()}
+      <div class="learners-list-wrap" id="learnersListWrap" ondragover="onLearnersListDragOver(event)" ondragleave="onLearnersListDragLeave(event)" ondrop="onLearnersListDrop(event)">
+        ${learners.length === 0
+          ? `<p class="muted" style="text-align:center;padding:24px 0;">No learners yet. Click "+ Add Learners" to bring people into this batch.</p>`
+          : learners.map(l=>renderLearnerRow(l)).join('')}
+      </div>
+    </div>
+  `;
+}
+function toggleSelectAllLearners(){
+  const allSelected = learners.length > 0 && learners.every(l=>selectedIds.has(l.id));
+  selectedIds = allSelected ? new Set() : new Set(learners.map(l=>l.id));
+  renderLearnersCol();
+}
+function renderLearnerRow(l){
+  const checked = selectedIds.has(l.id);
+  const progs = programsOf(l.id);
+  const badges = progs.map(g=>`<span class="assign-badge">${esc(entryLabel(g))} · ${esc(g.service)}<span class="x" onclick="event.stopPropagation();removeFromGroup('${g.id}',${l.id})">${iconX('#0276b1')}</span></span>`).join('');
+  return `<div class="learner-row" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)">
+    <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation()" onchange="toggleRowSelect(${l.id})" />
+    <div class="learner-row-body">
+      <div class="l-email">${esc(l.email)}</div>
+      ${badges ? `<div class="l-badges">${badges}</div>` : `<div class="l-unassigned">Not assigned yet</div>`}
+    </div>
+    <span class="learner-remove" title="Remove learner" onclick="removeLearnerEverywhere(${l.id})">${iconX('#5d7682')}</span>
+  </div>`;
+}
+function removeLearnerEverywhere(id){
+  learners = learners.filter(l=>l.id!==id);
+  groups.forEach(g=>g.assignedIds.delete(id));
+  selectedIds.delete(id);
+  renderAll();
+}
+
+/* =====================================================
+   DRAG AND DROP — dragging always ADDS to the target
+   (membership is additive; use each chip's × to remove).
+   Dragging a row that's part of the current selection carries
+   the whole selection along.
+===================================================== */
+function onLearnerDragStart(e, learnerId){
+  const ids = (selectedIds.has(learnerId) && selectedIds.size > 1) ? [...selectedIds] : [learnerId];
+  e.dataTransfer.setData('text/plain', JSON.stringify(ids));
+  e.dataTransfer.effectAllowed = 'copy';
+  e.currentTarget.classList.add('dragging');
+}
+function onLearnerDragEnd(e){ e.currentTarget.classList.remove('dragging'); }
+function onGroupCardDragOver(e){ e.preventDefault(); e.currentTarget.classList.add('drop-hover'); }
+function onGroupCardDragLeave(e){ e.currentTarget.classList.remove('drop-hover'); }
+function onLearnersListDragOver(e){ e.preventDefault(); e.currentTarget.classList.add('drop-hover'); }
+function onLearnersListDragLeave(e){ e.currentTarget.classList.remove('drop-hover'); }
+function onLearnersListDrop(e){ e.preventDefault(); e.currentTarget.classList.remove('drop-hover'); } // dropping back on the roster is a no-op
+
+function onGroupCardDrop(e, targetGroupId){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drop-hover');
+  let ids = [];
+  try { ids = JSON.parse(e.dataTransfer.getData('text/plain')); } catch(err) { return; }
+  if(!Array.isArray(ids) || ids.length === 0) return;
+
+  const group = groups.find(g=>g.id===targetGroupId);
+  if(!group || !group.entryId){ showToast('Choose a program for this card first.'); return; }
+
+  const remaining = remainingSeatsToAdd(group.entryId);
+  let added = 0, already = 0, capped = 0;
+  for(const id of ids){
+    if(group.assignedIds.has(id)){ already++; continue; }
+    if(added >= remaining){ capped++; continue; }
+    group.assignedIds.add(id); added++;
+  }
+  if(added > 0) showToast(`Added ${added} learner${added===1?'':'s'} to ${entryLabel(group)} · ${group.service}.`);
+  if(capped > 0) showToast(`${capped} learner${capped===1?'':'s'} left out — no seats left.`);
+  else if(added === 0 && already > 0) showToast('Already assigned to this program.');
+  renderAll();
+}
+
+/* =====================================================
+   ADD LEARNERS MODAL
+===================================================== */
+function openAddLearnersModal(){
+  addModalOpen = true; addModalTab = 'individual';
+  renderAddLearnersModal();
+}
+function closeAddLearnersModal(){
+  addModalOpen = false;
+  document.getElementById('modalRoot').innerHTML = '';
+  renderLearnersCol(); renderFooter();
+  if(pendingCardPickerGroupId){
+    const gid = pendingCardPickerGroupId;
+    pendingCardPickerGroupId = null;
+    const g = groups.find(x=>x.id===gid);
+    if(g && learners.some(l=>!g.assignedIds.has(l.id))){
+      openCardAddLearnersModal(gid);
+    }
+  }
+}
+function setAddModalTab(tab){ addModalTab = tab; renderAddLearnersModal(); }
+function renderAddLearnersModal(){
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeAddLearnersModal()">
+      <div class="modal" style="width:640px;">
+        <div class="modal-head"><h3>Add Learners</h3><button class="modal-close" onclick="closeAddLearnersModal()">✕</button></div>
+        <div class="modal-body">
+          <div class="add-modal-tabs">
+            <button class="tab ${addModalTab==='individual'?'active':''}" onclick="setAddModalTab('individual')">Add Individually</button>
+            <button class="tab ${addModalTab==='bulk'?'active':''}" onclick="setAddModalTab('bulk')">Bulk Import (Excel)</button>
+          </div>
+          ${addModalTab==='individual' ? renderAddModalIndividual() : renderAddModalBulk()}
+        </div>
+        <div class="modal-foot"><button class="btn btn-primary" onclick="closeAddLearnersModal()">Done</button></div>
+      </div>
+    </div>
+  `;
+  if(addModalTab==='individual'){ bindAddModalForm(); }
+}
+function renderAddModalIndividual(){
+  return `
+    <label>email <span class="req">*</span></label>
+    <input id="amEmail" type="email" placeholder="email" class="field-gap" />
+    <div class="field-error" id="amEmailError">Enter a valid email address.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label>First Name</label><input id="amFirst" type="text" placeholder="First Name" /></div>
+      <div><label>Last Name</label><input id="amLast" type="text" placeholder="Last Name" /></div>
+    </div>
+    <div class="field-gap" style="margin-top:14px;">
+      <label>Group</label>
+      <select id="amGroup">${GROUPS.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('')}</select>
+    </div>
+    <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="addLearnerFromModal()">Add To List
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="add-modal-ready">
+      <div class="row-between" style="margin-bottom:10px;">
+        <strong style="font-size:13px;">${learners.length} learner${learners.length===1?'':'s'} ready</strong>
+      </div>
+      <div class="chip-row" style="max-height:180px;overflow-y:auto;">
+        ${learners.length===0
+          ? `<span class="empty-hint">Learners you add will show up here.</span>`
+          : learners.map(l=>`<span class="chip removable">${esc(l.email)} <span class="x" onclick="removeLearnerFromModal(${l.id})">${iconX('#0276b1')}</span></span>`).join('')}
+      </div>
+    </div>
+  `;
+}
+function renderAddModalBulk(){
+  return `
+    <div class="bulk-placeholder" style="width:auto;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="#b3bec4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>Bulk import is coming soon</h3>
+      <p>For now, add your learners one at a time from the Add Individually tab. We'll let you know as soon as Excel import is ready.</p>
+      <button class="btn btn-secondary btn-sm" onclick="setAddModalTab('individual')">Add Individually instead</button>
+    </div>
+  `;
+}
+function bindAddModalForm(){
+  const emailInput = document.getElementById('amEmail');
+  emailInput.addEventListener('keydown', e => { if(e.key==='Enter') addLearnerFromModal(); });
+  emailInput.addEventListener('input', ()=>{ emailInput.classList.remove('invalid'); document.getElementById('amEmailError').classList.remove('show'); });
+  emailInput.focus();
+}
+function addLearnerFromModal(){
+  const emailInput = document.getElementById('amEmail');
+  const email = emailInput.value.trim();
+  const errEl = document.getElementById('amEmailError');
+  if(!email || !emailValid(email)){
+    emailInput.classList.add('invalid');
+    errEl.textContent = !email ? 'Email is required.' : 'Enter a valid email address.';
+    errEl.classList.add('show'); emailInput.focus(); return;
+  }
+  if(learners.some(l=>l.email.toLowerCase()===email.toLowerCase())){
+    emailInput.classList.add('invalid');
+    errEl.textContent = 'This learner is already on the list.';
+    errEl.classList.add('show'); emailInput.focus(); return;
+  }
+  learners.push({
+    id: nextId++, email,
+    firstName: document.getElementById('amFirst').value.trim(),
+    lastName: document.getElementById('amLast').value.trim(),
+    group: document.getElementById('amGroup').value,
+  });
+  renderAddLearnersModal();
+  renderLearnersCol(); renderFooter();
+  document.getElementById('amEmail').focus();
+}
+function removeLearnerFromModal(id){
+  learners = learners.filter(l=>l.id!==id);
+  groups.forEach(g=>g.assignedIds.delete(id));
+  selectedIds.delete(id);
+  renderAddLearnersModal();
+  renderLearnersCol(); renderFooter();
+}
+
+/* =====================================================
+   BULK ASSIGN MODAL — "Assign Selected to a Program"
+   Same cascade as the program cards; adds the selection to
+   whichever program you resolve, existing or brand new.
+===================================================== */
+function openBulkAssignModal(){
+  if(selectedIds.size === 0) return;
+  bulkAssignState = { targetIds:[...selectedIds], service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null };
+  renderBulkAssignModal();
+}
+function renderBulkAssignModal(){
+  const s = bulkAssignState;
+  const services = Object.keys(CATALOG);
+  const portfolios = s.service ? Object.keys(CATALOG[s.service]) : [];
+  const subjectNames = (s.service && s.portfolio) ? distinctSubjects(s.service, s.portfolio) : [];
+
+  let hoursHtml = '', availabilityHtml = '';
+  if(s.subjectName){
+    const entries = getEntriesFor(s.service, s.portfolio, s.subjectName);
+    const hoursOptions = [...new Set(entries.map(e=>e.hours).filter(h=>h!=null))];
+    if(hoursOptions.length > 0){
+      hoursHtml = `<div class="filter-group"><span class="filter-label">Hours</span>
+        <div class="chip-row">${hoursOptions.map(h=>`<span class="chip chip-filter ${s.hours===h?'selected':''}" onclick="setBulkAssignHours(${h})">${h}h</span>`).join('')}</div></div>`;
+    }
+  }
+  if(s.entryId){
+    const remaining = remainingSeatsToAdd(s.entryId);
+    if(remaining <= 0){
+      availabilityHtml = `<div class="info-box error"><strong>No seats left for ${esc(s.subject)}</strong><p>Choose a different program.</p></div>`;
+    } else {
+      availabilityHtml = `<div class="info-box"><strong>${remaining} available${s.funded?' <span class="funded-badge">FUNDED</span>':''}</strong><span>${fmtDate(s.start)} – ${fmtDate(s.end)}</span></div>
+        ${s.targetIds.length > remaining ? `<div class="cap-note show">Only ${remaining} of ${s.targetIds.length} selected learners will fit — the rest will stay unassigned.</div>` : ''}`;
+    }
+  }
+
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeBulkAssignModal()">
+      <div class="modal">
+        <div class="modal-head"><h3>Assign Selected to a Program</h3><button class="modal-close" onclick="closeBulkAssignModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0 0 16px;">Choose a program for the ${s.targetIds.length} learner${s.targetIds.length===1?'':'s'} you selected.</p>
+          <div class="filter-group" style="margin-top:0;">
+            <span class="filter-label">By Service</span>
+            <div class="chip-row">${services.map(sv=>`<span class="chip chip-filter ${s.service===sv?'selected':''}" onclick="setBulkAssignService('${sv}')">${sv}</span>`).join('')}</div>
+          </div>
+          ${s.service ? `<div class="filter-group"><span class="filter-label">By Portfolio</span>
+            <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${s.portfolio===p?'selected':''}" onclick="setBulkAssignPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}</div></div>` : ''}
+          ${s.portfolio ? `<div class="filter-group"><span class="filter-label">Subject</span>
+            <select onchange="setBulkAssignSubjectName(this.value)">
+              <option value="">Select a subject</option>
+              ${subjectNames.map(name=>{
+                const funded = getEntriesFor(s.service, s.portfolio, name).some(e=>e.funded);
+                return `<option value="${esc(name)}" ${s.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
+              }).join('')}
+            </select></div>` : ''}
+          ${hoursHtml}
+          ${availabilityHtml}
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeBulkAssignModal()">Cancel</button>
+          <button class="btn btn-primary" ${(!s.entryId || remainingSeatsToAdd(s.entryId)<=0)?'disabled':''} onclick="confirmBulkAssign()">Assign</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function setBulkAssignService(sv){ bulkAssignState.service=sv; bulkAssignState.portfolio=null; bulkAssignState.subjectName=null; bulkAssignState.entryId=null; renderBulkAssignModal(); }
+function setBulkAssignPortfolio(p){ bulkAssignState.portfolio=p; bulkAssignState.subjectName=null; bulkAssignState.entryId=null; renderBulkAssignModal(); }
+function setBulkAssignSubjectName(name){
+  const s = bulkAssignState;
+  s.subjectName = name || null; s.entryId=null; s.subject=null; s.hours=null; s.funded=false;
+  if(name){
+    const entries = getEntriesFor(s.service, s.portfolio, name);
+    if(entries.length === 1) resolveBulkAssignEntry(entries[0]);
+  }
+  renderBulkAssignModal();
+}
+function setBulkAssignHours(h){
+  const s = bulkAssignState;
+  const entries = getEntriesFor(s.service, s.portfolio, s.subjectName);
+  const entry = entries.find(e=>e.hours===h);
+  if(entry) resolveBulkAssignEntry(entry);
+  renderBulkAssignModal();
+}
+function resolveBulkAssignEntry(entry){
+  const s = bulkAssignState;
+  s.entryId=entry.id; s.subject=entry.subject; s.hours=entry.hours; s.funded=!!entry.funded;
+  s.start=entry.start; s.end=entry.end; s.startDate = todayISO() > entry.start ? todayISO() : entry.start;
+}
+function confirmBulkAssign(){
+  const s = bulkAssignState;
+  let group = groups.find(g=>g.entryId===s.entryId);
+  if(!group){
+    const entry = getEntry(s.entryId);
+    group = { id:'g'+(nextGroupId++), service:s.service, portfolio:s.portfolio, subjectName:s.subjectName, entryId:s.entryId,
+      subject:s.subject, hours:s.hours, funded:s.funded, seats:entry.seats, start:entry.start, end:entry.end, startDate:s.startDate, assignedIds:new Set() };
+    groups.push(group);
+  }
+  const remaining = remainingSeatsToAdd(s.entryId);
+  const toAssign = s.targetIds.filter(id=>!group.assignedIds.has(id)).slice(0, remaining);
+  toAssign.forEach(id=>group.assignedIds.add(id));
+  showToast(`Assigned ${toAssign.length} learner${toAssign.length===1?'':'s'} to ${esc(s.subject)} · ${s.service}.`);
+  closeBulkAssignModal();
+  selectedIds.clear();
+  renderAll();
+}
+function closeBulkAssignModal(){ bulkAssignState = null; document.getElementById('modalRoot').innerHTML = ''; }
+
+/* =====================================================
+   SEND
+===================================================== */
+function renderFooter(){
+  const el = document.getElementById('footerRoot');
+  const assigned = assignedLearnersCount();
+  const progCount = activeGroups().filter(g=>g.assignedIds.size>0).length;
+  const seatsUsed = groups.reduce((sum,g)=>sum+g.assignedIds.size,0);
+  el.innerHTML = `
+    <div class="stats-text">
+      <strong>${learners.length}</strong> learner${learners.length===1?'':'s'} ·
+      <strong>${assigned}</strong> assigned across <strong>${progCount}</strong> program${progCount===1?'':'s'} ·
+      <strong>${seatsUsed}</strong> seat${seatsUsed===1?'':'s'} used ·
+      <strong>${learners.length-assigned}</strong> not yet assigned
+    </div>
+    <button class="btn btn-primary" ${assigned===0?'disabled':''} onclick="openConfirmSend()">Send Assignments →</button>
+  `;
+}
+function openConfirmSend(){
+  const relevant = activeGroups().filter(g=>g.assignedIds.size>0);
+  const assigned = assignedLearnersCount();
+  const unassigned = learners.length - assigned;
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
+      <div class="modal" style="width:460px;">
+        <div class="modal-head"><h3>Confirm and send</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0 0 6px;">You're about to send licenses for ${assigned} learner${assigned===1?'':'s'}:</p>
+          ${relevant.map(g=>`<div class="recap-row"><span class="name">${esc(entryLabel(g))} · ${esc(g.service)}</span><span class="count">${g.assignedIds.size} learner${g.assignedIds.size===1?'':'s'}</span></div>`).join('')}
+          ${unassigned>0 ? `<div class="recap-warning">${unassigned} learner${unassigned===1?'':'s'} still not assigned — they'll stay in the list for later.</div>` : ''}
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeGenericModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="confirmSend()">Confirm & Send</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function confirmSend(){
+  const relevant = activeGroups().filter(g=>g.assignedIds.size>0);
+  const assigned = assignedLearnersCount();
+  learners = learners.filter(l=>!isAssigned(l.id));
+  groups = [];
+  selectedIds.clear();
+  closeGenericModal();
+  renderAll();
+  showToast(`Sent ${assigned} license${assigned===1?'':'s'} across ${relevant.length} program${relevant.length===1?'':'s'}.`);
+}
+function closeGenericModal(){ document.getElementById('modalRoot').innerHTML = ''; }
 
 renderAll();
 </script>
