@@ -633,6 +633,10 @@ function renderGroupPicker(g){
   const portfolios = g.service ? Object.keys(CATALOG[g.service]) : [];
   const subjectNames = (g.service && g.portfolio) ? distinctSubjects(g.service, g.portfolio) : [];
   return `
+    <div class="row-between" style="margin-bottom:2px;">
+      <span></span>
+      <button class="link-sm" onclick="openCatalogModal('${g.id}')">See Everything Available →</button>
+    </div>
     <div class="filter-group">
       <span class="filter-label">By Service</span>
       <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${g.service===s?'selected':''}" onclick="setGroupService('${g.id}','${s}')">${s}</span>`).join('')}</div>
@@ -695,6 +699,113 @@ function toggleGroupExpanded(id){
   g.uiExpanded = !g.uiExpanded;
   renderGroupsCol(); renderFooter();
 }
+
+/* ---- "See Everything Available" — browse the full catalog and apply
+   a pick directly to the card that opened it ---- */
+let catalogModalGroupId = null;
+let catalogFilters = { services:new Set(), portfolios:new Set(), search:'' };
+function getAllEntries(){
+  const out = [];
+  Object.keys(CATALOG).forEach(service=>{
+    Object.keys(CATALOG[service]).forEach(portfolio=>{
+      CATALOG[service][portfolio].forEach(entry=>out.push({ ...entry, service, portfolio }));
+    });
+  });
+  return out;
+}
+function filteredCatalogEntries(){
+  return getAllEntries().filter(e=>{
+    if(catalogFilters.services.size > 0 && !catalogFilters.services.has(e.service)) return false;
+    if(catalogFilters.portfolios.size > 0 && !catalogFilters.portfolios.has(e.portfolio)) return false;
+    if(catalogFilters.search){
+      const s = catalogFilters.search.toLowerCase();
+      const hay = `${e.subject} ${e.hours||''} ${e.funded?'funded':''}`.toLowerCase();
+      if(!hay.includes(s)) return false;
+    }
+    return true;
+  });
+}
+function openCatalogModal(groupId){
+  catalogModalGroupId = groupId;
+  catalogFilters = { services:new Set(), portfolios:new Set(), search:'' };
+  renderCatalogModalShell();
+}
+function renderCatalogModalShell(){
+  const services = Object.keys(CATALOG);
+  const portfolioSet = new Set();
+  services.forEach(s=>Object.keys(CATALOG[s]).forEach(p=>portfolioSet.add(p)));
+  const portfolios = [...portfolioSet];
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeCatalogModal()">
+      <div class="modal" style="width:640px;">
+        <div class="modal-head"><h3>Browse All Available Programs</h3><button class="modal-close" onclick="closeCatalogModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0 0 16px;">Filter or search, then select one to use it on this card.</p>
+          <div class="catalog-filters-row">
+            <div>
+              <span class="filter-label">Service</span>
+              <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${catalogFilters.services.has(s)?'selected':''}" onclick="toggleCatalogFilter('services','${s}')">${s}</span>`).join('')}</div>
+            </div>
+            <div>
+              <span class="filter-label">Portfolio</span>
+              <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${catalogFilters.portfolios.has(p)?'selected':''}" onclick="toggleCatalogFilter('portfolios','${esc(p)}')">${esc(p)}</span>`).join('')}</div>
+            </div>
+          </div>
+          <input class="catalog-search" type="text" placeholder="Search by subject, hours, funded…" value="${esc(catalogFilters.search)}" oninput="onCatalogSearchInput(this.value)" />
+          <div id="catalogListRoot"></div>
+        </div>
+        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeCatalogModal()">Close</button></div>
+      </div>
+    </div>
+  `;
+  renderCatalogList();
+}
+function toggleCatalogFilter(kind, value){
+  const set = catalogFilters[kind];
+  if(set.has(value)) set.delete(value); else set.add(value);
+  renderCatalogModalShell();
+}
+function onCatalogSearchInput(v){ catalogFilters.search = v; renderCatalogList(); } // updates the list only — keeps focus in the search box
+function renderCatalogList(){
+  const entries = filteredCatalogEntries();
+  if(entries.length === 0){
+    document.getElementById('catalogListRoot').innerHTML = `<div class="muted" style="text-align:center;padding:28px 0;">No programs match your filters.</div>`;
+    return;
+  }
+  const bySer = {};
+  entries.forEach(e=>{ (bySer[e.service] = bySer[e.service] || {}); (bySer[e.service][e.portfolio] = bySer[e.service][e.portfolio] || []).push(e); });
+  let html = '';
+  Object.keys(bySer).forEach(service=>{
+    html += `<div class="catalog-service-title">${service}</div>`;
+    Object.keys(bySer[service]).forEach(portfolio=>{
+      html += `<div class="catalog-group"><div class="catalog-group-title">${portfolio}</div>`;
+      bySer[service][portfolio].forEach(entry=>{
+        const remaining = remainingSeatsToAdd(entry.id);
+        html += `<div class="catalog-row">
+          <div>
+            <div class="name">${esc(entryLabel(entry))}${entry.funded?'<span class="funded-badge">FUNDED</span>':''}</div>
+            <div class="meta ${remaining<=0?'zero':''}">${fmtDate(entry.start)} – ${fmtDate(entry.end)} · ${remaining<=0?'No seats available':`${remaining} available`}</div>
+          </div>
+          <button class="pick" ${remaining<=0?'disabled':''} onclick="pickFromCatalog('${entry.id}')">Select</button>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+  });
+  document.getElementById('catalogListRoot').innerHTML = html;
+}
+function pickFromCatalog(entryId){
+  const g = groups.find(x=>x.id===catalogModalGroupId);
+  if(!g) return;
+  const entry = getEntry(entryId);
+  g.service = entry.service;
+  g.portfolio = entry.portfolio;
+  g.subjectName = entry.subject;
+  resolveGroupEntry(g, entry);
+  closeCatalogModal();
+  renderGroupsCol(); renderFooter();
+}
+function closeCatalogModal(){ catalogModalGroupId = null; document.getElementById('modalRoot').innerHTML = ''; }
 
 function addGroup(){
   groups.push({ id:'g'+(nextGroupId++), service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, startDate:null, assignedIds:new Set(), uiExpanded:true });
@@ -830,10 +941,17 @@ function toggleCardAddSelect(id){
 function confirmCardAddLearners(){
   const s = cardAddModalState;
   const g = groups.find(x=>x.id===s.groupId);
+  const groupId = s.groupId;
   s.selected.forEach(id=>g.assignedIds.add(id));
   showToast(`Added ${s.selected.size} learner${s.selected.size===1?'':'s'} to ${entryLabel(g)} · ${g.service}.`);
   closeCardAddLearnersModal();
   renderAll();
+
+  const stillAvailable = learners.some(l=>!g.assignedIds.has(l.id));
+  if(!stillAvailable){
+    pendingCardPickerGroupId = groupId;
+    openAddLearnersModal();
+  }
 }
 function closeCardAddLearnersModal(){ cardAddModalState = null; document.getElementById('modalRoot').innerHTML = ''; }
 
@@ -963,7 +1081,7 @@ function renderAddLearnersModal(){
           </div>
           ${addModalTab==='individual' ? renderAddModalIndividual() : renderAddModalBulk()}
         </div>
-        <div class="modal-foot"><button class="btn btn-primary" onclick="closeAddLearnersModal()">Done</button></div>
+        <div class="modal-foot"><button class="btn btn-primary" ${learners.length===0?'disabled':''} onclick="closeAddLearnersModal()" ${learners.length===0?'title="Add at least one learner first"':''}>Done</button></div>
       </div>
     </div>
   `;
@@ -1198,9 +1316,34 @@ function confirmSend(){
   learners = learners.filter(l=>!isAssigned(l.id));
   groups = [];
   selectedIds.clear();
-  closeGenericModal();
   renderAll();
-  showToast(`Sent ${assigned} license${assigned===1?'':'s'} across ${relevant.length} program${relevant.length===1?'':'s'}.`);
+  renderSendSuccessModal(relevant, assigned);
+}
+function renderSendSuccessModal(relevant, assigned){
+  const detail = relevant.length <= 1
+    ? `<p>${assigned} learner${assigned===1?'':'s'} now ${assigned===1?'has':'have'} access to ${relevant[0] ? esc(entryLabel(relevant[0]))+' · '+esc(relevant[0].service) : 'their program'}.</p>`
+    : `<p>${assigned} learners now have access across ${relevant.length} programs:</p>
+       <ul style="text-align:left;list-style:none;padding:0;margin:0 0 8px;display:inline-block;">
+         ${relevant.map(g=>`<li style="font-size:13px;color:var(--text-secondary);padding:4px 0;">• ${esc(entryLabel(g))} · ${esc(g.service)} — ${g.assignedIds.size} learner${g.assignedIds.size===1?'':'s'}</li>`).join('')}
+       </ul>`;
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
+      <div class="modal" style="width:480px;">
+        <div class="modal-body success-card" style="margin:0;">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="23" fill="#e9f8ee" stroke="#4ac97f"/>
+            <path d="M15 24.5l6 6 12-13" stroke="#2f9e56" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h2>Licenses assigned</h2>
+          ${detail}
+          <div class="success-actions">
+            <button class="btn btn-secondary" onclick="showToast('Heading back to Learners.'); closeGenericModal();">Back to Learners</button>
+            <button class="btn btn-primary" onclick="closeGenericModal()">Assign more licenses</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 function closeGenericModal(){ document.getElementById('modalRoot').innerHTML = ''; }
 
