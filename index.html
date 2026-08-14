@@ -270,12 +270,18 @@
   .info-box.error strong{color:var(--text-error);}
   .info-box.error p{font-size:13px;color:var(--text-secondary);margin:4px 0 0;}
 
-  .date-section{margin-top:16px;padding-top:16px;border-top:1px dashed var(--border-light);}
+  .date-section{margin-top:16px;padding-top:16px;border-top:1px dashed var(--border-light);border-radius:6px;}
   .date-section:first-of-type{margin-top:14px;}
+  @keyframes dropFlash{
+    0%{background-color:var(--bg-blue-light);}
+    100%{background-color:transparent;}
+  }
+  .date-section.drop-flash{animation:dropFlash 900ms ease-out;}
   .date-row{
-    display:inline-flex;align-items:center;gap:12px;margin-top:12px;
+    display:inline-flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;
     background:var(--bg-page);border-radius:var(--radius-int);padding:14px 16px;font-size:14px;
   }
+  .date-row .field-error{flex-basis:100%;margin:2px 0 0;}
   .date-row-text{font-size:16px;font-weight:600;color:var(--navy);}
   .date-row input[type=date]{width:150px;height:32px;flex:0 0 auto;}
   .icon-btn{background:none;border:none;cursor:pointer;padding:4px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;}
@@ -394,7 +400,7 @@
     background:var(--bg-white);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:26px 28px;
     border:2px dashed transparent;outline:none;transition:border-color .12s,background .12s;
   }
-  .group-card.drop-hover{border-color:var(--teal);background:var(--bg-blue-light);}
+  .date-section.drop-hover{background:var(--bg-blue-light);outline:2px dashed var(--teal);outline-offset:-2px;border-radius:6px;}
   .group-card .filter-group{margin-top:18px;}
   .group-card select{max-width:360px;}
   .group-card .filter-group:first-of-type{margin-top:0;}
@@ -418,6 +424,11 @@
   .learners-card{padding:26px 28px;}
   .learners-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
   .learner-count-line{font-size:12px;color:var(--text-secondary);margin-bottom:12px;}
+  .learner-group-label{
+    font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);
+    margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border-light);
+  }
+  .learner-group-label.first{margin-top:0;padding-top:0;border-top:none;}
 
   .learner-row{
     display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--border-light);border-radius:var(--radius-int);
@@ -553,12 +564,26 @@ let nextId = 1;
 let groups = [];        // {id, service, portfolio, entryId, subject, hours, funded, seats, start, end, startDate, assignedIds:Set}
 let nextGroupId = 1;
 let nextDateSectionId = 1;
+let creatingGroupId = null; // set while the "New Program" modal is open for a not-yet-confirmed group
+let dropHighlightSectionId = null;
+let dropHighlightTimeout = null;
+function flashDropTarget(sectionId){
+  dropHighlightSectionId = sectionId;
+  renderGroupsCol();
+  if(dropHighlightTimeout) clearTimeout(dropHighlightTimeout);
+  dropHighlightTimeout = setTimeout(()=>{
+    dropHighlightSectionId = null;
+    renderGroupsCol();
+  }, 900);
+}
 let selectedIds = new Set();   // checked rows in the Learners panel, for bulk actions
 let addModalOpen = false;
 let addModalTab = 'individual';
 let editingLearnerId = null; // set when a "ready" learner in the Add modal is clicked to edit
 let editOnlyMode = false; // true when opened to edit one specific learner (from the panel row) — no batch ready-list shown
+let sessionAddedIds = new Set(); // learners added during THIS modal session — the ready-list only shows these, not the whole roster
 let pendingCardPickerGroupId = null; // set when "+ Add Learners" on a card redirects to the Add Learners modal (no learners exist yet)
+let pendingCardPickerSectionId = null; // which date section on that card should auto-receive the newly-added learners
 let bulkAssignState = null;    // cascade state for the "Assign Selected to a Program" modal
 let bulkAssignCheckedProgramIds = new Set(); // existing programs checked in that modal's checklist
 
@@ -644,14 +669,19 @@ function removeSelectedRows(){
 ===================================================== */
 function renderGroupsCol(){
   const col = document.getElementById('groupsCol');
-  const heading = groups.length === 0
+  const visibleGroups = groups.filter(g=>g.id !== creatingGroupId);
+  const heading = visibleGroups.length === 0
     ? `<div class="empty-hint-card">Create a program here to get started. Once it's set up, you can drag learners onto it, use its "Assign Learner to this Program" button, or add them from the Learners panel anytime.</div>`
     : '';
   col.innerHTML = `
     ${heading}
-    ${groups.map(g=>renderGroupCard(g)).join('')}
-    <button class="new-group-btn" onclick="addGroup()">+ New Program</button>
+    <button class="new-group-btn" onclick="openNewProgramModal()">+ New Program</button>
+    ${visibleGroups.map(g=>renderGroupCard(g)).join('')}
   `;
+}
+function renderGroupUI(groupId){
+  if(creatingGroupId === groupId){ renderNewProgramModal(); }
+  else { renderGroupsCol(); renderFooter(); }
 }
 
 function renderGroupCard(g){
@@ -668,14 +698,14 @@ function renderGroupCard(g){
       ${!resolved ? `<button class="link-sm" style="margin-top:6px;" onclick="openCatalogModal('${g.id}')">See Everything Available →</button>` : ''}
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <button class="icon-btn" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);" title="Remove program" onclick="removeGroup('${g.id}')">${iconX('#5d7682')}</button>
+      <button class="icon-btn" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);" title="Remove program" onclick="confirmRemoveGroup('${g.id}')">${iconX('#5d7682')}</button>
     </div>
   </div>`;
 
   const picker = collapsed ? '' : renderGroupPicker(g);
   const availability = renderGroupAvailability(g);
   const sections = resolved ? g.dateSections.map(ds=>renderDateSection(g, ds)).join('') : '';
-  const duplicateBtn = resolved ? `<button class="link-sm" style="margin-top:12px;" onclick="duplicateDateSection('${g.id}')">+ Add Another Cohort (different start date)</button>` : '';
+  const duplicateBtn = resolved ? `<button class="link-sm" style="margin-top:12px;" onclick="duplicateDateSection('${g.id}')">+ Add an Extra Starting Date</button>` : '';
 
   return `<div class="group-card ${collapsed?'collapsed':''}">
     ${head}
@@ -690,18 +720,19 @@ function renderDateSection(g, ds){
     .map(l=>`<span class="chip removable" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)">${esc(l.email)} <span class="x" onclick="removeFromDateSection('${g.id}','${ds.id}',${l.id})">${iconX('#0276b1')}</span></span>`)
     .join('');
   const canRemoveSection = g.dateSections.length > 1;
-  return `<div class="date-section" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onDateSectionDrop(event,'${g.id}','${ds.id}')">
+  const justDropped = dropHighlightSectionId === ds.id;
+  return `<div class="date-section ${justDropped?'drop-flash':''}" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onDateSectionDrop(event,'${g.id}','${ds.id}')">
     <div class="date-row" id="dateRow-${ds.id}">
       <span class="date-row-text">Starts ${fmtDate(ds.startDate)}</span>
       <div style="display:flex;align-items:center;gap:2px;">
         <button class="icon-btn" title="Change start date" onclick="toggleGroupDateEdit('${g.id}','${ds.id}')">${iconPencil('#0276b1')}</button>
-        ${canRemoveSection ? `<button class="icon-btn" title="Remove this cohort" onclick="removeDateSection('${g.id}','${ds.id}')">${iconX('#ca2b34')}</button>` : ''}
+        ${canRemoveSection ? `<button class="icon-btn" title="Remove this starting date" onclick="removeDateSection('${g.id}','${ds.id}')">${iconX('#ca2b34')}</button>` : ''}
       </div>
     </div>
     <div class="group-chip-row chip-row">${chips || `<span class="muted" style="font-size:12px;">No one assigned yet.</span>`}</div>
     <div class="group-card-actions">
       <button class="btn btn-secondary btn-sm" onclick="openCardAddLearnersModal('${g.id}','${ds.id}')">Assign Learner to this Program</button>
-      <span class="group-drop-hint">or drag learners onto this cohort</span>
+      <span class="group-drop-hint">or drag learners onto this date</span>
     </div>
   </div>`;
 }
@@ -754,16 +785,27 @@ function toggleGroupDateEdit(groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
   const ds = g.dateSections.find(s=>s.id===sectionId);
   const row = document.getElementById('dateRow-'+sectionId);
-  row.innerHTML = `<input type="date" id="dateInput-${sectionId}" value="${ds.startDate}" min="${g.start}" max="${g.end}" />
-    <button class="icon-btn" title="Save" onclick="saveGroupDate('${groupId}','${sectionId}')">${iconCheck('#0276b1')}</button>`;
+  row.innerHTML = `<input type="date" id="dateInput-${sectionId}" value="${ds.startDate}" min="${g.start}" max="${g.end}" oninput="this.classList.remove('invalid'); document.getElementById('dateError-${sectionId}').classList.remove('show');" />
+    <button class="icon-btn" title="Save" onclick="saveGroupDate('${groupId}','${sectionId}')">${iconCheck('#0276b1')}</button>
+    <div class="field-error" id="dateError-${sectionId}">Starting dates in the same program need to be different.</div>`;
   document.getElementById('dateInput-'+sectionId).focus();
 }
 function saveGroupDate(groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
   const ds = g.dateSections.find(s=>s.id===sectionId);
-  const val = document.getElementById('dateInput-'+sectionId).value;
-  if(val) ds.startDate = val;
-  renderGroupsCol(); renderFooter();
+  const input = document.getElementById('dateInput-'+sectionId);
+  const val = input.value;
+  if(!val) return;
+  const collision = g.dateSections.some(other=>other.id!==sectionId && other.startDate===val);
+  if(collision){
+    input.classList.add('invalid');
+    const errEl = document.getElementById('dateError-'+sectionId);
+    if(errEl) errEl.classList.add('show');
+    input.focus();
+    return;
+  }
+  ds.startDate = val;
+  renderGroupUI(groupId);
 }
 /* ---- "See Everything Available" — browse the full catalog and apply
    a pick directly to the card that opened it ---- */
@@ -800,6 +842,7 @@ function renderCatalogModalShell(){
   const portfolioSet = new Set();
   services.forEach(s=>Object.keys(CATALOG[s]).forEach(p=>portfolioSet.add(p)));
   const portfolios = [...portfolioSet];
+  const returningToNewProgram = creatingGroupId === catalogModalGroupId;
   document.getElementById('modalRoot').innerHTML = `
     <div class="modal-overlay" onclick="if(event.target===this) closeCatalogModal()">
       <div class="modal" style="width:640px;">
@@ -820,7 +863,7 @@ function renderCatalogModalShell(){
           <input class="catalog-search" type="text" placeholder="Search by subject, hours, funded…" value="${esc(catalogFilters.search)}" oninput="onCatalogSearchInput(this.value)" />
           <div id="catalogListRoot"></div>
         </div>
-        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeCatalogModal()">Close</button></div>
+        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeCatalogModal()">${returningToNewProgram ? '← Back' : 'Close'}</button></div>
       </div>
     </div>
   `;
@@ -861,7 +904,8 @@ function renderCatalogList(){
   document.getElementById('catalogListRoot').innerHTML = html;
 }
 function pickFromCatalog(entryId){
-  const g = groups.find(x=>x.id===catalogModalGroupId);
+  const gid = catalogModalGroupId;
+  const g = groups.find(x=>x.id===gid);
   if(!g) return;
   const entry = getEntry(entryId);
   g.service = entry.service;
@@ -869,19 +913,113 @@ function pickFromCatalog(entryId){
   g.subjectName = entry.subject;
   resolveGroupEntry(g, entry);
   closeCatalogModal();
-  renderGroupsCol(); renderFooter();
+  renderGroupUI(gid);
 }
-function closeCatalogModal(){ catalogModalGroupId = null; document.getElementById('modalRoot').innerHTML = ''; }
+function closeCatalogModal(){
+  const gid = catalogModalGroupId;
+  catalogModalGroupId = null;
+  document.getElementById('modalRoot').innerHTML = '';
+  if(creatingGroupId === gid){ renderNewProgramModal(); }
+}
 
 function makeDateSection(startDate){
   return { id:'d'+(nextDateSectionId++), startDate, learnerIds:new Set() };
 }
-function addGroup(){
-  groups.push({ id:'g'+(nextGroupId++), service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, assignedIds:new Set(), dateSections:[], uiExpanded:true });
+function openNewProgramModal(){
+  const g = { id:'g'+(nextGroupId++), service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, assignedIds:new Set(), dateSections:[], uiExpanded:true };
+  groups.push(g);
+  creatingGroupId = g.id;
+  renderNewProgramModal();
+}
+function renderNewProgramModal(){
+  const g = groups.find(x=>x.id===creatingGroupId);
+  if(!g) return;
+  const resolved = !!g.entryId;
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeNewProgramModal()">
+      <div class="modal" style="width:480px;">
+        <div class="modal-head"><h3>New Program</h3><button class="modal-close" onclick="closeNewProgramModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0 0 16px;">Choose a Service, Portfolio, and Subject below to set up this program — or use "See Everything Available" to browse and pick one directly.</p>
+          <div class="row-between" style="margin-bottom:2px;">
+            <span></span>
+            <button class="link-sm" onclick="openCatalogModal('${g.id}')">See Everything Available →</button>
+          </div>
+          ${renderGroupPicker(g)}
+          ${renderGroupAvailability(g)}
+          ${resolved ? `
+          <div class="filter-group">
+            <span class="filter-label">Starting Dates</span>
+            ${g.dateSections.map(ds=>renderNewProgramDateRow(g, ds)).join('')}
+            <button class="link-sm" style="margin-top:10px;" onclick="duplicateDateSection('${g.id}')">+ Add an Extra Starting Date</button>
+            <p class="muted" style="font-size:12px;margin:10px 0 0;">Each starting date gets its own list of learners — you'll select them after the program is created.</p>
+          </div>` : ''}
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="cancelNewProgramModal()">Cancel</button>
+          <button class="btn btn-primary" ${resolved?'':'disabled'} onclick="confirmNewProgram()">Create Program</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function renderNewProgramDateRow(g, ds){
+  const canRemove = g.dateSections.length > 1;
+  return `<div class="date-row" id="dateRow-${ds.id}" style="margin-top:8px;">
+    <span class="date-row-text">Starts ${fmtDate(ds.startDate)}</span>
+    <div style="display:flex;align-items:center;gap:2px;">
+      <button class="icon-btn" title="Change date" onclick="toggleGroupDateEdit('${g.id}','${ds.id}')">${iconPencil('#0276b1')}</button>
+      ${canRemove ? `<button class="icon-btn" title="Remove this date" onclick="removeDateSection('${g.id}','${ds.id}')">${iconX('#ca2b34')}</button>` : ''}
+    </div>
+  </div>`;
+}
+function cancelNewProgramModal(){
+  if(creatingGroupId){ groups = groups.filter(g=>g.id!==creatingGroupId); }
+  creatingGroupId = null;
+  document.getElementById('modalRoot').innerHTML = '';
   renderGroupsCol(); renderFooter();
+}
+function confirmNewProgram(){
+  const g = groups.find(x=>x.id===creatingGroupId);
+  if(!g || !g.entryId) return;
+  creatingGroupId = null;
+  document.getElementById('modalRoot').innerHTML = '';
+  renderGroupsCol(); renderFooter();
+  showToast(`${entryLabel(g)} · ${g.service} created with ${g.dateSections.length} starting date${g.dateSections.length===1?'':'s'}.`);
+}
+function closeNewProgramModal(){
+  const g = groups.find(x=>x.id===creatingGroupId);
+  if(g && g.entryId){ confirmNewProgram(); } else { cancelNewProgramModal(); }
+}
+function confirmRemoveGroup(id){
+  const g = groups.find(x=>x.id===id);
+  if(!g) return;
+  const resolved = !!g.entryId;
+  const count = g.assignedIds.size;
+  const sectionCount = g.dateSections ? g.dateSections.length : 0;
+  const message = !resolved
+    ? `This program hasn't been set up yet — removing it just clears this empty card.`
+    : count === 0
+      ? `This will remove ${esc(entryLabel(g))} · ${esc(g.service)}${sectionCount>1?` and all ${sectionCount} of its starting dates`:''}. Nobody's assigned to it yet, so nothing else is affected.`
+      : `This will remove ${esc(entryLabel(g))} · ${esc(g.service)}${sectionCount>1?` and all ${sectionCount} of its starting dates`:''}. <strong>${count} learner${count===1?'':'s'}</strong> currently assigned here will become unassigned — they'll stay on your Learners list, just without this program.`;
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
+      <div class="modal" style="width:440px;">
+        <div class="modal-head"><h3>Remove this program?</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0;">${message}</p>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeGenericModal()">Cancel</button>
+          <button class="btn btn-primary" style="background:var(--text-error);" onclick="removeGroup('${id}')">Remove Program</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 function removeGroup(id){
   groups = groups.filter(g=>g.id!==id);
+  closeGenericModal();
   renderAll();
 }
 function clearGroupAssignmentsIfAny(g, reason){
@@ -896,22 +1034,26 @@ function setGroupService(id,s){
   const g = groups.find(x=>x.id===id);
   clearGroupAssignmentsIfAny(g, 'program changed');
   g.service=s; g.portfolio=null; g.subjectName=null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false; g.dateSections=[];
-  renderGroupsCol(); renderFooter();
+  renderGroupUI(id);
 }
 function setGroupPortfolio(id,p){
   const g = groups.find(x=>x.id===id);
   clearGroupAssignmentsIfAny(g, 'program changed');
   g.portfolio=p; g.subjectName=null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false; g.dateSections=[];
-  renderGroupsCol(); renderFooter();
+  renderGroupUI(id);
 }
 function resolveGroupEntry(g, entry){
   // If another card already represents this exact program, fold into it — one card
-  // per program, with cohorts (different start dates) living inside via "+ Add Another Cohort".
+  // per program, with multiple starting dates living inside via "+ Add an Extra Starting Date".
   const existing = groups.find(x=>x.id!==g.id && x.entryId===entry.id);
   if(existing){
     groups = groups.filter(x=>x.id!==g.id);
     existing.uiExpanded = false;
-    showToast(`${entryLabel(entry)} · ${entry.service} is already set up above — use "+ Add Another Cohort" on that card for a different start date.`);
+    showToast(`${entryLabel(entry)} · ${entry.service} is already set up above — use "+ Add an Extra Starting Date" on that card.`);
+    if(creatingGroupId === g.id){
+      creatingGroupId = null;
+      document.getElementById('modalRoot').innerHTML = '';
+    }
     return;
   }
   if(g.entryId && g.entryId !== entry.id){
@@ -931,21 +1073,30 @@ function setGroupSubjectName(id,name){
     const entries = getEntriesFor(g.service, g.portfolio, name);
     if(entries.length === 1) resolveGroupEntry(g, entries[0]);
   }
-  renderGroupsCol(); renderFooter();
+  renderGroupUI(id);
 }
 function setGroupHours(id,hours){
   const g = groups.find(x=>x.id===id);
   const entries = getEntriesFor(g.service, g.portfolio, g.subjectName);
   const entry = entries.find(e=>e.hours===hours);
   if(entry) resolveGroupEntry(g, entry);
-  renderGroupsCol(); renderFooter();
+  renderGroupUI(id);
 }
 function duplicateDateSection(groupId){
   const g = groups.find(x=>x.id===groupId);
   if(!g || !g.entryId) return;
   const last = g.dateSections[g.dateSections.length-1];
-  g.dateSections.push(makeDateSection(last ? last.startDate : g.start));
-  renderGroupsCol(); renderFooter();
+  const baseDate = last ? last.startDate : g.start;
+  let nextDate = addDaysISO(baseDate, 7);
+  if(nextDate > g.end) nextDate = g.end;
+  if(nextDate === baseDate) nextDate = g.start; // fallback if the range is too tight to add 7 days
+  g.dateSections.push(makeDateSection(nextDate));
+  renderGroupUI(groupId);
+}
+function addDaysISO(iso, days){
+  const d = new Date(iso+'T00:00:00');
+  d.setDate(d.getDate()+days);
+  return d.toISOString().slice(0,10);
 }
 function removeDateSection(groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
@@ -953,7 +1104,7 @@ function removeDateSection(groupId, sectionId){
   const ds = g.dateSections.find(s=>s.id===sectionId);
   if(ds) ds.learnerIds.forEach(id=>g.assignedIds.delete(id));
   g.dateSections = g.dateSections.filter(s=>s.id!==sectionId);
-  renderGroupsCol(); renderFooter();
+  renderGroupUI(groupId);
 }
 function removeFromDateSection(groupId, sectionId, learnerId){
   const g = groups.find(x=>x.id===groupId);
@@ -974,17 +1125,17 @@ function removeFromGroup(groupId, learnerId){
 
 /* ---- Per-card "+ Add Learners" picker — the click-based alternative to dragging ---- */
 let cardAddModalState = null; // {groupId, selected:Set}
-function openNoLearnersModal(groupId){
+function openNoLearnersModal(groupId, sectionId){
   document.getElementById('modalRoot').innerHTML = `
     <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
       <div class="modal" style="width:420px;">
         <div class="modal-head"><h3>No Learners Yet</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
         <div class="modal-body">
-          <p class="muted" style="margin:0;">You need to add learners to your list before you can assign them to a program. Use "+ Add Learners" in the Learners panel, then come back here to assign them to this program.</p>
+          <p class="muted" style="margin:0;">You need to add learners to your list before you can assign them to a program. Add them below and they'll be assigned here automatically.</p>
         </div>
         <div class="modal-foot">
           <button class="btn btn-secondary" onclick="closeGenericModal()">Got It</button>
-          <button class="btn btn-primary" onclick="closeGenericModal(); pendingCardPickerGroupId='${groupId}'; openAddLearnersModal();">+ Add Learners</button>
+          <button class="btn btn-primary" onclick="closeGenericModal(); pendingCardPickerGroupId='${groupId}'; pendingCardPickerSectionId='${sectionId}'; openAddLearnersModal();">+ Add Learners</button>
         </div>
       </div>
     </div>
@@ -996,7 +1147,7 @@ function openCardAddLearnersModal(groupId, sectionId){
   const available = learners.filter(l=>!g.assignedIds.has(l.id));
   if(available.length === 0){
     if(learners.length === 0){
-      openNoLearnersModal(groupId);
+      openNoLearnersModal(groupId, sectionId);
     } else {
       showToast('Everyone added is already in this program.');
     }
@@ -1103,12 +1254,27 @@ function renderLearnersCol(){
       </div>` : ''}
       ${renderBulkBarHtml()}
       <div class="learners-list-wrap" id="learnersListWrap" ondragover="onLearnersListDragOver(event)" ondragleave="onLearnersListDragLeave(event)" ondrop="onLearnersListDrop(event)">
-        ${learners.length === 0
-          ? `<p class="muted" style="text-align:center;padding:24px 0;">No learners yet. Click "+ Add Learners" to bring people into this batch.</p>`
-          : learners.map(l=>renderLearnerRow(l)).join('')}
+        ${renderLearnerListBody()}
       </div>
     </div>
   `;
+}
+function renderLearnerListBody(){
+  if(learners.length === 0){
+    return `<p class="muted" style="text-align:center;padding:24px 0;">No learners yet. Click "+ Add Learners" to bring people into this batch.</p>`;
+  }
+  const unassigned = learners.filter(l=>!isAssigned(l.id));
+  const assigned = learners.filter(l=>isAssigned(l.id));
+  let html = '';
+  if(unassigned.length > 0){
+    html += `<div class="learner-group-label first">Not Assigned (${unassigned.length})</div>`;
+    html += unassigned.map(l=>renderLearnerRow(l)).join('');
+  }
+  if(assigned.length > 0){
+    html += `<div class="learner-group-label ${unassigned.length===0?'first':''}">Assigned (${assigned.length})</div>`;
+    html += assigned.map(l=>renderLearnerRow(l)).join('');
+  }
+  return html;
 }
 function toggleSelectAllLearners(){
   const allSelected = learners.length > 0 && learners.every(l=>selectedIds.has(l.id));
@@ -1177,10 +1343,11 @@ function onDateSectionDrop(e, groupId, sectionId){
     if(alreadyInGroup){ moved++; } else { group.assignedIds.add(id); added++; }
   }
   if(added > 0) showToast(`Added ${added} learner${added===1?'':'s'} to ${entryLabel(group)} · ${group.service} (${fmtDate(ds.startDate)}).`);
-  if(moved > 0) showToast(`Moved ${moved} learner${moved===1?'':'s'} to this cohort.`);
+  if(moved > 0) showToast(`Moved ${moved} learner${moved===1?'':'s'} to this starting date.`);
   if(capped > 0) showToast(`${capped} learner${capped===1?'':'s'} left out — no seats left.`);
-  else if(added === 0 && moved === 0 && already > 0) showToast('Already in this cohort.');
+  else if(added === 0 && moved === 0 && already > 0) showToast('Already assigned to this starting date.');
   renderAll();
+  if(added > 0 || moved > 0) flashDropTarget(sectionId);
 }
 
 /* =====================================================
@@ -1188,6 +1355,7 @@ function onDateSectionDrop(e, groupId, sectionId){
 ===================================================== */
 function openAddLearnersModal(){
   addModalOpen = true; addModalTab = 'individual'; editOnlyMode = false;
+  sessionAddedIds = new Set();
   renderAddLearnersModal();
 }
 function openAddLearnersModalForEdit(id){
@@ -1203,10 +1371,21 @@ function closeAddLearnersModal(){
   renderLearnersCol(); renderFooter();
   if(pendingCardPickerGroupId){
     const gid = pendingCardPickerGroupId;
+    const sid = pendingCardPickerSectionId;
     pendingCardPickerGroupId = null;
+    pendingCardPickerSectionId = null;
     const g = groups.find(x=>x.id===gid);
-    if(g && learners.some(l=>!g.assignedIds.has(l.id))){
-      openCardAddLearnersModal(gid);
+    const ds = g ? g.dateSections.find(x=>x.id===sid) : null;
+    if(g && ds && sessionAddedIds.size > 0){
+      const remaining = remainingSeatsToAdd(g.entryId);
+      const newIds = learners.filter(l=>sessionAddedIds.has(l.id)).map(l=>l.id);
+      const toAssign = newIds.slice(0, remaining);
+      toAssign.forEach(id=>{ g.assignedIds.add(id); ds.learnerIds.add(id); });
+      const leftover = newIds.length - toAssign.length;
+      showToast(leftover > 0
+        ? `Assigned ${toAssign.length} of ${newIds.length} to ${entryLabel(g)} · ${g.service} — ${leftover} left out (seat limit).`
+        : `Assigned ${toAssign.length} learner${toAssign.length===1?'':'s'} to ${entryLabel(g)} · ${g.service} (${fmtDate(ds.startDate)}).`);
+      renderAll();
     }
   }
 }
@@ -1271,13 +1450,13 @@ function renderAddModalIndividual(){
     ${!editOnlyMode ? `
     <div class="add-modal-ready">
       <div class="row-between" style="margin-bottom:10px;">
-        <strong style="font-size:13px;">${learners.length} learner${learners.length===1?'':'s'} ready</strong>
-        ${editing ? `<span class="muted" style="font-size:12px;">Editing ${esc(editing.email)}</span>` : (learners.length>0 ? `<span class="muted" style="font-size:12px;">Click one to edit</span>` : '')}
+        <strong style="font-size:13px;">${sessionAddedIds.size} learner${sessionAddedIds.size===1?'':'s'} ready</strong>
+        ${editing ? `<span class="muted" style="font-size:12px;">Editing ${esc(editing.email)}</span>` : (sessionAddedIds.size>0 ? `<span class="muted" style="font-size:12px;">Click one to edit</span>` : '')}
       </div>
       <div class="chip-row" style="max-height:180px;overflow-y:auto;">
-        ${learners.length===0
+        ${sessionAddedIds.size===0
           ? `<span class="empty-hint">Learners you add will show up here.</span>`
-          : learners.map(l=>`<span class="chip removable ${editingLearnerId===l.id?'editing':''}" style="cursor:pointer;" title="Click to edit" onclick="startEditLearner(${l.id})">${esc(l.email)} <span class="x" onclick="event.stopPropagation(); removeLearnerFromModal(${l.id})">${iconX(editingLearnerId===l.id?'#fff':'#0276b1')}</span></span>`).join('')}
+          : learners.filter(l=>sessionAddedIds.has(l.id)).map(l=>`<span class="chip removable ${editingLearnerId===l.id?'editing':''}" style="cursor:pointer;" title="Click to edit" onclick="startEditLearner(${l.id})">${esc(l.email)} <span class="x" onclick="event.stopPropagation(); removeLearnerFromModal(${l.id})">${iconX(editingLearnerId===l.id?'#fff':'#0276b1')}</span></span>`).join('')}
       </div>
     </div>` : ''}
   `;
@@ -1350,12 +1529,14 @@ function addLearnerFromModal(){
     errEl.textContent = 'This learner is already on the list.';
     errEl.classList.add('show'); emailInput.focus(); return;
   }
+  const newId = nextId++;
   learners.push({
-    id: nextId++, email,
+    id: newId, email,
     firstName: document.getElementById('amFirst').value.trim(),
     lastName: document.getElementById('amLast').value.trim(),
     group: document.getElementById('amGroup').value,
   });
+  sessionAddedIds.add(newId);
   renderAddLearnersModal();
   renderLearnersCol(); renderFooter();
   document.getElementById('amEmail').focus();
@@ -1369,6 +1550,7 @@ function removeLearnerFromModal(id){
   learners = learners.filter(l=>l.id!==id);
   purgeLearnerFromAllGroups(id);
   selectedIds.delete(id);
+  sessionAddedIds.delete(id);
   if(editingLearnerId===id) editingLearnerId=null;
   renderAddLearnersModal();
   renderLearnersCol(); renderFooter();
@@ -2004,13 +2186,20 @@ function openConfirmSend(){
   const relevant = activeGroups().filter(g=>g.assignedIds.size>0);
   const assigned = assignedLearnersCount();
   const unassigned = learners.length - assigned;
+  const recapRows = relevant.map(g=>{
+    const activeSections = g.dateSections.filter(ds=>ds.learnerIds.size>0);
+    if(activeSections.length <= 1){
+      return `<div class="recap-row"><span class="name">${esc(entryLabel(g))} · ${esc(g.service)}</span><span class="count">${g.assignedIds.size} learner${g.assignedIds.size===1?'':'s'}</span></div>`;
+    }
+    return activeSections.map(ds=>`<div class="recap-row"><span class="name">${esc(entryLabel(g))} · ${esc(g.service)} <span class="muted" style="font-size:12px;">(${fmtDate(ds.startDate)})</span></span><span class="count">${ds.learnerIds.size} learner${ds.learnerIds.size===1?'':'s'}</span></div>`).join('');
+  }).join('');
   document.getElementById('modalRoot').innerHTML = `
     <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
       <div class="modal" style="width:460px;">
         <div class="modal-head"><h3>Confirm and send</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
         <div class="modal-body">
           <p class="muted" style="margin:0 0 6px;">You're about to send licenses for ${assigned} learner${assigned===1?'':'s'}:</p>
-          ${relevant.map(g=>`<div class="recap-row"><span class="name">${esc(entryLabel(g))} · ${esc(g.service)}</span><span class="count">${g.assignedIds.size} learner${g.assignedIds.size===1?'':'s'}</span></div>`).join('')}
+          ${recapRows}
           ${unassigned>0 ? `<div class="recap-warning">${unassigned} learner${unassigned===1?'':'s'} still not assigned — they'll stay in the list for later.</div>` : ''}
         </div>
         <div class="modal-foot">
@@ -2031,11 +2220,18 @@ function confirmSend(){
   renderSendSuccessModal(relevant, assigned);
 }
 function renderSendSuccessModal(relevant, assigned){
-  const detail = relevant.length <= 1
-    ? `<p>${assigned} learner${assigned===1?'':'s'} now ${assigned===1?'has':'have'} access to ${relevant[0] ? esc(entryLabel(relevant[0]))+' · '+esc(relevant[0].service) : 'their program'}.</p>`
-    : `<p>${assigned} learners now have access across ${relevant.length} programs:</p>
+  const cohortLines = relevant.flatMap(g=>{
+    const activeSections = g.dateSections.filter(ds=>ds.learnerIds.size>0);
+    if(activeSections.length <= 1){
+      return [`${esc(entryLabel(g))} · ${esc(g.service)} — ${g.assignedIds.size} learner${g.assignedIds.size===1?'':'s'}`];
+    }
+    return activeSections.map(ds=>`${esc(entryLabel(g))} · ${esc(g.service)} (${fmtDate(ds.startDate)}) — ${ds.learnerIds.size} learner${ds.learnerIds.size===1?'':'s'}`);
+  });
+  const detail = cohortLines.length <= 1
+    ? `<p>${assigned} learner${assigned===1?'':'s'} now ${assigned===1?'has':'have'} access to ${cohortLines[0] ? cohortLines[0].split(' — ')[0] : 'their program'}.</p>`
+    : `<p>${assigned} learners now have access, broken down as follows:</p>
        <ul style="text-align:left;list-style:none;padding:0;margin:0 0 8px;display:inline-block;">
-         ${relevant.map(g=>`<li style="font-size:13px;color:var(--text-secondary);padding:4px 0;">• ${esc(entryLabel(g))} · ${esc(g.service)} — ${g.assignedIds.size} learner${g.assignedIds.size===1?'':'s'}</li>`).join('')}
+         ${cohortLines.map(line=>`<li style="font-size:13px;color:var(--text-secondary);padding:4px 0;">• ${line}</li>`).join('')}
        </ul>`;
   document.getElementById('modalRoot').innerHTML = `
     <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
