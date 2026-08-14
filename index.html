@@ -47,9 +47,12 @@
   .topnav{
     background:var(--bg-white);
     box-shadow:var(--shadow-header);
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 24px;height:60px;flex:0 0 60px;
+    height:60px;flex:0 0 60px;
     position:relative;z-index:5;
+  }
+  .topnav-inner{
+    max-width:1332px;width:100%;margin:0 auto;height:100%;padding:0 24px;
+    display:flex;align-items:center;justify-content:space-between;
   }
   .topnav-left{display:flex;align-items:center;gap:28px;}
   .logo{font-size:20px;font-weight:700;color:var(--teal);letter-spacing:-0.3px;}
@@ -68,7 +71,7 @@
 
   /* ===== Page shell ===== */
   .page{
-    flex:1;max-width:1312px;width:100%;margin:0 auto;padding:32px 24px 100px;
+    flex:1;max-width:1332px;width:100%;margin:0 auto;padding:32px 24px 100px;
   }
   .breadcrumb{font-size:13px;color:var(--teal);font-weight:500;display:inline-flex;align-items:center;gap:4px;margin-bottom:8px;}
   .breadcrumb:hover{text-decoration:underline;}
@@ -189,6 +192,38 @@
   .list-card .chip-row::-webkit-scrollbar-thumb:hover{background:var(--text-disabled);}
 
   .bulk-placeholder{width:634px;padding:48px 40px;text-align:center;}
+
+  /* ===== Bulk import ===== */
+  .bulk-import-box{
+    border:1.5px dashed var(--border);border-radius:var(--radius-card);background:var(--bg-page);
+    padding:40px 32px;text-align:center;margin-top:8px;
+  }
+  .bulk-import-box h3{font-size:16px;margin-bottom:6px;}
+  .bulk-import-box p{font-size:13px;color:var(--text-secondary);margin:0;}
+  .bulk-summary{font-size:14px;font-weight:600;margin:4px 0 18px;}
+  .bulk-summary .ok{color:#2f9e56;}
+  .bulk-summary .warn{color:var(--text-error);}
+  .bulk-section-label{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin:0 0 10px;}
+  .bulk-section-label.warn{color:var(--text-error);}
+  .bulk-program-row{border:1px solid var(--border-light);border-radius:var(--radius-int);margin-bottom:8px;overflow:hidden;transition:border-color .12s,background .12s;}
+  .bulk-program-row.drop-hover{border-color:var(--teal);background:var(--bg-blue-light);}
+  #bulkFlaggedDropZone.drop-hover{border-color:var(--text-error);background:var(--bg-error);}
+  .bulk-program-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;}
+  .bulk-program-head:hover{background:var(--bg-page);}
+  .bulk-program-head .name{font-size:14px;font-weight:600;color:var(--navy);}
+  .bulk-program-learners{padding:0 16px 14px;display:flex;flex-wrap:wrap;gap:6px;}
+  .chevron{display:inline-block;transition:transform .15s;color:var(--text-secondary);}
+  .chevron.open{transform:rotate(180deg);}
+  .bulk-flag-row{
+    display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--border-light);border-radius:var(--radius-int);
+    margin-bottom:6px;cursor:pointer;
+  }
+  .bulk-flag-row.selected{background:var(--bg-blue-light);border-color:var(--teal);}
+  .bulk-flag-row .check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);flex:0 0 auto;margin-top:1px;display:flex;align-items:center;justify-content:center;}
+  .bulk-flag-row.selected .check{background:var(--teal);border-color:var(--teal);}
+  .bulk-flag-row .email{font-size:13px;font-weight:500;color:var(--navy);}
+  .bulk-flag-row.dragging{opacity:.4;}
+  .bulk-fix-panel{border-top:1px solid var(--border-light);margin-top:14px;padding-top:14px;}
   .bulk-placeholder svg{margin-bottom:16px;}
   .bulk-placeholder h3{font-size:16px;margin-bottom:8px;}
   .bulk-placeholder p{font-size:14px;color:var(--text-secondary);margin:0 0 20px;max-width:380px;margin-left:auto;margin-right:auto;}
@@ -235,10 +270,16 @@
   .info-box.error strong{color:var(--text-error);}
   .info-box.error p{font-size:13px;color:var(--text-secondary);margin:4px 0 0;}
 
+  .date-section{margin-top:16px;padding-top:16px;border-top:1px dashed var(--border-light);}
+  .date-section:first-of-type{margin-top:14px;}
   .date-row{
-    display:flex;align-items:center;justify-content:space-between;margin-top:12px;
-    background:var(--bg-page);border-radius:var(--radius-int);padding:10px 16px;font-size:14px;
+    display:inline-flex;align-items:center;gap:12px;margin-top:12px;
+    background:var(--bg-page);border-radius:var(--radius-int);padding:14px 16px;font-size:14px;
   }
+  .date-row-text{font-size:16px;font-weight:600;color:var(--navy);}
+  .date-row input[type=date]{width:150px;height:32px;flex:0 0 auto;}
+  .icon-btn{background:none;border:none;cursor:pointer;padding:4px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;}
+  .icon-btn:hover{background:var(--bg-blue-light);}
   .date-row input[type=date]{height:32px;width:170px;}
 
   .select-learners{margin-top:24px;}
@@ -275,9 +316,12 @@
   /* ===== Footer bar ===== */
   .widget-footer{
     background:var(--bg-white);border-top:1px solid var(--border);
-    padding:16px 24px;display:flex;align-items:center;justify-content:space-between;
     position:fixed;bottom:0;left:0;right:0;z-index:20;
     box-shadow:0 -2px 8px rgba(9,30,66,0.08);
+  }
+  .footer-inner{
+    max-width:1332px;width:100%;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;
   }
   .footer-right{display:flex;gap:10px;}
 
@@ -300,22 +344,23 @@
   .modal-body{padding:20px 24px;overflow-y:auto;}
   .modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
 
-  .catalog-group{margin-bottom:18px;}
-  .catalog-group-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:8px;}
-  .catalog-service-title{font-size:15px;font-weight:600;color:var(--navy);margin:18px 0 10px;}
+  .catalog-group{margin-bottom:22px;}
+  .catalog-group-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:10px;}
+  .catalog-service-title{font-size:15px;font-weight:600;color:var(--navy);margin:22px 0 12px;}
   .catalog-service-title:first-child{margin-top:0;}
   .funded-badge{font-size:10px;font-weight:700;letter-spacing:.02em;color:var(--teal);background:var(--bg-blue-light);padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
   .catalog-search{width:100%;height:40px;border:1px solid var(--border);border-radius:var(--radius-int);padding:0 12px;font-size:14px;outline:none;margin-bottom:18px;}
   .catalog-search:focus{border-color:var(--teal);}
-  .catalog-filters-row{display:flex;gap:28px;margin-bottom:16px;flex-wrap:wrap;}
+  .catalog-filters-row{display:flex;gap:32px;margin-bottom:20px;flex-wrap:wrap;align-items:flex-start;}
+  .catalog-filter-divider{width:1px;align-self:stretch;background:var(--border);margin:2px 0;}
   .catalog-row{
-    display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border-light);
-    border-radius:var(--radius-int);margin-bottom:8px;
+    display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border:1px solid var(--border-light);
+    border-radius:var(--radius-int);margin-bottom:10px;
   }
-  .catalog-row .name{font-size:14px;font-weight:500;color:var(--navy);}
+  .catalog-row .name{font-size:14px;font-weight:500;color:var(--navy);margin-bottom:4px;}
   .catalog-row .meta{font-size:12px;color:var(--text-secondary);}
   .catalog-row .meta.zero{color:var(--text-error);}
-  .catalog-row .pick{font-size:13px;font-weight:600;color:var(--teal);background:none;border:1px solid var(--teal);border-radius:6px;padding:5px 12px;cursor:pointer;}
+  .catalog-row .pick{font-size:13px;font-weight:600;color:var(--teal);background:none;border:1px solid var(--teal);border-radius:6px;padding:6px 14px;cursor:pointer;}
   .catalog-row .pick:hover{background:var(--bg-blue-light);}
   .catalog-row .pick:disabled{border-color:var(--border);color:var(--text-disabled);cursor:not-allowed;}
 
@@ -341,36 +386,37 @@
   .bulk-bar strong{font-weight:600;}
   .bulk-bar-actions{display:flex;align-items:center;gap:16px;}
 
-  .builder-wrap{display:flex;justify-content:center;gap:16px;align-items:flex-start;}
-  .learners-col{width:360px;flex:0 0 auto;position:sticky;top:24px;}
-  .groups-col{width:460px;display:flex;flex-direction:column;gap:14px;flex:0 0 auto;}
+  .builder-wrap{display:flex;gap:24px;align-items:flex-start;}
+  .learners-col{width:400px;flex:0 0 400px;position:sticky;top:24px;}
+  .groups-col{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:16px;}
 
   .group-card{
-    background:var(--bg-white);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:20px 22px;
+    background:var(--bg-white);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:26px 28px;
     border:2px dashed transparent;outline:none;transition:border-color .12s,background .12s;
   }
   .group-card.drop-hover{border-color:var(--teal);background:var(--bg-blue-light);}
-  .group-card .filter-group{margin-top:14px;}
+  .group-card .filter-group{margin-top:18px;}
+  .group-card select{max-width:360px;}
   .group-card .filter-group:first-of-type{margin-top:0;}
-  .group-avail-line{font-size:12px;color:var(--text-secondary);margin-top:10px;background:var(--bg-page);padding:7px 10px;border-radius:6px;}
+  .group-avail-line{font-size:12px;color:var(--text-secondary);margin-top:12px;background:var(--bg-page);padding:8px 12px;border-radius:6px;}
   .group-avail-line.error{color:var(--text-error);background:var(--bg-error);}
-  .group-chip-row{margin-top:12px;}
+  .group-chip-row{margin-top:14px;}
   .group-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .group-drop-hint{font-size:12px;color:var(--text-disabled);}
-  .group-card-actions{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
-  .group-card.collapsed{padding-bottom:16px;}
+  .group-card-actions{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .group-card.collapsed{padding-bottom:20px;}
   .empty-hint-card{
     background:var(--bg-blue-light);border:1px dashed var(--blue-100);border-radius:var(--radius-card);
-    padding:16px 18px;font-size:13px;color:var(--navy);margin-bottom:14px;line-height:1.5;
+    padding:18px 20px;font-size:13px;color:var(--navy);margin-bottom:16px;line-height:1.5;
   }
   .new-group-btn{
     border:1.5px dashed var(--border);border-radius:var(--radius-card);background:transparent;color:var(--teal);
-    font-size:14px;font-weight:600;padding:16px;cursor:pointer;text-align:center;
+    font-size:14px;font-weight:600;padding:18px;cursor:pointer;text-align:center;
   }
   .new-group-btn:hover{background:var(--bg-blue-light);border-color:var(--blue-100);}
 
-  .learners-card{padding:20px 22px;}
-  .learners-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+  .learners-card{padding:26px 28px;}
+  .learners-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
   .learner-count-line{font-size:12px;color:var(--text-secondary);margin-bottom:12px;}
 
   .learner-row{
@@ -409,27 +455,34 @@
   .add-modal-tabs .tab{background:none;border:none;padding:0 0 10px;font-size:14px;font-weight:600;color:var(--text-secondary);border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;}
   .add-modal-tabs .tab.active{color:var(--teal);border-bottom-color:var(--teal);}
   .add-modal-ready{margin-top:18px;padding-top:16px;border-top:1px solid var(--border-light);}
+  .chip.editing{background:var(--teal);color:#fff;}
+  .new-group-row{display:none;gap:8px;margin-top:8px;}
+  .new-group-row.active{display:flex;}
+  .new-group-row input{flex:1;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
 <div class="app">
   <div class="topnav">
-    <div class="topnav-left">
-      <span class="logo">ACME</span>
-      <span class="navlink">Analytics ▾</span>
-      <span class="navlink" style="color:var(--teal);font-weight:600;">Learners</span>
-    </div>
-    <div class="topnav-right">
-      <div class="org-switch">ACME Corporation
-        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#5d7682" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="topnav-inner">
+      <div class="topnav-left">
+        <span class="logo">ACME</span>
+        <span class="navlink" style="cursor:pointer;" onclick="guardNavigation('Analytics')">Analytics ▾</span>
+        <span class="navlink" style="color:var(--teal);font-weight:600;cursor:pointer;" onclick="guardNavigation('Learners')">Learners</span>
       </div>
-      <div class="avatar">AL</div>
+      <div class="topnav-right">
+        <div class="org-switch">ACME Corporation
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="#5d7682" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="avatar">AL</div>
+      </div>
     </div>
   </div>
 
   <div class="page">
-    <a class="breadcrumb">‹ Back to Learners</a>
+    <a class="breadcrumb" style="cursor:pointer;" onclick="guardNavigation('Learners')">‹ Back to Learners</a>
     <div class="toolbar-row">
       <div>
         <h1>Assign Licenses</h1>
@@ -487,7 +540,7 @@ function distinctSubjects(service, portfolio){
   CATALOG[service][portfolio].forEach(e=>{ if(!seen.has(e.subject)){ seen.add(e.subject); out.push(e.subject); } });
   return out;
 }
-const GROUPS = ['No Group Assigned','Marketing Team','Sales Team','Customer Success','Engineering'];
+let GROUPS = ['No Reporting Group Assigned','Marketing Team','Sales Team','Customer Success','Engineering'];
 
 /* =====================================================
    STATE
@@ -499,11 +552,15 @@ let learners = [];      // {id, email, firstName, lastName, group}
 let nextId = 1;
 let groups = [];        // {id, service, portfolio, entryId, subject, hours, funded, seats, start, end, startDate, assignedIds:Set}
 let nextGroupId = 1;
+let nextDateSectionId = 1;
 let selectedIds = new Set();   // checked rows in the Learners panel, for bulk actions
 let addModalOpen = false;
 let addModalTab = 'individual';
+let editingLearnerId = null; // set when a "ready" learner in the Add modal is clicked to edit
+let editOnlyMode = false; // true when opened to edit one specific learner (from the panel row) — no batch ready-list shown
 let pendingCardPickerGroupId = null; // set when "+ Add Learners" on a card redirects to the Add Learners modal (no learners exist yet)
 let bulkAssignState = null;    // cascade state for the "Assign Selected to a Program" modal
+let bulkAssignCheckedProgramIds = new Set(); // existing programs checked in that modal's checklist
 
 /* =====================================================
    HELPERS
@@ -522,6 +579,7 @@ function showToast(msg){
 }
 function iconCheck(color){ return `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6.2l2.8 2.8L10 3" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
 function iconX(color){ return `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1l-8 8" stroke="${color}" stroke-width="1.4" stroke-linecap="round"/></svg>`; }
+function iconPencil(color){ return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`; }
 
 /* ---- Seat accounting ---- */
 function remainingSeatsToAdd(entryId){
@@ -565,10 +623,16 @@ function toggleRowSelect(id){
   renderLearnersCol();
 }
 function clearSelection(){ selectedIds.clear(); renderLearnersCol(); }
+function purgeLearnerFromAllGroups(learnerId){
+  groups.forEach(g=>{
+    if(g.dateSections) g.dateSections.forEach(ds=>ds.learnerIds.delete(learnerId));
+    g.assignedIds.delete(learnerId);
+  });
+}
 function removeSelectedRows(){
   const n = selectedIds.size;
   learners = learners.filter(l=>!selectedIds.has(l.id));
-  groups.forEach(g=>selectedIds.forEach(id=>g.assignedIds.delete(id)));
+  selectedIds.forEach(id=>purgeLearnerFromAllGroups(id));
   selectedIds.clear();
   renderAll();
   showToast(`Removed ${n} learner${n===1?'':'s'}.`);
@@ -581,7 +645,7 @@ function removeSelectedRows(){
 function renderGroupsCol(){
   const col = document.getElementById('groupsCol');
   const heading = groups.length === 0
-    ? `<div class="empty-hint-card">Create a program here, then add learners to it — by dragging them in, using "+ Add Learners" on the card, or adding them from the Learners panel first.</div>`
+    ? `<div class="empty-hint-card">Create a program here to get started. Once it's set up, you can drag learners onto it, use its "Assign Learner to this Program" button, or add them from the Learners panel anytime.</div>`
     : '';
   col.innerHTML = `
     ${heading}
@@ -593,38 +657,52 @@ function renderGroupsCol(){
 function renderGroupCard(g){
   const resolved = !!g.entryId;
   const collapsed = resolved && !g.uiExpanded;
-  const chips = learners.filter(l=>g.assignedIds.has(l.id))
-    .map(l=>`<span class="chip removable" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)">${esc(l.email)} <span class="x" onclick="removeFromGroup('${g.id}',${l.id})">${iconX('#0276b1')}</span></span>`)
-    .join('');
 
   const headTitle = resolved
     ? `${esc(entryLabel(g))} · ${esc(g.service)}${g.funded?'<span class="funded-badge">FUNDED</span>':''}`
     : `Program ${groups.indexOf(g)+1}`;
 
   const head = `<div class="group-card-head">
-    <h3>${headTitle}</h3>
+    <div>
+      <h3>${headTitle}</h3>
+      ${!resolved ? `<button class="link-sm" style="margin-top:6px;" onclick="openCatalogModal('${g.id}')">See Everything Available →</button>` : ''}
+    </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      ${resolved ? `<button class="link-sm" onclick="toggleGroupExpanded('${g.id}')">${collapsed?'Change':'Done'}</button>` : ''}
       <button class="icon-btn" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);" title="Remove program" onclick="removeGroup('${g.id}')">${iconX('#5d7682')}</button>
     </div>
   </div>`;
 
   const picker = collapsed ? '' : renderGroupPicker(g);
   const availability = renderGroupAvailability(g);
-  const dateRow = renderGroupDateRow(g);
-  const roster = resolved ? `
-    <div class="group-chip-row chip-row">${chips || `<span class="muted" style="font-size:12px;">No one assigned yet.</span>`}</div>
-    <div class="group-card-actions">
-      <button class="btn btn-secondary btn-sm" onclick="openCardAddLearnersModal('${g.id}')">+ Add Learners</button>
-      <span class="group-drop-hint">or drag learners onto this card</span>
-    </div>` : '';
+  const sections = resolved ? g.dateSections.map(ds=>renderDateSection(g, ds)).join('') : '';
+  const duplicateBtn = resolved ? `<button class="link-sm" style="margin-top:12px;" onclick="duplicateDateSection('${g.id}')">+ Add Another Cohort (different start date)</button>` : '';
 
-  return `<div class="group-card ${collapsed?'collapsed':''}" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onGroupCardDrop(event,'${g.id}')">
+  return `<div class="group-card ${collapsed?'collapsed':''}">
     ${head}
     ${picker}
     ${availability}
-    ${dateRow}
-    ${roster}
+    ${sections}
+    ${duplicateBtn}
+  </div>`;
+}
+function renderDateSection(g, ds){
+  const chips = learners.filter(l=>ds.learnerIds.has(l.id))
+    .map(l=>`<span class="chip removable" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)">${esc(l.email)} <span class="x" onclick="removeFromDateSection('${g.id}','${ds.id}',${l.id})">${iconX('#0276b1')}</span></span>`)
+    .join('');
+  const canRemoveSection = g.dateSections.length > 1;
+  return `<div class="date-section" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onDateSectionDrop(event,'${g.id}','${ds.id}')">
+    <div class="date-row" id="dateRow-${ds.id}">
+      <span class="date-row-text">Starts ${fmtDate(ds.startDate)}</span>
+      <div style="display:flex;align-items:center;gap:2px;">
+        <button class="icon-btn" title="Change start date" onclick="toggleGroupDateEdit('${g.id}','${ds.id}')">${iconPencil('#0276b1')}</button>
+        ${canRemoveSection ? `<button class="icon-btn" title="Remove this cohort" onclick="removeDateSection('${g.id}','${ds.id}')">${iconX('#ca2b34')}</button>` : ''}
+      </div>
+    </div>
+    <div class="group-chip-row chip-row">${chips || `<span class="muted" style="font-size:12px;">No one assigned yet.</span>`}</div>
+    <div class="group-card-actions">
+      <button class="btn btn-secondary btn-sm" onclick="openCardAddLearnersModal('${g.id}','${ds.id}')">Assign Learner to this Program</button>
+      <span class="group-drop-hint">or drag learners onto this cohort</span>
+    </div>
   </div>`;
 }
 
@@ -633,10 +711,6 @@ function renderGroupPicker(g){
   const portfolios = g.service ? Object.keys(CATALOG[g.service]) : [];
   const subjectNames = (g.service && g.portfolio) ? distinctSubjects(g.service, g.portfolio) : [];
   return `
-    <div class="row-between" style="margin-bottom:2px;">
-      <span></span>
-      <button class="link-sm" onclick="openCatalogModal('${g.id}')">See Everything Available →</button>
-    </div>
     <div class="filter-group">
       <span class="filter-label">By Service</span>
       <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${g.service===s?'selected':''}" onclick="setGroupService('${g.id}','${s}')">${s}</span>`).join('')}</div>
@@ -676,30 +750,21 @@ function renderGroupAvailability(g){
   }
   return `<div class="group-avail-line">${remaining} seat${remaining===1?'':'s'} left · ${fmtDate(g.start)} – ${fmtDate(g.end)} · ${g.assignedIds.size} assigned</div>`;
 }
-function renderGroupDateRow(g){
-  if(!g.entryId) return '';
-  const remaining = remainingSeatsToAdd(g.entryId);
-  if(remaining <= 0 && g.assignedIds.size === 0) return '';
-  return `<div class="date-row" id="dateRow-${g.id}"><span>Starts ${fmtDate(g.startDate)}</span><button class="link-sm" onclick="toggleGroupDateEdit('${g.id}')">Change</button></div>`;
+function toggleGroupDateEdit(groupId, sectionId){
+  const g = groups.find(x=>x.id===groupId);
+  const ds = g.dateSections.find(s=>s.id===sectionId);
+  const row = document.getElementById('dateRow-'+sectionId);
+  row.innerHTML = `<input type="date" id="dateInput-${sectionId}" value="${ds.startDate}" min="${g.start}" max="${g.end}" />
+    <button class="icon-btn" title="Save" onclick="saveGroupDate('${groupId}','${sectionId}')">${iconCheck('#0276b1')}</button>`;
+  document.getElementById('dateInput-'+sectionId).focus();
 }
-function toggleGroupDateEdit(id){
-  const g = groups.find(x=>x.id===id);
-  const row = document.getElementById('dateRow-'+id);
-  row.innerHTML = `<input type="date" id="dateInput-${id}" value="${g.startDate}" min="${g.start}" max="${g.end}" /><button class="link-sm" onclick="saveGroupDate('${id}')">Save</button>`;
-  document.getElementById('dateInput-'+id).focus();
-}
-function saveGroupDate(id){
-  const g = groups.find(x=>x.id===id);
-  const val = document.getElementById('dateInput-'+id).value;
-  if(val) g.startDate = val;
+function saveGroupDate(groupId, sectionId){
+  const g = groups.find(x=>x.id===groupId);
+  const ds = g.dateSections.find(s=>s.id===sectionId);
+  const val = document.getElementById('dateInput-'+sectionId).value;
+  if(val) ds.startDate = val;
   renderGroupsCol(); renderFooter();
 }
-function toggleGroupExpanded(id){
-  const g = groups.find(x=>x.id===id);
-  g.uiExpanded = !g.uiExpanded;
-  renderGroupsCol(); renderFooter();
-}
-
 /* ---- "See Everything Available" — browse the full catalog and apply
    a pick directly to the card that opened it ---- */
 let catalogModalGroupId = null;
@@ -746,6 +811,7 @@ function renderCatalogModalShell(){
               <span class="filter-label">Service</span>
               <div class="chip-row">${services.map(s=>`<span class="chip chip-filter ${catalogFilters.services.has(s)?'selected':''}" onclick="toggleCatalogFilter('services','${s}')">${s}</span>`).join('')}</div>
             </div>
+            <div class="catalog-filter-divider"></div>
             <div>
               <span class="filter-label">Portfolio</span>
               <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${catalogFilters.portfolios.has(p)?'selected':''}" onclick="toggleCatalogFilter('portfolios','${esc(p)}')">${esc(p)}</span>`).join('')}</div>
@@ -807,8 +873,11 @@ function pickFromCatalog(entryId){
 }
 function closeCatalogModal(){ catalogModalGroupId = null; document.getElementById('modalRoot').innerHTML = ''; }
 
+function makeDateSection(startDate){
+  return { id:'d'+(nextDateSectionId++), startDate, learnerIds:new Set() };
+}
 function addGroup(){
-  groups.push({ id:'g'+(nextGroupId++), service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, startDate:null, assignedIds:new Set(), uiExpanded:true });
+  groups.push({ id:'g'+(nextGroupId++), service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, seats:null, start:null, end:null, assignedIds:new Set(), dateSections:[], uiExpanded:true });
   renderGroupsCol(); renderFooter();
 }
 function removeGroup(id){
@@ -819,46 +888,45 @@ function clearGroupAssignmentsIfAny(g, reason){
   if(g.assignedIds.size > 0){
     const n = g.assignedIds.size;
     g.assignedIds.clear();
+    if(g.dateSections) g.dateSections.forEach(ds=>ds.learnerIds.clear());
     showToast(`Cleared ${n} learner${n===1?'':'s'} from this card — ${reason}.`);
   }
 }
 function setGroupService(id,s){
   const g = groups.find(x=>x.id===id);
   clearGroupAssignmentsIfAny(g, 'program changed');
-  g.service=s; g.portfolio=null; g.subjectName=null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false;
+  g.service=s; g.portfolio=null; g.subjectName=null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false; g.dateSections=[];
   renderGroupsCol(); renderFooter();
 }
 function setGroupPortfolio(id,p){
   const g = groups.find(x=>x.id===id);
   clearGroupAssignmentsIfAny(g, 'program changed');
-  g.portfolio=p; g.subjectName=null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false;
+  g.portfolio=p; g.subjectName=null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false; g.dateSections=[];
   renderGroupsCol(); renderFooter();
 }
 function resolveGroupEntry(g, entry){
-  // If this card previously pointed at a different program, release those seats —
-  // switching what a card is FOR shouldn't silently carry old assignments into the new one.
+  // If another card already represents this exact program, fold into it — one card
+  // per program, with cohorts (different start dates) living inside via "+ Add Another Cohort".
+  const existing = groups.find(x=>x.id!==g.id && x.entryId===entry.id);
+  if(existing){
+    groups = groups.filter(x=>x.id!==g.id);
+    existing.uiExpanded = false;
+    showToast(`${entryLabel(entry)} · ${entry.service} is already set up above — use "+ Add Another Cohort" on that card for a different start date.`);
+    return;
+  }
   if(g.entryId && g.entryId !== entry.id){
     clearGroupAssignmentsIfAny(g, 'program changed');
   }
-  // If another card already resolved to this exact program, merge into it
-  // instead of creating a second card for the same English · Digital, etc.
-  const existing = groups.find(x=>x.id!==g.id && x.entryId===entry.id);
-  if(existing){
-    g.assignedIds.forEach(id=>existing.assignedIds.add(id));
-    groups = groups.filter(x=>x.id!==g.id);
-    existing.uiExpanded = false;
-    showToast(`${entryLabel(entry)} · ${entry.service} is already set up above — merged into that card.`);
-    return;
-  }
+  const candidateStartDate = todayISO() > entry.start ? todayISO() : entry.start;
   g.entryId=entry.id; g.subject=entry.subject; g.hours=entry.hours; g.funded=!!entry.funded;
   g.seats=entry.seats; g.start=entry.start; g.end=entry.end;
-  g.startDate = todayISO() > entry.start ? todayISO() : entry.start;
+  g.dateSections = [ makeDateSection(candidateStartDate) ];
   g.uiExpanded = false;
 }
 function setGroupSubjectName(id,name){
   const g = groups.find(x=>x.id===id);
   clearGroupAssignmentsIfAny(g, 'program changed');
-  g.subjectName = name || null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false;
+  g.subjectName = name || null; g.entryId=null; g.subject=null; g.hours=null; g.funded=false; g.dateSections=[];
   if(name){
     const entries = getEntriesFor(g.service, g.portfolio, name);
     if(entries.length === 1) resolveGroupEntry(g, entries[0]);
@@ -872,35 +940,78 @@ function setGroupHours(id,hours){
   if(entry) resolveGroupEntry(g, entry);
   renderGroupsCol(); renderFooter();
 }
+function duplicateDateSection(groupId){
+  const g = groups.find(x=>x.id===groupId);
+  if(!g || !g.entryId) return;
+  const last = g.dateSections[g.dateSections.length-1];
+  g.dateSections.push(makeDateSection(last ? last.startDate : g.start));
+  renderGroupsCol(); renderFooter();
+}
+function removeDateSection(groupId, sectionId){
+  const g = groups.find(x=>x.id===groupId);
+  if(!g || g.dateSections.length <= 1) return;
+  const ds = g.dateSections.find(s=>s.id===sectionId);
+  if(ds) ds.learnerIds.forEach(id=>g.assignedIds.delete(id));
+  g.dateSections = g.dateSections.filter(s=>s.id!==sectionId);
+  renderGroupsCol(); renderFooter();
+}
+function removeFromDateSection(groupId, sectionId, learnerId){
+  const g = groups.find(x=>x.id===groupId);
+  if(!g) return;
+  const ds = g.dateSections.find(s=>s.id===sectionId);
+  if(ds) ds.learnerIds.delete(learnerId);
+  g.assignedIds.delete(learnerId);
+  renderAll();
+}
 function removeFromGroup(groupId, learnerId){
   const g = groups.find(x=>x.id===groupId);
-  if(g) g.assignedIds.delete(learnerId);
+  if(g){
+    if(g.dateSections) g.dateSections.forEach(ds=>ds.learnerIds.delete(learnerId));
+    g.assignedIds.delete(learnerId);
+  }
   renderAll();
 }
 
 /* ---- Per-card "+ Add Learners" picker — the click-based alternative to dragging ---- */
 let cardAddModalState = null; // {groupId, selected:Set}
-function openCardAddLearnersModal(groupId){
+function openNoLearnersModal(groupId){
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
+      <div class="modal" style="width:420px;">
+        <div class="modal-head"><h3>No Learners Yet</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0;">You need to add learners to your list before you can assign them to a program. Use "+ Add Learners" in the Learners panel, then come back here to assign them to this program.</p>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeGenericModal()">Got It</button>
+          <button class="btn btn-primary" onclick="closeGenericModal(); pendingCardPickerGroupId='${groupId}'; openAddLearnersModal();">+ Add Learners</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function openCardAddLearnersModal(groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
   if(!g) return;
   const available = learners.filter(l=>!g.assignedIds.has(l.id));
   if(available.length === 0){
     if(learners.length === 0){
-      pendingCardPickerGroupId = groupId;
-      openAddLearnersModal();
+      openNoLearnersModal(groupId);
     } else {
       showToast('Everyone added is already in this program.');
     }
     return;
   }
-  cardAddModalState = { groupId, selected: new Set() };
+  cardAddModalState = { groupId, sectionId, selected: new Set() };
   renderCardAddLearnersModal();
 }
 function renderCardAddLearnersModal(){
   const s = cardAddModalState;
   const g = groups.find(x=>x.id===s.groupId);
+  const ds = g.dateSections.find(x=>x.id===s.sectionId);
   const available = learners.filter(l=>!g.assignedIds.has(l.id));
   const remaining = remainingSeatsToAdd(g.entryId);
+  const allSelected = available.length > 0 && available.every(l=>s.selected.has(l.id));
 
   const rows = available.map(l=>{
     const sel = s.selected.has(l.id);
@@ -917,9 +1028,12 @@ function renderCardAddLearnersModal(){
   document.getElementById('modalRoot').innerHTML = `
     <div class="modal-overlay" onclick="if(event.target===this) closeCardAddLearnersModal()">
       <div class="modal">
-        <div class="modal-head"><h3>Add Learners to ${esc(entryLabel(g))}</h3><button class="modal-close" onclick="closeCardAddLearnersModal()">✕</button></div>
+        <div class="modal-head"><h3>Add Learners to ${esc(entryLabel(g))}${ds?` · ${fmtDate(ds.startDate)}`:''}</h3><button class="modal-close" onclick="closeCardAddLearnersModal()">✕</button></div>
         <div class="modal-body">
-          <div class="seat-counter">${s.selected.size} of ${remaining} seat${remaining===1?'':'s'} selected</div>
+          <div class="row-between" style="margin-bottom:6px;">
+            <div class="seat-counter" style="margin:0;">${s.selected.size} of ${remaining} seat${remaining===1?'':'s'} selected</div>
+            <button class="link-sm" onclick="toggleCardAddSelectAll()">${allSelected?'Clear':'Select All'}</button>
+          </div>
           <div class="roster-list">${rows}</div>
         </div>
         <div class="modal-foot">
@@ -938,12 +1052,27 @@ function toggleCardAddSelect(id){
   else { if(s.selected.size >= remaining) return; s.selected.add(id); }
   renderCardAddLearnersModal();
 }
+function toggleCardAddSelectAll(){
+  const s = cardAddModalState;
+  const g = groups.find(x=>x.id===s.groupId);
+  const remaining = remainingSeatsToAdd(g.entryId);
+  const available = learners.filter(l=>!g.assignedIds.has(l.id));
+  const allSelected = available.length > 0 && available.every(l=>s.selected.has(l.id));
+  if(allSelected){
+    s.selected = new Set();
+  } else {
+    s.selected = new Set(available.slice(0, remaining).map(l=>l.id));
+    if(available.length > remaining) showToast(`Only ${remaining} seat${remaining===1?'':'s'} available — ${available.length-remaining} left unselected.`);
+  }
+  renderCardAddLearnersModal();
+}
 function confirmCardAddLearners(){
   const s = cardAddModalState;
   const g = groups.find(x=>x.id===s.groupId);
+  const ds = g.dateSections.find(x=>x.id===s.sectionId) || g.dateSections[0];
   const groupId = s.groupId;
-  s.selected.forEach(id=>g.assignedIds.add(id));
-  showToast(`Added ${s.selected.size} learner${s.selected.size===1?'':'s'} to ${entryLabel(g)} · ${g.service}.`);
+  s.selected.forEach(id=>{ g.assignedIds.add(id); if(ds) ds.learnerIds.add(id); });
+  showToast(`Added ${s.selected.size} learner${s.selected.size===1?'':'s'} to ${entryLabel(g)} · ${g.service}${ds?` (${fmtDate(ds.startDate)})`:''}.`);
   closeCardAddLearnersModal();
   renderAll();
 
@@ -992,16 +1121,16 @@ function renderLearnerRow(l){
   const badges = progs.map(g=>`<span class="assign-badge">${esc(entryLabel(g))} · ${esc(g.service)}<span class="x" onclick="event.stopPropagation();removeFromGroup('${g.id}',${l.id})">${iconX('#0276b1')}</span></span>`).join('');
   return `<div class="learner-row" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)">
     <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation()" onchange="toggleRowSelect(${l.id})" />
-    <div class="learner-row-body">
+    <div class="learner-row-body" style="cursor:pointer;" title="Click to edit" onclick="openAddLearnersModalForEdit(${l.id})">
       <div class="l-email">${esc(l.email)}</div>
       ${badges ? `<div class="l-badges">${badges}</div>` : `<div class="l-unassigned">Not assigned yet</div>`}
     </div>
-    <span class="learner-remove" title="Remove learner" onclick="removeLearnerEverywhere(${l.id})">${iconX('#5d7682')}</span>
+    <span class="learner-remove" title="Remove learner" onclick="event.stopPropagation(); removeLearnerEverywhere(${l.id})">${iconX('#5d7682')}</span>
   </div>`;
 }
 function removeLearnerEverywhere(id){
   learners = learners.filter(l=>l.id!==id);
-  groups.forEach(g=>g.assignedIds.delete(id));
+  purgeLearnerFromAllGroups(id);
   selectedIds.delete(id);
   renderAll();
 }
@@ -1025,26 +1154,32 @@ function onLearnersListDragOver(e){ e.preventDefault(); e.currentTarget.classLis
 function onLearnersListDragLeave(e){ e.currentTarget.classList.remove('drop-hover'); }
 function onLearnersListDrop(e){ e.preventDefault(); e.currentTarget.classList.remove('drop-hover'); } // dropping back on the roster is a no-op
 
-function onGroupCardDrop(e, targetGroupId){
+function onDateSectionDrop(e, groupId, sectionId){
   e.preventDefault();
   e.currentTarget.classList.remove('drop-hover');
   let ids = [];
   try { ids = JSON.parse(e.dataTransfer.getData('text/plain')); } catch(err) { return; }
   if(!Array.isArray(ids) || ids.length === 0) return;
 
-  const group = groups.find(g=>g.id===targetGroupId);
+  const group = groups.find(g=>g.id===groupId);
   if(!group || !group.entryId){ showToast('Choose a program for this card first.'); return; }
+  const ds = group.dateSections.find(s=>s.id===sectionId);
+  if(!ds) return;
 
   const remaining = remainingSeatsToAdd(group.entryId);
-  let added = 0, already = 0, capped = 0;
+  let added = 0, moved = 0, already = 0, capped = 0;
   for(const id of ids){
-    if(group.assignedIds.has(id)){ already++; continue; }
-    if(added >= remaining){ capped++; continue; }
-    group.assignedIds.add(id); added++;
+    if(ds.learnerIds.has(id)){ already++; continue; }
+    const alreadyInGroup = group.assignedIds.has(id);
+    if(!alreadyInGroup && added >= remaining){ capped++; continue; }
+    group.dateSections.forEach(other=>{ if(other!==ds) other.learnerIds.delete(id); });
+    ds.learnerIds.add(id);
+    if(alreadyInGroup){ moved++; } else { group.assignedIds.add(id); added++; }
   }
-  if(added > 0) showToast(`Added ${added} learner${added===1?'':'s'} to ${entryLabel(group)} · ${group.service}.`);
+  if(added > 0) showToast(`Added ${added} learner${added===1?'':'s'} to ${entryLabel(group)} · ${group.service} (${fmtDate(ds.startDate)}).`);
+  if(moved > 0) showToast(`Moved ${moved} learner${moved===1?'':'s'} to this cohort.`);
   if(capped > 0) showToast(`${capped} learner${capped===1?'':'s'} left out — no seats left.`);
-  else if(added === 0 && already > 0) showToast('Already assigned to this program.');
+  else if(added === 0 && moved === 0 && already > 0) showToast('Already in this cohort.');
   renderAll();
 }
 
@@ -1052,11 +1187,18 @@ function onGroupCardDrop(e, targetGroupId){
    ADD LEARNERS MODAL
 ===================================================== */
 function openAddLearnersModal(){
-  addModalOpen = true; addModalTab = 'individual';
+  addModalOpen = true; addModalTab = 'individual'; editOnlyMode = false;
+  renderAddLearnersModal();
+}
+function openAddLearnersModalForEdit(id){
+  addModalOpen = true; addModalTab = 'individual'; editOnlyMode = true;
+  editingLearnerId = id;
   renderAddLearnersModal();
 }
 function closeAddLearnersModal(){
   addModalOpen = false;
+  editingLearnerId = null;
+  editOnlyMode = false;
   document.getElementById('modalRoot').innerHTML = '';
   renderLearnersCol(); renderFooter();
   if(pendingCardPickerGroupId){
@@ -1070,67 +1212,130 @@ function closeAddLearnersModal(){
 }
 function setAddModalTab(tab){ addModalTab = tab; renderAddLearnersModal(); }
 function renderAddLearnersModal(){
+  const showingResults = addModalTab === 'bulk' && bulkImportState;
+  const showTabs = !showingResults && !editingLearnerId;
+  const showIndividualFooter = !showingResults && addModalTab==='individual' && !editingLearnerId;
   document.getElementById('modalRoot').innerHTML = `
     <div class="modal-overlay" onclick="if(event.target===this) closeAddLearnersModal()">
-      <div class="modal" style="width:640px;">
-        <div class="modal-head"><h3>Add Learners</h3><button class="modal-close" onclick="closeAddLearnersModal()">✕</button></div>
+      <div class="modal" style="width:${showingResults?'960px':'640px'};max-height:${showingResults?'86vh':'80vh'};">
+        <div class="modal-head"><h3>${showingResults?'Bulk Import Results':(editingLearnerId?'Edit Learner':'Add Learners')}</h3><button class="modal-close" onclick="closeAddLearnersModal()">✕</button></div>
         <div class="modal-body">
-          <div class="add-modal-tabs">
+          ${showTabs ? `<div class="add-modal-tabs">
             <button class="tab ${addModalTab==='individual'?'active':''}" onclick="setAddModalTab('individual')">Add Individually</button>
             <button class="tab ${addModalTab==='bulk'?'active':''}" onclick="setAddModalTab('bulk')">Bulk Import (Excel)</button>
-          </div>
+          </div>` : ''}
           ${addModalTab==='individual' ? renderAddModalIndividual() : renderAddModalBulk()}
         </div>
-        <div class="modal-foot"><button class="btn btn-primary" ${learners.length===0?'disabled':''} onclick="closeAddLearnersModal()" ${learners.length===0?'title="Add at least one learner first"':''}>Done</button></div>
+        ${showingResults ? `<div class="modal-foot">${renderBulkResultsFooter()}</div>` : ''}
+        ${showIndividualFooter ? `<div class="modal-foot">${renderAddModalFooter()}</div>` : ''}
       </div>
     </div>
   `;
   if(addModalTab==='individual'){ bindAddModalForm(); }
 }
+function renderAddModalFooter(){
+  return `<button class="btn btn-primary btn-sm" onclick="closeAddLearnersModal()">Done</button>`;
+}
 function renderAddModalIndividual(){
+  const editing = editingLearnerId ? learners.find(l=>l.id===editingLearnerId) : null;
   return `
     <label>email <span class="req">*</span></label>
-    <input id="amEmail" type="email" placeholder="email" class="field-gap" />
+    <input id="amEmail" type="email" placeholder="email" class="field-gap" value="${editing?esc(editing.email):''}" />
     <div class="field-error" id="amEmailError">Enter a valid email address.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>First Name</label><input id="amFirst" type="text" placeholder="First Name" /></div>
-      <div><label>Last Name</label><input id="amLast" type="text" placeholder="Last Name" /></div>
+      <div><label>First Name</label><input id="amFirst" type="text" placeholder="First Name" value="${editing?esc(editing.firstName):''}" /></div>
+      <div><label>Last Name</label><input id="amLast" type="text" placeholder="Last Name" value="${editing?esc(editing.lastName):''}" /></div>
     </div>
     <div class="field-gap" style="margin-top:14px;">
-      <label>Group</label>
-      <select id="amGroup">${GROUPS.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('')}</select>
+      <label>Reporting Group</label>
+      <select id="amGroup" onchange="onGroupSelectChange(this.value)">
+        ${GROUPS.map(g=>`<option value="${esc(g)}" ${editing&&editing.group===g?'selected':''}>${esc(g)}</option>`).join('')}
+        <option value="__new_group__">+ Create New Reporting Group</option>
+      </select>
+      <div id="newGroupRow" class="new-group-row">
+        <input type="text" id="newGroupInput" placeholder="New reporting group name" />
+        <button class="btn btn-secondary btn-sm" onclick="confirmNewGroup()">Add</button>
+        <button class="link-sm" onclick="cancelNewGroup()">Cancel</button>
+      </div>
     </div>
-    <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="addLearnerFromModal()">Add To List
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      ${editing ? `
+        <button class="btn btn-primary btn-sm" onclick="saveLearnerEdits()">Save Changes</button>
+        <button class="btn btn-secondary btn-sm" onclick="cancelEditLearner()">Cancel</button>
+      ` : `
+        <button class="btn btn-primary btn-sm" onclick="addLearnerFromModal()">Add Learner
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      `}
+    </div>
+    ${!editOnlyMode ? `
     <div class="add-modal-ready">
       <div class="row-between" style="margin-bottom:10px;">
         <strong style="font-size:13px;">${learners.length} learner${learners.length===1?'':'s'} ready</strong>
+        ${editing ? `<span class="muted" style="font-size:12px;">Editing ${esc(editing.email)}</span>` : (learners.length>0 ? `<span class="muted" style="font-size:12px;">Click one to edit</span>` : '')}
       </div>
       <div class="chip-row" style="max-height:180px;overflow-y:auto;">
         ${learners.length===0
           ? `<span class="empty-hint">Learners you add will show up here.</span>`
-          : learners.map(l=>`<span class="chip removable">${esc(l.email)} <span class="x" onclick="removeLearnerFromModal(${l.id})">${iconX('#0276b1')}</span></span>`).join('')}
+          : learners.map(l=>`<span class="chip removable ${editingLearnerId===l.id?'editing':''}" style="cursor:pointer;" title="Click to edit" onclick="startEditLearner(${l.id})">${esc(l.email)} <span class="x" onclick="event.stopPropagation(); removeLearnerFromModal(${l.id})">${iconX(editingLearnerId===l.id?'#fff':'#0276b1')}</span></span>`).join('')}
       </div>
-    </div>
+    </div>` : ''}
   `;
 }
 function renderAddModalBulk(){
+  if(!bulkImportState) return renderBulkUploadPrompt();
+  return renderBulkImportResults();
+}
+function renderBulkUploadPrompt(){
   return `
-    <div class="bulk-placeholder" style="width:auto;">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4l-4 4M12 4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="#b3bec4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <h3>Bulk import is coming soon</h3>
-      <p>For now, add your learners one at a time from the Add Individually tab. We'll let you know as soon as Excel import is ready.</p>
-      <button class="btn btn-secondary btn-sm" onclick="setAddModalTab('individual')">Add Individually instead</button>
+    <p class="muted" style="margin:0 0 4px;">Download the template, fill in as many learners and programs as you like, then upload it — you'll review and fix anything before it's sent.</p>
+    <div class="bulk-import-box">
+      <h3>Bulk import</h3>
+      <p>Download the template, fill it in, then upload it here.</p>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:18px;">
+        <button class="btn btn-secondary" onclick="downloadBulkTemplate()">Download template</button>
+        <button class="btn btn-primary" onclick="document.getElementById('bulkFileInput').click()">Upload completed file</button>
+      </div>
+      <input type="file" id="bulkFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleBulkFileUpload(event)" />
     </div>
   `;
 }
 function bindAddModalForm(){
   const emailInput = document.getElementById('amEmail');
-  emailInput.addEventListener('keydown', e => { if(e.key==='Enter') addLearnerFromModal(); });
+  emailInput.addEventListener('keydown', e => {
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('amFirst').focus(); }
+  });
   emailInput.addEventListener('input', ()=>{ emailInput.classList.remove('invalid'); document.getElementById('amEmailError').classList.remove('show'); });
   emailInput.focus();
 }
+
+/* ---- Inline "create new reporting group" from the Reporting Group dropdown ---- */
+function onGroupSelectChange(val){
+  const row = document.getElementById('newGroupRow');
+  if(val === '__new_group__'){
+    row.classList.add('active');
+    document.getElementById('newGroupInput').focus();
+  } else {
+    row.classList.remove('active');
+  }
+}
+function confirmNewGroup(){
+  const input = document.getElementById('newGroupInput');
+  const name = input.value.trim();
+  if(!name){ input.focus(); return; }
+  if(!GROUPS.includes(name)) GROUPS.push(name);
+  const select = document.getElementById('amGroup');
+  select.innerHTML = GROUPS.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('') + `<option value="__new_group__">+ Create New Reporting Group</option>`;
+  select.value = name;
+  document.getElementById('newGroupRow').classList.remove('active');
+  input.value = '';
+  showToast(`Added "${name}" as a reporting group.`);
+}
+function cancelNewGroup(){
+  document.getElementById('newGroupRow').classList.remove('active');
+  document.getElementById('amGroup').value = GROUPS[0];
+}
+
 function addLearnerFromModal(){
   const emailInput = document.getElementById('amEmail');
   const email = emailInput.value.trim();
@@ -1155,12 +1360,470 @@ function addLearnerFromModal(){
   renderLearnersCol(); renderFooter();
   document.getElementById('amEmail').focus();
 }
+function startEditLearner(id){
+  editingLearnerId = id;
+  renderAddLearnersModal();
+  document.getElementById('amEmail').focus();
+}
 function removeLearnerFromModal(id){
   learners = learners.filter(l=>l.id!==id);
-  groups.forEach(g=>g.assignedIds.delete(id));
+  purgeLearnerFromAllGroups(id);
   selectedIds.delete(id);
+  if(editingLearnerId===id) editingLearnerId=null;
   renderAddLearnersModal();
   renderLearnersCol(); renderFooter();
+}
+function cancelEditLearner(){
+  editingLearnerId = null;
+  if(editOnlyMode){ closeAddLearnersModal(); return; }
+  renderAddLearnersModal();
+  document.getElementById('amEmail').focus();
+}
+function saveLearnerEdits(){
+  const l = learners.find(x=>x.id===editingLearnerId);
+  if(!l){ editingLearnerId=null; if(editOnlyMode){ closeAddLearnersModal(); } else { renderAddLearnersModal(); } return; }
+  const emailInput = document.getElementById('amEmail');
+  const email = emailInput.value.trim();
+  const errEl = document.getElementById('amEmailError');
+  if(!email || !emailValid(email)){
+    emailInput.classList.add('invalid');
+    errEl.textContent = !email ? 'Email is required.' : 'Enter a valid email address.';
+    errEl.classList.add('show'); emailInput.focus(); return;
+  }
+  if(learners.some(x=>x.id!==l.id && x.email.toLowerCase()===email.toLowerCase())){
+    emailInput.classList.add('invalid');
+    errEl.textContent = 'Another learner already has this email.';
+    errEl.classList.add('show'); emailInput.focus(); return;
+  }
+  l.email = email;
+  l.firstName = document.getElementById('amFirst').value.trim();
+  l.lastName = document.getElementById('amLast').value.trim();
+  l.group = document.getElementById('amGroup').value;
+  editingLearnerId = null;
+  if(editOnlyMode){
+    closeAddLearnersModal();
+  } else {
+    renderAddLearnersModal();
+    renderLearnersCol(); renderFooter();
+    document.getElementById('amEmail').focus();
+  }
+  showToast('Learner updated.');
+}
+
+/* =====================================================
+   BULK IMPORT (Excel) — download a template, upload it back,
+   review matches and fix flagged rows, then commit.
+===================================================== */
+let bulkImportState = null;       // {fileName, rows:[{id,email,firstName,lastName,group,reqService,reqPortfolio,reqSubject,reqHours,matchedEntryId,startDate,issue,discarded}]}
+let bulkFlaggedSelection = new Set();
+let bulkExpandedPrograms = new Set();
+let bulkFixState = null;
+
+function downloadBulkTemplate(){
+  const header = ['Email (required)','First Name (optional)','Last Name (optional)','Reporting Group (optional)','Service (optional)','Category (optional)','Subject (optional)','Hours (optional)','Start Date (optional)'];
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.aoa_to_sheet([header]);
+  ws1['!cols'] = [{wch:26},{wch:16},{wch:16},{wch:18},{wch:10},{wch:14},{wch:30},{wch:10},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'Learner Import');
+
+  const progHeader = ['Service','Category','Subject','Hours','Funded','Seats Available','Start Date','End Date'];
+  const progRows = getAllEntries().map(e=>[e.service, e.portfolio, e.subject, e.hours||'N/A', e.funded?'Yes':'No', remainingSeatsToAdd(e.id), fmtDate(e.start), fmtDate(e.end)]);
+  const ws2 = XLSX.utils.aoa_to_sheet([progHeader, ...progRows]);
+  ws2['!cols'] = [{wch:10},{wch:14},{wch:30},{wch:8},{wch:8},{wch:16},{wch:12},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Available Programs');
+
+  XLSX.writeFile(wb, 'learner-import-template.xlsx');
+}
+
+function toISODate(val){
+  if(val instanceof Date && !isNaN(val)) return val.toISOString().slice(0,10);
+  if(typeof val === 'string' && val.trim()){
+    const d = new Date(val);
+    if(!isNaN(d)) return d.toISOString().slice(0,10);
+  }
+  return null;
+}
+function mapBulkHeaders(headerRow){
+  const idx = { email:0, first:1, last:2, group:3, service:4, portfolio:5, subject:6, hours:7, start:8 };
+  (headerRow||[]).forEach((h,i)=>{
+    const s = String(h||'').toLowerCase();
+    if(s.includes('email')) idx.email=i;
+    else if(s.includes('first')) idx.first=i;
+    else if(s.includes('last')) idx.last=i;
+    else if(s.includes('group')) idx.group=i;
+    else if(s.includes('service')) idx.service=i;
+    else if(s.includes('categ')) idx.portfolio=i;
+    else if(s.includes('subject')) idx.subject=i;
+    else if(s.includes('hour')) idx.hours=i;
+    else if(s.includes('start')) idx.start=i;
+  });
+  return idx;
+}
+function parseBulkRows(dataRows, idx){
+  const seenEmails = new Set();
+  const entryTally = {};
+  const out = [];
+  let rowId = 1;
+  dataRows.forEach(row=>{
+    const email = String(row[idx.email]||'').trim();
+    if(!email) return; // blank row
+    const firstName = String(row[idx.first]||'').trim();
+    const lastName = String(row[idx.last]||'').trim();
+    const group = String(row[idx.group]||'').trim() || GROUPS[0];
+    const reqService = String(row[idx.service]||'').trim();
+    const reqPortfolio = String(row[idx.portfolio]||'').trim();
+    const reqSubject = String(row[idx.subject]||'').trim();
+    const reqHoursRaw = row[idx.hours];
+    const reqHours = (reqHoursRaw===''||reqHoursRaw==null||String(reqHoursRaw).toUpperCase()==='N/A') ? null : Number(reqHoursRaw);
+    const reqStartRaw = row[idx.start];
+
+    const r = { id: rowId++, email, firstName, lastName, group, reqService, reqPortfolio, reqSubject, reqHours,
+      matchedEntryId:null, startDate:null, issue:null, discarded:false };
+
+    if(!emailValid(email)){ r.issue = 'Invalid email address.'; out.push(r); return; }
+    const emailKey = email.toLowerCase();
+    if(seenEmails.has(emailKey)){ r.issue = 'Duplicate email in this file.'; out.push(r); return; }
+    seenEmails.add(emailKey);
+    if(learners.some(l=>l.email.toLowerCase()===emailKey)){ r.issue = 'Already in your learner list.'; out.push(r); return; }
+
+    if(!reqService && !reqPortfolio && !reqSubject){
+      r.issue = 'No program requested for this row.';
+      out.push(r); return;
+    }
+
+    const candidates = (CATALOG[reqService] && CATALOG[reqService][reqPortfolio])
+      ? CATALOG[reqService][reqPortfolio].filter(e=>e.subject.toLowerCase()===reqSubject.toLowerCase())
+      : [];
+    let entry = candidates.length === 1 ? candidates[0] : (candidates.length > 1 ? candidates.find(e=>e.hours===reqHours) : null);
+
+    if(!entry){
+      const label = `${reqService||'—'} / ${reqPortfolio||'—'} / ${reqSubject||'—'} / ${reqHours||'—'}`;
+      r.issue = `No matching program found for "${label}".`;
+      out.push(r); return;
+    }
+
+    let startDate = todayISO() > entry.start ? todayISO() : entry.start;
+    if(reqStartRaw){
+      const iso = toISODate(reqStartRaw);
+      if(iso && iso >= entry.start && iso <= entry.end){ startDate = iso; }
+      else { r.issue = `Start date is outside ${entry.subject}'s active window.`; out.push(r); return; }
+    }
+
+    const availableBefore = remainingSeatsToAdd(entry.id);
+    const claimed = entryTally[entry.id] || 0;
+    if(claimed >= availableBefore){
+      r.issue = `"${entry.subject}" (${reqService}) has no seats left.`;
+      out.push(r); return;
+    }
+    entryTally[entry.id] = claimed + 1;
+    r.matchedEntryId = entry.id;
+    r.startDate = startDate;
+    out.push(r);
+  });
+  return out;
+}
+async function handleBulkFileUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type:'array', cellDates:true });
+    const sheetName = wb.SheetNames.includes('Learner Import') ? 'Learner Import' : wb.SheetNames[0];
+    const ws = wb.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+    if(rows.length < 2){ showToast('No learner rows found in that file.'); e.target.value=''; return; }
+    const idx = mapBulkHeaders(rows[0]);
+    const parsed = parseBulkRows(rows.slice(1), idx);
+    if(parsed.length === 0){ showToast('No learner rows found in that file.'); e.target.value=''; return; }
+    bulkImportState = { fileName: file.name, rows: parsed };
+    bulkFlaggedSelection = new Set();
+    bulkExpandedPrograms = new Set();
+    bulkFixState = null;
+    renderAddLearnersModal();
+  } catch(err){
+    showToast('Could not read that file — please check it\u2019s a valid .xlsx export of the template.');
+  }
+  e.target.value = '';
+}
+
+function bulkSeatsUsedInImport(entryId, excludeIds){
+  const ex = new Set(excludeIds||[]);
+  return bulkImportState.rows.filter(r=>!r.discarded && r.matchedEntryId===entryId && !ex.has(r.id)).length;
+}
+function bulkRemainingSeats(entryId, excludeIds){
+  return remainingSeatsToAdd(entryId) - bulkSeatsUsedInImport(entryId, excludeIds);
+}
+function bulkReadyRows(){ return bulkImportState.rows.filter(r=>!r.discarded && !r.issue); }
+function bulkFlaggedRows(){ return bulkImportState.rows.filter(r=>!r.discarded && r.issue); }
+function bulkProgramGroups(){
+  const map = new Map();
+  bulkReadyRows().forEach(r=>{
+    if(!map.has(r.matchedEntryId)) map.set(r.matchedEntryId, []);
+    map.get(r.matchedEntryId).push(r);
+  });
+  return [...map.entries()].map(([entryId, rows])=>({ entry:getEntry(entryId), rows }));
+}
+function renderBulkImportResults(){
+  const ready = bulkReadyRows();
+  const flagged = bulkFlaggedRows();
+  const programGroups = bulkProgramGroups();
+  const allFlaggedSelected = flagged.length > 0 && flagged.every(r=>bulkFlaggedSelection.has(r.id));
+
+  return `
+    <p class="muted" style="margin:0 0 4px;">${esc(bulkImportState.fileName)}</p>
+    <div class="bulk-summary">
+      <span class="ok">${ready.length} learner${ready.length===1?'':'s'} will get a program</span>${flagged.length>0?` · <span class="warn">${flagged.length} need${flagged.length===1?'s':''} a program</span>`:''}
+    </div>
+
+    ${programGroups.length>0 ? `
+    <div class="bulk-section-label">Programs to Assign</div>
+    ${programGroups.map(pg=>renderBulkProgramRow(pg)).join('')}
+    ` : ''}
+
+    <div class="bulk-section-label warn" style="margin-top:18px;">Needs a Program (${flagged.length})</div>
+    <div class="card" style="padding:16px 18px;box-shadow:none;border:1px solid var(--border-light);" id="bulkFlaggedDropZone" ondragover="onBulkDropZoneDragOver(event)" ondragleave="onBulkDropZoneDragLeave(event)" ondrop="onBulkNeedsProgramDrop(event)">
+      <div class="row-between" style="margin-bottom:10px;">
+        <h3>Flagged Learners</h3>
+        ${flagged.length>0 ? `<button class="link-sm" onclick="toggleBulkSelectAll()">${allFlaggedSelected?'Clear':'Select all'}</button>` : ''}
+      </div>
+      ${flagged.length>0
+        ? `<div>${flagged.map(r=>renderBulkFlaggedRow(r)).join('')}</div>`
+        : `<p class="muted" style="margin:4px 0;font-size:13px;">Nobody's flagged. Drag a learner here to unassign them from their program.</p>`}
+      ${bulkFlaggedSelection.size>0 ? renderBulkFixPanel() : ''}
+    </div>
+  `;
+}
+function renderBulkResultsFooter(){
+  const flagged = bulkFlaggedRows();
+  const totalToImport = bulkImportState.rows.filter(r=>!r.discarded).length;
+  return `
+    <button class="btn btn-secondary" onclick="cancelBulkImport()">Cancel Import</button>
+    <button class="btn btn-primary" ${totalToImport===0?'disabled':''} onclick="confirmBulkImportCommit()">
+      Import ${totalToImport} Learner${totalToImport===1?'':'s'}${flagged.length>0?` (${flagged.length} without a program)`:''} →
+    </button>
+  `;
+}
+function renderBulkProgramRow(pg){
+  const expanded = bulkExpandedPrograms.has(pg.entry.id);
+  return `<div class="bulk-program-row" ondragover="onBulkDropZoneDragOver(event)" ondragleave="onBulkDropZoneDragLeave(event)" ondrop="onBulkProgramDrop(event,'${pg.entry.id}')">
+    <div class="bulk-program-head" onclick="toggleBulkProgramExpand('${pg.entry.id}')">
+      <div>
+        <span class="name">${esc(entryLabel(pg.entry))} · ${esc(pg.entry.service)} <span class="muted" style="font-size:12px;">(${esc(pg.entry.portfolio)})</span></span>
+        <div class="muted" style="font-size:12px;">Starts ${fmtDate(pg.rows[0].startDate)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="muted" style="font-size:13px;">${pg.rows.length} learner${pg.rows.length===1?'':'s'}</span>
+        <span class="chevron ${expanded?'open':''}">⌄</span>
+      </div>
+    </div>
+    ${expanded ? `<div class="bulk-program-learners">${pg.rows.map(r=>`<span class="chip removable" draggable="true" ondragstart="onBulkDragStart(event,${r.id})" ondragend="onBulkDragEnd(event)">${esc(r.email)} <span class="x" title="Move to Needs a Program" onclick="event.stopPropagation(); unassignBulkRow(${r.id})">${iconX('#0276b1')}</span></span>`).join('')}</div>` : ''}
+  </div>`;
+}
+function renderBulkFlaggedRow(r){
+  const sel = bulkFlaggedSelection.has(r.id);
+  return `<div class="bulk-flag-row ${sel?'selected':''}" draggable="true" ondragstart="onBulkFlagDragStart(event,${r.id})" ondragend="onBulkDragEnd(event)" onclick="toggleBulkFlaggedSelect(${r.id})">
+    <span class="check">${sel?iconCheck('#fff'):''}</span>
+    <div style="flex:1;min-width:0;">
+      <div class="email">${esc(r.email)}</div>
+      <div class="muted" style="font-size:12px;">${esc(r.issue)}</div>
+    </div>
+    <span class="learner-remove" onclick="event.stopPropagation(); discardBulkRow(${r.id})" title="Discard this row">${iconX('#ca2b34')}</span>
+  </div>`;
+}
+function renderBulkFixPanel(){
+  const s = bulkFixState = bulkFixState || { service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null };
+  const services = Object.keys(CATALOG);
+  const portfolios = s.service ? Object.keys(CATALOG[s.service]) : [];
+  const subjectNames = (s.service && s.portfolio) ? distinctSubjects(s.service, s.portfolio) : [];
+  let hoursHtml = '', availHtml = '';
+  if(s.subjectName){
+    const entries = getEntriesFor(s.service, s.portfolio, s.subjectName);
+    const hoursOptions = [...new Set(entries.map(e=>e.hours).filter(h=>h!=null))];
+    if(hoursOptions.length > 0){
+      hoursHtml = `<div class="filter-group"><span class="filter-label">Hours</span><div class="chip-row">${hoursOptions.map(h=>`<span class="chip chip-filter ${s.hours===h?'selected':''}" onclick="setBulkFixHours(${h})">${h}h</span>`).join('')}</div></div>`;
+    }
+  }
+  if(s.entryId){
+    const remaining = bulkRemainingSeats(s.entryId, [...bulkFlaggedSelection]);
+    availHtml = remaining<=0
+      ? `<div class="info-box error"><strong>No seats left for ${esc(s.subject)}</strong></div>`
+      : `<div class="info-box"><strong>${remaining} available${s.funded?' <span class="funded-badge">FUNDED</span>':''}</strong><span>${fmtDate(s.start)} – ${fmtDate(s.end)}</span></div>`;
+  }
+  return `<div class="bulk-fix-panel">
+    <h3 style="margin-bottom:12px;">Choose a Program for ${bulkFlaggedSelection.size} Selected</h3>
+    <div class="filter-group" style="margin-top:0;">
+      <span class="filter-label">Service</span>
+      <div class="chip-row">${services.map(sv=>`<span class="chip chip-filter ${s.service===sv?'selected':''}" onclick="setBulkFixService('${sv}')">${sv}</span>`).join('')}</div>
+    </div>
+    ${s.service?`<div class="filter-group"><span class="filter-label">Portfolio</span><div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${s.portfolio===p?'selected':''}" onclick="setBulkFixPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}</div></div>`:''}
+    ${s.portfolio?`<div class="filter-group"><span class="filter-label">Subject</span><select onchange="setBulkFixSubjectName(this.value)"><option value="">Select a subject</option>${subjectNames.map(name=>{const funded=getEntriesFor(s.service,s.portfolio,name).some(e=>e.funded);return `<option value="${esc(name)}" ${s.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;}).join('')}</select></div>`:''}
+    ${hoursHtml}
+    ${availHtml}
+    <button class="btn btn-primary btn-sm" style="margin-top:14px;" ${(!s.entryId||bulkRemainingSeats(s.entryId,[...bulkFlaggedSelection])<=0)?'disabled':''} onclick="applyBulkFix()">Assign Selected to This Program</button>
+  </div>`;
+}
+function setBulkFixService(sv){ bulkFixState.service=sv; bulkFixState.portfolio=null; bulkFixState.subjectName=null; bulkFixState.entryId=null; renderAddLearnersModal(); }
+function setBulkFixPortfolio(p){ bulkFixState.portfolio=p; bulkFixState.subjectName=null; bulkFixState.entryId=null; renderAddLearnersModal(); }
+function setBulkFixSubjectName(name){
+  bulkFixState.subjectName = name || null; bulkFixState.entryId=null; bulkFixState.subject=null; bulkFixState.hours=null; bulkFixState.funded=false;
+  if(name){
+    const entries = getEntriesFor(bulkFixState.service, bulkFixState.portfolio, name);
+    if(entries.length === 1) resolveBulkFixEntry(entries[0]);
+  }
+  renderAddLearnersModal();
+}
+function setBulkFixHours(h){
+  const entries = getEntriesFor(bulkFixState.service, bulkFixState.portfolio, bulkFixState.subjectName);
+  const entry = entries.find(e=>e.hours===h);
+  if(entry) resolveBulkFixEntry(entry);
+  renderAddLearnersModal();
+}
+function resolveBulkFixEntry(entry){
+  bulkFixState.entryId = entry.id; bulkFixState.subject = entry.subject; bulkFixState.hours = entry.hours; bulkFixState.funded = !!entry.funded;
+  bulkFixState.start = entry.start; bulkFixState.end = entry.end;
+  bulkFixState.startDate = todayISO() > entry.start ? todayISO() : entry.start;
+}
+function applyBulkFix(){
+  const entry = getEntry(bulkFixState.entryId);
+  const ids = [...bulkFlaggedSelection];
+  const remaining = bulkRemainingSeats(bulkFixState.entryId, ids);
+  let fixed = 0;
+  ids.forEach(id=>{
+    if(fixed >= remaining) return;
+    const row = bulkImportState.rows.find(r=>r.id===id);
+    if(!row) return;
+    row.matchedEntryId = entry.id;
+    row.issue = null;
+    row.startDate = bulkFixState.startDate;
+    fixed++;
+  });
+  const leftover = ids.length - fixed;
+  showToast(leftover > 0
+    ? `Assigned ${fixed} of ${ids.length} — ${leftover} left (seat limit).`
+    : `Assigned ${fixed} learner${fixed===1?'':'s'} to ${entry.subject} · ${entry.service}.`);
+  bulkFlaggedSelection.clear();
+  bulkFixState = null;
+  renderAddLearnersModal();
+}
+function toggleBulkFlaggedSelect(id){
+  if(bulkFlaggedSelection.has(id)) bulkFlaggedSelection.delete(id); else bulkFlaggedSelection.add(id);
+  bulkFixState = null;
+  renderAddLearnersModal();
+}
+function toggleBulkSelectAll(){
+  const flagged = bulkFlaggedRows();
+  const all = flagged.length > 0 && flagged.every(r=>bulkFlaggedSelection.has(r.id));
+  bulkFlaggedSelection = all ? new Set() : new Set(flagged.map(r=>r.id));
+  bulkFixState = null;
+  renderAddLearnersModal();
+}
+function discardBulkRow(id){
+  const row = bulkImportState.rows.find(r=>r.id===id);
+  if(row) row.discarded = true;
+  bulkFlaggedSelection.delete(id);
+  renderAddLearnersModal();
+}
+function unassignBulkRowCore(id){
+  const row = bulkImportState.rows.find(r=>r.id===id);
+  if(row){
+    row.matchedEntryId = null;
+    row.issue = 'Removed from its matched program — choose one below.';
+  }
+}
+function unassignBulkRow(id){
+  unassignBulkRowCore(id);
+  renderAddLearnersModal();
+}
+
+/* ---- Drag and drop within the Bulk Import Results screen ----
+   Dragging a chip from "Programs to Assign" onto a different program row
+   reassigns it there; dropping onto "Needs a Program" unassigns it.
+   Dragging a flagged row that's part of the current multi-selection
+   carries the whole selection along. ---- */
+function onBulkDragStart(e, id){
+  e.dataTransfer.setData('text/plain', JSON.stringify([id]));
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.classList.add('dragging');
+}
+function onBulkFlagDragStart(e, id){
+  const ids = (bulkFlaggedSelection.has(id) && bulkFlaggedSelection.size > 1) ? [...bulkFlaggedSelection] : [id];
+  e.dataTransfer.setData('text/plain', JSON.stringify(ids));
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.classList.add('dragging');
+}
+function onBulkDragEnd(e){ e.currentTarget.classList.remove('dragging'); }
+function onBulkDropZoneDragOver(e){ e.preventDefault(); e.currentTarget.classList.add('drop-hover'); }
+function onBulkDropZoneDragLeave(e){ e.currentTarget.classList.remove('drop-hover'); }
+
+function onBulkProgramDrop(e, entryId){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drop-hover');
+  let ids = [];
+  try{ ids = JSON.parse(e.dataTransfer.getData('text/plain')); } catch(err){ return; }
+  if(!Array.isArray(ids) || ids.length === 0) return;
+  const entry = getEntry(entryId);
+  let assigned = 0, capped = 0, already = 0;
+  ids.forEach(id=>{
+    const row = bulkImportState.rows.find(r=>r.id===id && !r.discarded);
+    if(!row) return;
+    if(row.matchedEntryId === entryId){ already++; return; }
+    const remaining = bulkRemainingSeats(entryId, [id]);
+    if(remaining <= 0){ capped++; return; }
+    row.matchedEntryId = entryId;
+    row.issue = null;
+    row.startDate = todayISO() > entry.start ? todayISO() : entry.start;
+    bulkFlaggedSelection.delete(id);
+    assigned++;
+  });
+  if(assigned > 0) showToast(`Assigned ${assigned} learner${assigned===1?'':'s'} to ${entry.subject} · ${entry.service}.`);
+  if(capped > 0) showToast(`${capped} learner${capped===1?'':'s'} left out — no seats left.`);
+  else if(assigned === 0 && already > 0) showToast('Already assigned to this program.');
+  renderAddLearnersModal();
+}
+function onBulkNeedsProgramDrop(e){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drop-hover');
+  let ids = [];
+  try{ ids = JSON.parse(e.dataTransfer.getData('text/plain')); } catch(err){ return; }
+  if(!Array.isArray(ids) || ids.length === 0) return;
+  ids.forEach(id=>unassignBulkRowCore(id));
+  renderAddLearnersModal();
+}
+
+function toggleBulkProgramExpand(entryId){
+  if(bulkExpandedPrograms.has(entryId)) bulkExpandedPrograms.delete(entryId); else bulkExpandedPrograms.add(entryId);
+  renderAddLearnersModal();
+}
+function cancelBulkImport(){
+  bulkImportState = null; bulkFlaggedSelection = new Set(); bulkExpandedPrograms = new Set(); bulkFixState = null;
+  renderAddLearnersModal();
+}
+function confirmBulkImportCommit(){
+  const rows = bulkImportState.rows.filter(r=>!r.discarded);
+  let importedCount = 0, assignedCount = 0;
+  rows.forEach(row=>{
+    const l = { id: nextId++, email: row.email, firstName: row.firstName, lastName: row.lastName, group: row.group };
+    learners.push(l);
+    importedCount++;
+    if(row.matchedEntryId){
+      const entry = getEntry(row.matchedEntryId);
+      const rowStartDate = row.startDate || entry.start;
+      let group = groups.find(g=>g.entryId===row.matchedEntryId);
+      if(!group){
+        group = { id:'g'+(nextGroupId++), service:entry.service, portfolio:entry.portfolio, subjectName:entry.subject, entryId:entry.id,
+          subject:entry.subject, hours:entry.hours, funded:!!entry.funded, seats:entry.seats, start:entry.start, end:entry.end,
+          assignedIds:new Set(), dateSections:[], uiExpanded:false };
+        groups.push(group);
+      }
+      let ds = group.dateSections.find(s=>s.startDate===rowStartDate);
+      if(!ds){ ds = makeDateSection(rowStartDate); group.dateSections.push(ds); }
+      if(remainingSeatsToAdd(row.matchedEntryId) > 0){ group.assignedIds.add(l.id); ds.learnerIds.add(l.id); assignedCount++; }
+    }
+  });
+  bulkImportState = null; bulkFlaggedSelection = new Set(); bulkExpandedPrograms = new Set(); bulkFixState = null;
+  closeAddLearnersModal();
+  renderGroupsCol();
+  showToast(`Imported ${importedCount} learner${importedCount===1?'':'s'} (${assignedCount} assigned to a program).`);
 }
 
 /* =====================================================
@@ -1171,6 +1834,7 @@ function removeLearnerFromModal(id){
 function openBulkAssignModal(){
   if(selectedIds.size === 0) return;
   bulkAssignState = { targetIds:[...selectedIds], service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null };
+  bulkAssignCheckedProgramIds = new Set();
   renderBulkAssignModal();
 }
 function renderBulkAssignModal(){
@@ -1194,40 +1858,67 @@ function renderBulkAssignModal(){
       availabilityHtml = `<div class="info-box error"><strong>No seats left for ${esc(s.subject)}</strong><p>Choose a different program.</p></div>`;
     } else {
       availabilityHtml = `<div class="info-box"><strong>${remaining} available${s.funded?' <span class="funded-badge">FUNDED</span>':''}</strong><span>${fmtDate(s.start)} – ${fmtDate(s.end)}</span></div>
-        ${s.targetIds.length > remaining ? `<div class="cap-note show">Only ${remaining} of ${s.targetIds.length} selected learners will fit — the rest will stay unassigned.</div>` : ''}`;
+        ${s.targetIds.length > remaining ? `<div class="cap-note show">Only ${remaining} of ${s.targetIds.length} selected learners will fit here — the rest will stay unassigned.</div>` : ''}`;
     }
   }
 
+  const existingPrograms = groups.filter(g=>g.entryId);
+  const programChecklist = existingPrograms.length === 0
+    ? `<p class="muted" style="font-size:13px;margin-top:8px;">No programs created yet — set one up on the left, or from the Programs column.</p>`
+    : `<div class="roster-list" style="max-height:260px;margin-top:8px;">${existingPrograms.map(g=>{
+        const checked = bulkAssignCheckedProgramIds.has(g.id);
+        const remaining = remainingSeatsToAdd(g.entryId);
+        return `<div class="roster-row selectable ${checked?'selected':''}" onclick="toggleBulkAssignProgramCheck('${g.id}')">
+          <span class="check">${checked?iconCheck('#fff'):''}</span>
+          <span class="email">${esc(entryLabel(g))} · ${esc(g.service)}</span>
+          <span class="badge">${remaining} left</span>
+        </div>`;
+      }).join('')}</div>`;
+
   document.getElementById('modalRoot').innerHTML = `
     <div class="modal-overlay" onclick="if(event.target===this) closeBulkAssignModal()">
-      <div class="modal">
+      <div class="modal" style="width:660px;">
         <div class="modal-head"><h3>Assign Selected to a Program</h3><button class="modal-close" onclick="closeBulkAssignModal()">✕</button></div>
         <div class="modal-body">
-          <p class="muted" style="margin:0 0 16px;">Choose a program for the ${s.targetIds.length} learner${s.targetIds.length===1?'':'s'} you selected.</p>
-          <div class="filter-group" style="margin-top:0;">
-            <span class="filter-label">By Service</span>
-            <div class="chip-row">${services.map(sv=>`<span class="chip chip-filter ${s.service===sv?'selected':''}" onclick="setBulkAssignService('${sv}')">${sv}</span>`).join('')}</div>
+          <p class="muted" style="margin:0 0 16px;">Choose one or more programs for the ${s.targetIds.length} learner${s.targetIds.length===1?'':'s'} you selected.</p>
+          <div style="display:flex;gap:24px;">
+            <div style="flex:1;min-width:0;">
+              <h3 style="margin-bottom:10px;">New Program</h3>
+              <div class="filter-group" style="margin-top:0;">
+                <span class="filter-label">Service</span>
+                <div class="chip-row">${services.map(sv=>`<span class="chip chip-filter ${s.service===sv?'selected':''}" onclick="setBulkAssignService('${sv}')">${sv}</span>`).join('')}</div>
+              </div>
+              ${s.service ? `<div class="filter-group"><span class="filter-label">Portfolio</span>
+                <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${s.portfolio===p?'selected':''}" onclick="setBulkAssignPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}</div></div>` : ''}
+              ${s.portfolio ? `<div class="filter-group"><span class="filter-label">Subject</span>
+                <select onchange="setBulkAssignSubjectName(this.value)">
+                  <option value="">Select a subject</option>
+                  ${subjectNames.map(name=>{
+                    const funded = getEntriesFor(s.service, s.portfolio, name).some(e=>e.funded);
+                    return `<option value="${esc(name)}" ${s.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
+                  }).join('')}
+                </select></div>` : ''}
+              ${hoursHtml}
+              ${availabilityHtml}
+            </div>
+            <div style="flex:1;min-width:0;border-left:1px solid var(--border-light);padding-left:24px;">
+              <h3>Your Programs</h3>
+              ${programChecklist}
+            </div>
           </div>
-          ${s.service ? `<div class="filter-group"><span class="filter-label">By Portfolio</span>
-            <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${s.portfolio===p?'selected':''}" onclick="setBulkAssignPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}</div></div>` : ''}
-          ${s.portfolio ? `<div class="filter-group"><span class="filter-label">Subject</span>
-            <select onchange="setBulkAssignSubjectName(this.value)">
-              <option value="">Select a subject</option>
-              ${subjectNames.map(name=>{
-                const funded = getEntriesFor(s.service, s.portfolio, name).some(e=>e.funded);
-                return `<option value="${esc(name)}" ${s.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
-              }).join('')}
-            </select></div>` : ''}
-          ${hoursHtml}
-          ${availabilityHtml}
         </div>
         <div class="modal-foot">
           <button class="btn btn-secondary" onclick="closeBulkAssignModal()">Cancel</button>
-          <button class="btn btn-primary" ${(!s.entryId || remainingSeatsToAdd(s.entryId)<=0)?'disabled':''} onclick="confirmBulkAssign()">Assign</button>
+          <button class="btn btn-primary" ${(!s.entryId && bulkAssignCheckedProgramIds.size===0)?'disabled':''} onclick="confirmBulkAssign()">Assign</button>
         </div>
       </div>
     </div>
   `;
+}
+function toggleBulkAssignProgramCheck(groupId){
+  if(bulkAssignCheckedProgramIds.has(groupId)) bulkAssignCheckedProgramIds.delete(groupId);
+  else bulkAssignCheckedProgramIds.add(groupId);
+  renderBulkAssignModal();
 }
 function setBulkAssignService(sv){ bulkAssignState.service=sv; bulkAssignState.portfolio=null; bulkAssignState.subjectName=null; bulkAssignState.entryId=null; renderBulkAssignModal(); }
 function setBulkAssignPortfolio(p){ bulkAssignState.portfolio=p; bulkAssignState.subjectName=null; bulkAssignState.entryId=null; renderBulkAssignModal(); }
@@ -1254,22 +1945,40 @@ function resolveBulkAssignEntry(entry){
 }
 function confirmBulkAssign(){
   const s = bulkAssignState;
-  let group = groups.find(g=>g.entryId===s.entryId);
-  if(!group){
-    const entry = getEntry(s.entryId);
-    group = { id:'g'+(nextGroupId++), service:s.service, portfolio:s.portfolio, subjectName:s.subjectName, entryId:s.entryId,
-      subject:s.subject, hours:s.hours, funded:s.funded, seats:entry.seats, start:entry.start, end:entry.end, startDate:s.startDate, assignedIds:new Set() };
-    groups.push(group);
+  const targetGroupIds = new Set(bulkAssignCheckedProgramIds);
+
+  if(s.entryId){
+    let group = groups.find(g=>g.entryId===s.entryId);
+    if(!group){
+      const entry = getEntry(s.entryId);
+      group = { id:'g'+(nextGroupId++), service:s.service, portfolio:s.portfolio, subjectName:s.subjectName, entryId:s.entryId,
+        subject:s.subject, hours:s.hours, funded:s.funded, seats:entry.seats, start:entry.start, end:entry.end,
+        assignedIds:new Set(), dateSections:[ makeDateSection(s.startDate) ], uiExpanded:false };
+      groups.push(group);
+    } else if(group.dateSections.length === 0){
+      group.dateSections.push(makeDateSection(s.startDate));
+    }
+    targetGroupIds.add(group.id);
   }
-  const remaining = remainingSeatsToAdd(s.entryId);
-  const toAssign = s.targetIds.filter(id=>!group.assignedIds.has(id)).slice(0, remaining);
-  toAssign.forEach(id=>group.assignedIds.add(id));
-  showToast(`Assigned ${toAssign.length} learner${toAssign.length===1?'':'s'} to ${esc(s.subject)} · ${s.service}.`);
+  if(targetGroupIds.size === 0){ showToast('Pick at least one program.'); return; }
+
+  let totalAssigned = 0;
+  const parts = [];
+  targetGroupIds.forEach(gid=>{
+    const group = groups.find(g=>g.id===gid);
+    if(!group || !group.dateSections.length) return;
+    const ds = group.dateSections[0];
+    const remaining = remainingSeatsToAdd(group.entryId);
+    const toAssign = s.targetIds.filter(id=>!group.assignedIds.has(id)).slice(0, remaining);
+    toAssign.forEach(id=>{ group.assignedIds.add(id); ds.learnerIds.add(id); });
+    if(toAssign.length > 0){ totalAssigned += toAssign.length; parts.push(`${entryLabel(group)} (${toAssign.length})`); }
+  });
+  showToast(parts.length > 0 ? `Assigned to ${parts.join(', ')}.` : 'Everyone selected is already in those programs, or seats are full.');
   closeBulkAssignModal();
   selectedIds.clear();
   renderAll();
 }
-function closeBulkAssignModal(){ bulkAssignState = null; document.getElementById('modalRoot').innerHTML = ''; }
+function closeBulkAssignModal(){ bulkAssignState = null; bulkAssignCheckedProgramIds = new Set(); document.getElementById('modalRoot').innerHTML = ''; }
 
 /* =====================================================
    SEND
@@ -1280,13 +1989,15 @@ function renderFooter(){
   const progCount = activeGroups().filter(g=>g.assignedIds.size>0).length;
   const seatsUsed = groups.reduce((sum,g)=>sum+g.assignedIds.size,0);
   el.innerHTML = `
-    <div class="stats-text">
-      <strong>${learners.length}</strong> learner${learners.length===1?'':'s'} ·
-      <strong>${assigned}</strong> assigned across <strong>${progCount}</strong> program${progCount===1?'':'s'} ·
-      <strong>${seatsUsed}</strong> seat${seatsUsed===1?'':'s'} used ·
-      <strong>${learners.length-assigned}</strong> not yet assigned
+    <div class="footer-inner">
+      <div class="stats-text">
+        <strong>${learners.length}</strong> learner${learners.length===1?'':'s'} ·
+        <strong>${assigned}</strong> assigned across <strong>${progCount}</strong> program${progCount===1?'':'s'} ·
+        <strong>${seatsUsed}</strong> seat${seatsUsed===1?'':'s'} used ·
+        <strong>${learners.length-assigned}</strong> not yet assigned
+      </div>
+      <button class="btn btn-primary" ${assigned===0?'disabled':''} onclick="openConfirmSend()">Send Assignments →</button>
     </div>
-    <button class="btn btn-primary" ${assigned===0?'disabled':''} onclick="openConfirmSend()">Send Assignments →</button>
   `;
 }
 function openConfirmSend(){
@@ -1346,6 +2057,44 @@ function renderSendSuccessModal(relevant, assigned){
   `;
 }
 function closeGenericModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+
+/* =====================================================
+   NAVIGATION GUARD — warn before leaving with unsent work
+===================================================== */
+function hasUnsentWork(){
+  return learners.length > 0 || groups.some(g=>g.assignedIds.size > 0);
+}
+function guardNavigation(destination){
+  if(hasUnsentWork()){
+    openUnsentWorkModal(destination);
+  } else {
+    showToast(`Heading to ${destination}.`);
+  }
+}
+function openUnsentWorkModal(destination){
+  const assigned = assignedLearnersCount();
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
+      <div class="modal" style="width:440px;">
+        <div class="modal-head"><h3>You have unsent assignments</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted" style="margin:0;">
+            You've added ${learners.length} learner${learners.length===1?'':'s'}${assigned>0?` and assigned ${assigned} of them to a program`:''}, but haven't sent it yet.
+            Use <strong>Send Assignments</strong> at the bottom of the page before leaving, or this work will be lost.
+          </p>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="confirmLeaveWithoutSending('${esc(destination)}')">Leave Without Sending</button>
+          <button class="btn btn-primary" onclick="closeGenericModal()">Stay on This Page</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function confirmLeaveWithoutSending(destination){
+  closeGenericModal();
+  showToast(`Left without sending — heading to ${destination}.`);
+}
 
 renderAll();
 </script>
