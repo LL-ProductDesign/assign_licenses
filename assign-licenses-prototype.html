@@ -492,19 +492,21 @@
      TESTING MODE — deliberately NOT styled like the product.
      This is a researcher-facing overlay, not part of the design system.
   ===================================================== */
+  .dev-toggles-row{position:fixed;top:12px;right:16px;z-index:200;display:flex;align-items:center;gap:10px;}
   .testing-toggle-fixed{
-    position:fixed;top:12px;right:16px;z-index:200;
     display:flex;align-items:center;gap:10px;
     background:#fff3cd;border:2px dashed #d9a400;border-radius:20px;
     padding:6px 8px 6px 14px;
     font-family:'Courier New',Courier,monospace;font-size:12px;font-weight:700;letter-spacing:.03em;
     color:#6b5000;box-shadow:0 3px 10px rgba(0,0,0,0.18);
   }
+  .onboarding-toggle-fixed{background:#e6f3ff;border-color:#2f7fd1;color:#0a4a8a;}
   .testing-switch{position:relative;display:inline-block;width:34px;height:19px;flex:0 0 auto;}
   .testing-switch input{opacity:0;width:0;height:0;}
   .testing-slider{position:absolute;cursor:pointer;inset:0;background:#c9c2a8;transition:.15s;border-radius:20px;}
   .testing-slider:before{position:absolute;content:"";height:13px;width:13px;left:3px;bottom:3px;background:#fff;transition:.15s;border-radius:50%;}
   .testing-switch input:checked + .testing-slider{background:#d9a400;}
+  .onboarding-switch input:checked + .onboarding-slider{background:#2f7fd1;}
   .testing-switch input:checked + .testing-slider:before{transform:translateX(15px);}
 
   .testing-panel{
@@ -525,17 +527,62 @@
   .testing-tasks input[type=checkbox]{margin-top:2px;flex:0 0 auto;accent-color:#d9a400;width:14px;height:14px;}
   .testing-tasks li.done label{text-decoration:line-through;opacity:.55;}
   .testing-panel-footer{padding:8px 14px 14px;font-size:11px;font-style:italic;color:#8a6d00;border-top:1px dashed #e6c766;margin-top:4px;}
+
+  /* =====================================================
+     ONBOARDING TOUR — spotlight overlay, also deliberately
+     NOT styled like the product (uses the same blue accent
+     as its toggle so the two read as one system).
+  ===================================================== */
+  .onboarding-spotlight{
+    position:fixed;z-index:250;border-radius:10px;pointer-events:none;
+    box-shadow:0 0 0 9999px rgba(9,30,66,0.6);
+    outline:3px solid #2f7fd1;outline-offset:3px;
+    transition:top .25s ease,left .25s ease,width .25s ease,height .25s ease;
+  }
+  .onboarding-tooltip{
+    position:fixed;z-index:251;width:300px;max-width:calc(100vw - 32px);
+    background:#fff;border-radius:10px;box-shadow:0 12px 32px rgba(9,30,66,0.35);
+    font-family:'Fira Sans',sans-serif;
+    transition:top .25s ease,left .25s ease;
+  }
+  .onboarding-tooltip-eyebrow{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 16px 0;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#2f7fd1;
+  }
+  .onboarding-tooltip-title{padding:6px 16px 0;font-size:16px;font-weight:700;color:var(--navy);}
+  .onboarding-tooltip-text{padding:8px 16px 16px;font-size:13.5px;line-height:1.5;color:var(--text-secondary);}
+  .onboarding-tooltip-foot{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:12px 16px;border-top:1px solid var(--border-light);
+  }
+  .onboarding-skip{font-size:12.5px;font-weight:600;color:var(--text-secondary);background:none;border:none;cursor:pointer;}
+  .onboarding-nav-btns{display:flex;gap:8px;}
+  .onboarding-btn{
+    height:32px;padding:0 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;
+  }
+  .onboarding-btn-back{background:#fff;color:var(--navy);border-color:var(--border);}
+  .onboarding-btn-next{background:#2f7fd1;color:#fff;}
+  .onboarding-btn-next:hover{background:#1e5fa8;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
-<div class="testing-toggle-fixed">
-  <span>🧪 TESTING MODE</span>
-  <label class="testing-switch">
-    <input type="checkbox" id="testingModeToggle" onchange="toggleTestingMode(this.checked)">
-    <span class="testing-slider"></span>
-  </label>
+<div class="dev-toggles-row">
+  <div class="testing-toggle-fixed onboarding-toggle-fixed">
+    <span>🎓 ONBOARDING TOUR</span>
+    <label class="testing-switch onboarding-switch">
+      <input type="checkbox" id="onboardingToggle" onchange="toggleOnboarding(this.checked)">
+      <span class="testing-slider onboarding-slider"></span>
+    </label>
+  </div>
+  <div class="testing-toggle-fixed">
+    <span>🧪 TESTING MODE</span>
+    <label class="testing-switch">
+      <input type="checkbox" id="testingModeToggle" onchange="toggleTestingMode(this.checked)">
+      <span class="testing-slider"></span>
+    </label>
+  </div>
 </div>
 <div class="testing-panel" id="testingPanel" style="display:none;">
   <div class="testing-panel-header">researcher notes — not part of the product</div>
@@ -1376,7 +1423,7 @@ function renderLearnersCol(){
     <div class="card learners-card">
       <div class="learners-card-head">
         <h3>Learners (${learners.length})</h3>
-        <button class="btn btn-primary btn-sm" onclick="openAddLearnersModal()">+ Add Learners</button>
+        <button class="btn btn-primary btn-sm" id="addLearnersBtn" onclick="openAddLearnersModal()">+ Add Learners</button>
       </div>
       ${learners.length > 0 ? `
       <div class="learner-count-line row-between">
@@ -2536,6 +2583,122 @@ function confirmLeaveWithoutSending(destination){
 function toggleTestingMode(on){
   document.getElementById('testingPanel').style.display = on ? 'block' : 'none';
 }
+
+/* =====================================================
+   ONBOARDING TOUR — a first-time-user walkthrough.
+   Spotlights real elements one at a time with a tooltip;
+   entirely separate from the app's own state.
+===================================================== */
+const onboardingSteps = [
+  { selector:'#learnersCol', placement:'right', title:'Your Learners',
+    text:'Everyone you add lives here. Add people one at a time, or import a whole spreadsheet using Bulk Import.' },
+  { selector:'#addLearnersBtn', placement:'bottom', title:'Add Learners',
+    text:'Start here — add a few learners individually, or switch to the Bulk Import tab in this modal to upload a spreadsheet.' },
+  { selector:'#groupsCol', placement:'left', title:'Programs',
+    text:'Set up a program here — choose a service, portfolio, subject, and starting date. You can add more than one starting date to the same program later on.' },
+  { selector:'.new-group-btn', placement:'bottom', title:'Create a Program',
+    text:'Click here to create your first program.' },
+  { selector:'.widget-footer', placement:'top', title:'Send Assignments',
+    text:"Once everyone has a program, review and send from here. Nothing goes out until you click this button." },
+];
+let onboardingActive = false;
+let onboardingStepIndex = 0;
+
+function toggleOnboarding(on){
+  if(on){
+    onboardingActive = true;
+    onboardingStepIndex = 0;
+    showOnboardingStep();
+  } else {
+    endOnboarding();
+  }
+}
+function showOnboardingStep(){
+  if(!onboardingActive) return;
+  const step = onboardingSteps[onboardingStepIndex];
+  const el = document.querySelector(step.selector);
+  if(!el){
+    if(onboardingStepIndex < onboardingSteps.length - 1){ onboardingStepIndex++; showOnboardingStep(); }
+    else { endOnboarding(); }
+    return;
+  }
+  el.scrollIntoView({ block:'center', behavior:'smooth' });
+  setTimeout(() => renderOnboardingStep(el, step), 260);
+}
+function renderOnboardingStep(el, step){
+  if(!onboardingActive) return;
+  const rect = el.getBoundingClientRect();
+
+  let spotlight = document.getElementById('onboardingSpotlight');
+  if(!spotlight){
+    spotlight = document.createElement('div');
+    spotlight.id = 'onboardingSpotlight';
+    spotlight.className = 'onboarding-spotlight';
+    document.body.appendChild(spotlight);
+  }
+  spotlight.style.top = (rect.top - 6) + 'px';
+  spotlight.style.left = (rect.left - 6) + 'px';
+  spotlight.style.width = (rect.width + 12) + 'px';
+  spotlight.style.height = (rect.height + 12) + 'px';
+
+  let tip = document.getElementById('onboardingTooltip');
+  if(!tip){
+    tip = document.createElement('div');
+    tip.id = 'onboardingTooltip';
+    tip.className = 'onboarding-tooltip';
+    document.body.appendChild(tip);
+  }
+  tip.style.visibility = 'hidden';
+  const isLast = onboardingStepIndex === onboardingSteps.length - 1;
+  tip.innerHTML = `
+    <div class="onboarding-tooltip-eyebrow"><span>Step ${onboardingStepIndex+1} of ${onboardingSteps.length}</span></div>
+    <div class="onboarding-tooltip-title">${esc(step.title)}</div>
+    <div class="onboarding-tooltip-text">${esc(step.text)}</div>
+    <div class="onboarding-tooltip-foot">
+      <button class="onboarding-skip" onclick="endOnboarding()">Skip tour</button>
+      <div class="onboarding-nav-btns">
+        ${onboardingStepIndex > 0 ? `<button class="onboarding-btn onboarding-btn-back" onclick="onboardingBack()">Back</button>` : ''}
+        <button class="onboarding-btn onboarding-btn-next" onclick="onboardingNext()">${isLast ? 'Finish' : 'Next'}</button>
+      </div>
+    </div>
+  `;
+
+  const tipRect = tip.getBoundingClientRect();
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let top, left;
+  const placement = step.placement || 'bottom';
+  if(placement === 'bottom'){ top = rect.bottom + 16; left = rect.left; }
+  else if(placement === 'top'){ top = rect.top - tipRect.height - 16; left = rect.left; }
+  else if(placement === 'left'){ top = rect.top; left = rect.left - tipRect.width - 16; }
+  else { top = rect.top; left = rect.right + 16; }
+  left = Math.max(16, Math.min(left, vw - tipRect.width - 16));
+  top = Math.max(16, Math.min(top, vh - tipRect.height - 16));
+  tip.style.top = top + 'px';
+  tip.style.left = left + 'px';
+  tip.style.visibility = 'visible';
+}
+function onboardingNext(){
+  if(onboardingStepIndex < onboardingSteps.length - 1){ onboardingStepIndex++; showOnboardingStep(); }
+  else { endOnboarding(); }
+}
+function onboardingBack(){
+  if(onboardingStepIndex > 0){ onboardingStepIndex--; showOnboardingStep(); }
+}
+function endOnboarding(){
+  onboardingActive = false;
+  const spotlight = document.getElementById('onboardingSpotlight');
+  if(spotlight) spotlight.remove();
+  const tip = document.getElementById('onboardingTooltip');
+  if(tip) tip.remove();
+  const toggle = document.getElementById('onboardingToggle');
+  if(toggle) toggle.checked = false;
+}
+window.addEventListener('resize', () => {
+  if(!onboardingActive) return;
+  const step = onboardingSteps[onboardingStepIndex];
+  const el = document.querySelector(step.selector);
+  if(el) renderOnboardingStep(el, step);
+});
 
 renderAll();
 </script>
