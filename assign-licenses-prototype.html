@@ -1012,6 +1012,7 @@ function saveGroupDate(groupId, sectionId){
 /* ---- "See Everything Available" — browse the full catalog and apply
    a pick directly to the card that opened it ---- */
 let catalogModalGroupId = null;
+let catalogModalTarget = null; // 'addLearnerProgram' | 'bulkAssign' — for cascades that aren't tied to a real group yet
 let catalogFilters = { services:new Set(), portfolios:new Set(), search:'' };
 function getAllEntries(){
   const out = [];
@@ -1036,6 +1037,13 @@ function filteredCatalogEntries(){
 }
 function openCatalogModal(groupId){
   catalogModalGroupId = groupId;
+  catalogModalTarget = null;
+  catalogFilters = { services:new Set(), portfolios:new Set(), search:'' };
+  renderCatalogModalShell();
+}
+function openCatalogModalForTarget(target){
+  catalogModalTarget = target; // 'addLearnerProgram' | 'bulkAssign'
+  catalogModalGroupId = null;
   catalogFilters = { services:new Set(), portfolios:new Set(), search:'' };
   renderCatalogModalShell();
 }
@@ -1044,13 +1052,13 @@ function renderCatalogModalShell(){
   const portfolioSet = new Set();
   services.forEach(s=>Object.keys(CATALOG[s]).forEach(p=>portfolioSet.add(p)));
   const portfolios = [...portfolioSet];
-  const returningToNewProgram = false;
+  const showBackButton = !!catalogModalGroupId || !!catalogModalTarget;
   document.getElementById('modalRoot').innerHTML = `
     <div class="modal-overlay" onclick="if(event.target===this) closeCatalogModal()">
       <div class="modal" style="width:640px;">
         <div class="modal-head"><h3>Browse All Available Programs</h3><button class="modal-close" onclick="closeCatalogModal()">✕</button></div>
         <div class="modal-body">
-          <p class="muted" style="margin:0 0 16px;">Filter or search, then select one to use it on this card.</p>
+          <p class="muted" style="margin:0 0 16px;">Filter or search, then select one to use it.</p>
           <div class="catalog-filters-row">
             <div>
               <span class="filter-label">Service</span>
@@ -1065,7 +1073,7 @@ function renderCatalogModalShell(){
           <input class="catalog-search" type="text" placeholder="Search by subject, hours, funded…" value="${esc(catalogFilters.search)}" oninput="onCatalogSearchInput(this.value)" />
           <div id="catalogListRoot"></div>
         </div>
-        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeCatalogModal()">${returningToNewProgram ? '← Back' : 'Close'}</button></div>
+        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeCatalogModal()">${showBackButton ? '← Back' : 'Close'}</button></div>
       </div>
     </div>
   `;
@@ -1106,10 +1114,26 @@ function renderCatalogList(){
   document.getElementById('catalogListRoot').innerHTML = html;
 }
 function pickFromCatalog(entryId){
+  const entry = getEntry(entryId);
+  if(catalogModalTarget === 'addLearnerProgram'){
+    resolveAddLearnerProgramEntry(entry);
+    addLearnerProgramState.service = entry.service;
+    addLearnerProgramState.portfolio = entry.portfolio;
+    addLearnerProgramState.subjectName = entry.subject;
+    closeCatalogModal();
+    return;
+  }
+  if(catalogModalTarget === 'bulkAssign'){
+    resolveBulkAssignEntry(entry);
+    bulkAssignState.service = entry.service;
+    bulkAssignState.portfolio = entry.portfolio;
+    bulkAssignState.subjectName = entry.subject;
+    closeCatalogModal();
+    return;
+  }
   const gid = catalogModalGroupId;
   const g = groups.find(x=>x.id===gid);
   if(!g) return;
-  const entry = getEntry(entryId);
   g.service = entry.service;
   g.portfolio = entry.portfolio;
   g.subjectName = entry.subject;
@@ -1118,8 +1142,12 @@ function pickFromCatalog(entryId){
   renderGroupUI(gid);
 }
 function closeCatalogModal(){
+  const target = catalogModalTarget;
   catalogModalGroupId = null;
+  catalogModalTarget = null;
   document.getElementById('modalRoot').innerHTML = '';
+  if(target === 'addLearnerProgram') renderAddLearnersModal();
+  else if(target === 'bulkAssign') renderBulkAssignModal();
 }
 
 function makeDateSection(startDate){
@@ -1902,8 +1930,11 @@ function renderAddLearnerProgramSection(){
       ` : `<p class="muted" style="font-size:12.5px;margin:8px 0 0;">No programs set up yet — create one below.</p>`}
 
       <div class="add-learner-program-cascade">
-        <label>Select a Program</label>
-        <div class="filter-group" style="margin-top:0;">
+        <div class="row-between" style="align-items:baseline;">
+          <label style="margin-bottom:0;">Select a Program</label>
+          <button class="link-sm" onclick="openCatalogModalForTarget('addLearnerProgram')">See Everything Available →</button>
+        </div>
+        <div class="filter-group" style="margin-top:8px;">
           <span class="filter-label">Service</span>
           <div class="chip-row">${services.map(sv=>`<span class="chip chip-filter ${s.service===sv?'selected':''}" onclick="setAddLearnerProgramService('${sv}')">${sv}</span>`).join('')}</div>
         </div>
@@ -2478,7 +2509,10 @@ function renderBulkAssignModal(){
           <p class="muted" style="margin:0 0 16px;">Choose one or more programs for the ${s.targetIds.length} learner${s.targetIds.length===1?'':'s'} you selected.</p>
           <div style="display:flex;gap:24px;">
             <div style="flex:1;min-width:0;">
-              <h3 style="margin-bottom:10px;">New Program</h3>
+              <div class="row-between" style="align-items:baseline;margin-bottom:10px;">
+                <h3 style="margin-bottom:0;">New Program</h3>
+                <button class="link-sm" onclick="openCatalogModalForTarget('bulkAssign')">See Everything Available →</button>
+              </div>
               <div class="filter-group" style="margin-top:0;">
                 <span class="filter-label">Service</span>
                 <div class="chip-row">${services.map(sv=>`<span class="chip chip-filter ${s.service===sv?'selected':''}" onclick="setBulkAssignService('${sv}')">${sv}</span>`).join('')}</div>
