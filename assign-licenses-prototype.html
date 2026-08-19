@@ -134,6 +134,8 @@
   .btn-primary:hover{background:var(--teal-dark);}
   .btn-primary:disabled{background:var(--border);color:var(--text-disabled);cursor:not-allowed;box-shadow:none;}
   .btn-secondary{background:#fff;color:var(--navy);border-color:var(--border);}
+  .btn-look-disabled{opacity:.5;color:var(--text-disabled);}
+  .btn-look-disabled:hover{background:#fff;}
   .btn-secondary:hover{background:var(--bg-page);}
   .btn-ghost{background:transparent;color:var(--navy);border-color:var(--border);}
   .btn-sm{height:32px;padding:0 14px;font-size:13px;}
@@ -142,12 +144,17 @@
   .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
   .chip{
     height:32px;border-radius:16px;border:1px solid var(--teal);color:var(--teal);
-    font-size:13px;font-weight:500;padding:0 12px;display:inline-flex;align-items:center;gap:8px;
-    background:#fff;cursor:default;
+    font-size:14px;line-height:18px;font-weight:400;padding:0 12px;display:inline-flex;align-items:center;gap:4px;
+    background:#fff;cursor:default;transition:background-color .12s,border-width .08s;
   }
+  .chip:hover{background:var(--bg-blue-light);}
+  .chip:focus-within{border-width:2px;padding:0 11px;}
+  .chip.chip-disabled{opacity:.4;pointer-events:none;}
   .chip.removable{padding-right:8px;}
-  .chip .x{cursor:pointer;font-size:15px;line-height:1;color:var(--teal);opacity:.7;}
+  .chip.removable:focus-within{padding-right:7px;}
+  .chip .x{cursor:pointer;font-size:15px;line-height:1;color:var(--teal);opacity:.7;border-radius:50%;}
   .chip .x:hover{opacity:1;}
+  .chip .x:focus{outline:none;opacity:1;box-shadow:0 0 0 2px var(--bg-blue-light);}
   .chip-filter{cursor:pointer;user-select:none;}
   .chip-filter.selected{background:var(--teal);color:#fff;}
   .chip-toggle{cursor:pointer;user-select:none;}
@@ -204,9 +211,9 @@
   .bulk-import-box p{font-size:13px;color:var(--text-secondary);margin:0;}
   .bulk-summary{font-size:14px;font-weight:600;margin:4px 0 18px;}
   .bulk-summary .ok{color:#2f9e56;}
-  .bulk-summary .warn{color:var(--text-error);}
+  .bulk-summary .warn{color:var(--navy);}
   .bulk-section-label{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);margin:0 0 10px;}
-  .bulk-section-label.warn{color:var(--text-error);}
+  .bulk-section-label.warn{color:var(--navy);}
   .bulk-program-row{border:1px solid var(--border-light);border-radius:var(--radius-int);margin-bottom:8px;overflow:hidden;transition:border-color .12s,background .12s;}
   .bulk-program-row.drop-hover{border-color:var(--teal);background:var(--bg-blue-light);}
   #bulkFlaggedDropZone.drop-hover{border-color:var(--text-error);background:var(--bg-error);}
@@ -263,6 +270,7 @@
   .roster-row.selected{background:var(--bg-blue-light);border-color:var(--teal);}
   .roster-row.selected .check{background:var(--teal);border-color:var(--teal);}
   .roster-row.disabled{opacity:.55;}
+  .seat-request-note{font-size:11.5px;color:var(--text-error);padding:2px 10px 6px;}
   .roster-row.disabled .email{color:var(--text-secondary);}
 
   .info-box{border-radius:var(--radius-int);padding:12px 16px;margin-top:18px;background:var(--bg-blue-light);}
@@ -882,7 +890,7 @@ function onAddDateTabDrop(e, groupId){
 }
 function renderActiveDateSection(g, ds){
   const chips = learners.filter(l=>ds.learnerIds.has(l.id))
-    .map(l=>`<span class="chip removable" draggable="true" ondragstart="onProgramChipDragStart(event,${l.id},'${g.id}','${ds.id}')" ondragend="onLearnerDragEnd(event)">${esc(l.email)} <span class="x" onclick="removeFromDateSection('${g.id}','${ds.id}',${l.id})">${iconX('#0276b1')}</span></span>`)
+    .map(l=>`<span class="chip removable" draggable="true" ondragstart="onProgramChipDragStart(event,${l.id},'${g.id}','${ds.id}')" ondragend="onLearnerDragEnd(event)">${esc(l.email)} <span class="x" tabindex="0" role="button" onclick="removeFromDateSection('${g.id}','${ds.id}',${l.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">${iconX('#0276b1')}</span></span>`)
     .join('');
   const canRemoveSection = g.dateSections.length > 1;
   const justDropped = dropHighlightSectionId === ds.id;
@@ -896,10 +904,20 @@ function renderActiveDateSection(g, ds){
     </div>
     <div class="group-chip-row chip-row">${chips || `<span class="muted" style="font-size:12px;">No one assigned yet.</span>`}</div>
     <div class="group-card-actions">
-      <button class="btn btn-secondary btn-sm" onclick="openCardAddLearnersModal('${g.id}','${ds.id}')">Assign Learner to this Program</button>
+      <button class="btn btn-secondary btn-sm ${remainingSeatsToAdd(g.entryId)<=0?'btn-look-disabled':''}" onclick="onAssignLearnerBtnClick('${g.id}','${ds.id}')">Assign Learner to this Program</button>
       <span class="group-drop-hint">or drag them here</span>
     </div>
   </div>`;
+}
+function onAssignLearnerBtnClick(groupId, sectionId){
+  const g = groups.find(x=>x.id===groupId);
+  if(!g) return;
+  const remaining = remainingSeatsToAdd(g.entryId);
+  if(remaining <= 0){
+    showToast(`No seats left in ${entryLabel(g)} · ${g.service} — this program is full.`);
+    return;
+  }
+  openCardAddLearnersModal(groupId, sectionId);
 }
 function setActiveDateSection(groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
@@ -1348,7 +1366,7 @@ function openNoLearnersModal(groupId, sectionId){
         </div>
         <div class="modal-foot">
           <button class="btn btn-secondary" onclick="closeGenericModal()">Got It</button>
-          <button class="btn btn-primary" onclick="closeGenericModal(); openAddLearnersModal();">+ Add Learners</button>
+          <button class="btn btn-primary" onclick="closeGenericModal(); openAddLearnersModal('${groupId}');">+ Add Learners</button>
         </div>
       </div>
     </div>
@@ -1744,11 +1762,12 @@ function applyDateSectionDrop(groupId, sectionId, payload){
 /* =====================================================
    ADD LEARNERS MODAL
 ===================================================== */
-function openAddLearnersModal(){
+function openAddLearnersModal(preselectGroupId){
   addModalOpen = true; addModalTab = 'individual'; editOnlyMode = false;
   learnerJustAdded = false;
   amEmailChips = [];
-  addLearnerProgramState = { checkedExistingGroupIds:new Set(), service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null };
+  const preselect = preselectGroupId ? new Set([preselectGroupId]) : new Set();
+  addLearnerProgramState = { checkedExistingGroupIds:preselect, service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null };
   renderAddLearnersModal();
 }
 function openAddLearnersModalForEdit(id){
@@ -1797,7 +1816,7 @@ function renderAddModalIndividual(){
   const emailFieldHtml = editing
     ? `<input id="amEmail" type="email" placeholder="email" class="field-gap" value="${esc(editing.email)}" />`
     : `<div class="email-chip-box field-gap" id="amEmailChipBox" onclick="document.getElementById('amEmailTyping').focus()">
-        ${amEmailChips.map((email,i)=>`<span class="chip removable">${esc(email)} <span class="x" onclick="event.stopPropagation(); removeAmEmailChip(${i})">${iconX('#0276b1')}</span></span>`).join('')}
+        ${amEmailChips.map((email,i)=>`<span class="chip removable">${esc(email)} <span class="x" tabindex="0" role="button" onclick="event.stopPropagation(); removeAmEmailChip(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">${iconX('#0276b1')}</span></span>`).join('')}
         <input id="amEmailTyping" type="text" placeholder="${amEmailChips.length===0?'email — press comma after each one':'add another…'}" autocomplete="off" onkeydown="onAmEmailTypingKeydown(event)" oninput="this.classList.remove('invalid'); document.getElementById('amEmailError').classList.remove('show');" />
       </div>`;
   return `
@@ -1871,7 +1890,7 @@ function refreshAmEmailField(){
   const box = document.getElementById('amEmailChipBox');
   if(!box) return;
   box.innerHTML = `
-    ${amEmailChips.map((email,i)=>`<span class="chip removable">${esc(email)} <span class="x" onclick="event.stopPropagation(); removeAmEmailChip(${i})">${iconX('#0276b1')}</span></span>`).join('')}
+    ${amEmailChips.map((email,i)=>`<span class="chip removable">${esc(email)} <span class="x" tabindex="0" role="button" onclick="event.stopPropagation(); removeAmEmailChip(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">${iconX('#0276b1')}</span></span>`).join('')}
     <input id="amEmailTyping" type="text" placeholder="${amEmailChips.length===0?'email — press comma after each one':'add another…'}" autocomplete="off" onkeydown="onAmEmailTypingKeydown(event)" oninput="this.classList.remove('invalid'); document.getElementById('amEmailError').classList.remove('show');" />
   `;
   document.getElementById('amEmailTyping').focus();
@@ -1906,7 +1925,7 @@ function renderAddLearnerProgramSection(){
     const remaining = remainingSeatsToAdd(s.entryId);
     availHtml = remaining<=0
       ? `<div class="info-box error"><strong>No seats left for ${esc(s.subject)}</strong></div>`
-      : `<div class="info-box"><strong>${remaining} available${s.funded?' <span class="funded-badge">FUNDED</span>':''}</strong><span>${fmtDate(s.start)} – ${fmtDate(s.end)}</span></div>
+      : `<div class="info-box"><strong>${remaining} available seat${remaining===1?'':'s'}${s.funded?' <span class="funded-badge">FUNDED</span>':''}</strong><span>${fmtDate(s.start)} – ${fmtDate(s.end)}</span></div>
         ${emailCount>1 && emailCount>remaining ? `<div class="cap-note show">Only ${remaining} of ${emailCount} being added will fit here.</div>` : ''}`;
   }
 
@@ -1918,12 +1937,16 @@ function renderAddLearnerProgramSection(){
           ${existingPrograms.map(g=>{
             const checked = s.checkedExistingGroupIds.has(g.id);
             const remaining = remainingSeatsToAdd(g.entryId);
-            const disabled = !checked && (remaining <= 0 || (emailCount > 0 && remaining < emailCount));
-            const disabledTitle = remaining <= 0 ? 'No seats left in this program' : `Not enough seats for ${emailCount} learner${emailCount===1?'':'s'}`;
-            return `<div class="roster-row selectable ${checked?'selected':''} ${disabled?'disabled':''}" ${disabled?'':`onclick="toggleAddLearnerProgramCheck('${g.id}')"`} ${disabled?`title="${disabledTitle}"`:''}>
-              <span class="check">${checked?iconCheck('#fff'):''}</span>
-              <span class="email">${esc(entryLabel(g))} · ${esc(g.service)}</span>
-              <span class="badge">${remaining} left</span>
+            const zeroSeats = remaining <= 0;
+            const disabled = !checked && (zeroSeats || (emailCount > 0 && remaining < emailCount));
+            const disabledTitle = zeroSeats ? 'No seats left in this program' : `Not enough seats for ${emailCount} learner${emailCount===1?'':'s'}`;
+            return `<div>
+              <div class="roster-row selectable ${checked?'selected':''} ${disabled?'disabled':''}" ${disabled?'':`onclick="toggleAddLearnerProgramCheck('${g.id}')"`} ${disabled?`title="${disabledTitle}"`:''}>
+                <span class="check">${checked?iconCheck('#fff'):''}</span>
+                <span class="email">${esc(entryLabel(g))} · ${esc(g.service)}</span>
+                <span class="badge">${remaining} left</span>
+              </div>
+              ${zeroSeats && !checked ? `<div class="seat-request-note">No seats left — request more seats to assign learners here.</div>` : ''}
             </div>`;
           }).join('')}
         </div>
@@ -1932,7 +1955,7 @@ function renderAddLearnerProgramSection(){
       <div class="add-learner-program-cascade">
         <div class="row-between" style="align-items:baseline;">
           <label style="margin-bottom:0;">Select a Program</label>
-          <button class="link-sm" onclick="openCatalogModalForTarget('addLearnerProgram')">See Everything Available →</button>
+          <button class="link-sm" onclick="commitAmEmailTyping(); openCatalogModalForTarget('addLearnerProgram')">See Everything Available →</button>
         </div>
         <div class="filter-group" style="margin-top:8px;">
           <span class="filter-label">Service</span>
@@ -2412,7 +2435,7 @@ function renderBulkFlaggedRow(r){
   return `<div class="bulk-flag-row">
     <div style="flex:1;min-width:0;">
       <div class="email">${esc(r.email)}</div>
-      <div class="muted" style="font-size:12px;">${esc(r.issue)}</div>
+      <div class="muted" style="font-size:12px;">No program assigned</div>
     </div>
   </div>`;
 }
@@ -2483,7 +2506,7 @@ function renderBulkAssignModal(){
     if(remaining <= 0){
       availabilityHtml = `<div class="info-box error"><strong>No seats left for ${esc(s.subject)}</strong><p>Choose a different program.</p></div>`;
     } else {
-      availabilityHtml = `<div class="info-box"><strong>${remaining} available${s.funded?' <span class="funded-badge">FUNDED</span>':''}</strong><span>${fmtDate(s.start)} – ${fmtDate(s.end)}</span></div>
+      availabilityHtml = `<div class="info-box"><strong>${remaining} available seat${remaining===1?'':'s'}${s.funded?' <span class="funded-badge">FUNDED</span>':''}</strong><span>${fmtDate(s.start)} – ${fmtDate(s.end)}</span></div>
         ${s.targetIds.length > remaining ? `<div class="cap-note show">Only ${remaining} of ${s.targetIds.length} selected learners will fit here — the rest will stay unassigned.</div>` : ''}`;
     }
   }
@@ -2494,10 +2517,15 @@ function renderBulkAssignModal(){
     : `<div class="roster-list" style="max-height:260px;margin-top:8px;">${existingPrograms.map(g=>{
         const checked = bulkAssignCheckedProgramIds.has(g.id);
         const remaining = remainingSeatsToAdd(g.entryId);
-        return `<div class="roster-row selectable ${checked?'selected':''}" onclick="toggleBulkAssignProgramCheck('${g.id}')">
-          <span class="check">${checked?iconCheck('#fff'):''}</span>
-          <span class="email">${esc(entryLabel(g))} · ${esc(g.service)}</span>
-          <span class="badge">${remaining} left</span>
+        const zeroSeats = remaining <= 0;
+        const disabled = !checked && zeroSeats;
+        return `<div>
+          <div class="roster-row selectable ${checked?'selected':''} ${disabled?'disabled':''}" ${disabled?'':`onclick="toggleBulkAssignProgramCheck('${g.id}')"`} ${disabled?'title="No seats left in this program"':''}>
+            <span class="check">${checked?iconCheck('#fff'):''}</span>
+            <span class="email">${esc(entryLabel(g))} · ${esc(g.service)}</span>
+            <span class="badge">${remaining} left</span>
+          </div>
+          ${zeroSeats && !checked ? `<div class="seat-request-note">No seats left — request more seats to assign learners here.</div>` : ''}
         </div>`;
       }).join('')}</div>`;
 
@@ -2766,8 +2794,8 @@ function openUnsentWorkModal(destination){
         <div class="modal-body">
           <p class="muted warning-modal-text" style="margin:0;">
             ${onlyUnassigned
-              ? `You've added ${learners.length} learner${learners.length===1?'':'s'}, but none of them are assigned to a program yet. If you leave now, your list will be saved so you can pick this back up later.`
-              : `You've added ${learners.length} learner${learners.length===1?'':'s'} and assigned ${assigned} of them to a program, but haven't sent it yet. Use <strong>Send Assignments</strong> at the bottom of the page before leaving, or leave now and your learner list will be saved for later — program assignments won't be.`}
+              ? `You've added ${learners.length} learner${learners.length===1?'':'s'}, but none of them are assigned to a program yet. If you leave now, your draft will be saved so you can pick this back up later.`
+              : `You've added ${learners.length} learner${learners.length===1?'':'s'} and assigned ${assigned} of them to a program, but haven't sent it yet. Use <strong>Send Assignments</strong> at the bottom of the page before leaving, or leave now and your whole draft — learners, programs, and assignments — will be saved for when you come back.`}
           </p>
         </div>
         <div class="modal-foot">
@@ -2783,11 +2811,30 @@ function confirmLeaveWithoutSending(destination){
   closeGenericModal();
   navigateTo(destination);
 }
-const PENDING_LEARNERS_KEY = 'acme_pending_learners_v1';
+const PENDING_LEARNERS_KEY = 'acme_pending_draft_v2';
+function serializeGroupsForStorage(){
+  return groups.map(g => ({
+    id: g.id, service: g.service, portfolio: g.portfolio, subjectName: g.subjectName,
+    entryId: g.entryId, subject: g.subject, hours: g.hours, funded: g.funded, seats: g.seats,
+    start: g.start, end: g.end, uiExpanded: g.uiExpanded, bodyCollapsed: g.bodyCollapsed, activeSectionId: g.activeSectionId,
+    assignedIds: [...g.assignedIds],
+    dateSections: g.dateSections.map(ds => ({ id: ds.id, startDate: ds.startDate, learnerIds: [...ds.learnerIds] })),
+  }));
+}
+function deserializeGroupsFromStorage(saved){
+  return saved.map(g => ({
+    ...g,
+    assignedIds: new Set(g.assignedIds || []),
+    dateSections: (g.dateSections || []).map(ds => ({ ...ds, learnerIds: new Set(ds.learnerIds || []) })),
+  }));
+}
 function savePendingLearnersForLater(){
-  if(learners.length === 0) return;
+  if(learners.length === 0 && groups.length === 0) return;
   try{
-    sessionStorage.setItem(PENDING_LEARNERS_KEY, JSON.stringify({ learners, nextId }));
+    sessionStorage.setItem(PENDING_LEARNERS_KEY, JSON.stringify({
+      learners, nextId,
+      groups: serializeGroupsForStorage(), nextGroupId, nextDateSectionId,
+    }));
   }catch(err){ /* storage unavailable — nothing more we can do here */ }
 }
 function restorePendingLearnersIfAny(){
@@ -2796,10 +2843,23 @@ function restorePendingLearnersIfAny(){
     if(!raw) return;
     sessionStorage.removeItem(PENDING_LEARNERS_KEY);
     const data = JSON.parse(raw);
+    let restoredLearnerCount = 0, restoredGroupCount = 0;
     if(data && Array.isArray(data.learners) && data.learners.length > 0){
       learners = data.learners;
       if(typeof data.nextId === 'number') nextId = Math.max(nextId, data.nextId);
-      showToast(`Welcome back — restored ${learners.length} learner${learners.length===1?'':'s'} from before.`);
+      restoredLearnerCount = learners.length;
+    }
+    if(data && Array.isArray(data.groups) && data.groups.length > 0){
+      groups = deserializeGroupsFromStorage(data.groups);
+      if(typeof data.nextGroupId === 'number') nextGroupId = Math.max(nextGroupId, data.nextGroupId);
+      if(typeof data.nextDateSectionId === 'number') nextDateSectionId = Math.max(nextDateSectionId, data.nextDateSectionId);
+      restoredGroupCount = groups.length;
+    }
+    if(restoredLearnerCount > 0 || restoredGroupCount > 0){
+      const parts = [];
+      if(restoredLearnerCount > 0) parts.push(`${restoredLearnerCount} learner${restoredLearnerCount===1?'':'s'}`);
+      if(restoredGroupCount > 0) parts.push(`${restoredGroupCount} program${restoredGroupCount===1?'':'s'}`);
+      showToast(`Welcome back — restored ${parts.join(' and ')} from your last draft.`);
     }
   }catch(err){ /* ignore corrupt or unavailable storage */ }
 }
