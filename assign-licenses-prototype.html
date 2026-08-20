@@ -155,10 +155,14 @@
   .chip .x{cursor:pointer;font-size:15px;line-height:1;color:var(--teal);opacity:.7;border-radius:50%;}
   .chip .x:hover{opacity:1;}
   .chip .x:focus{outline:none;opacity:1;box-shadow:0 0 0 2px var(--bg-blue-light);}
-  .chip-filter{cursor:pointer;user-select:none;}
-  .chip-filter.selected{background:var(--teal);color:#fff;}
-  .chip-toggle{cursor:pointer;user-select:none;}
-  .chip-toggle.selected{background:var(--teal);color:#fff;}
+  .chip-filter{cursor:pointer;user-select:none;background:#fff;border-color:var(--border-light);color:var(--text-disabled);transition:border-color .12s,color .12s,background-color .12s;}
+  .chip-filter:hover{border-color:var(--teal);color:var(--teal);}
+  .chip-filter.selected{background:#fff;border-color:var(--teal);color:var(--teal);}
+  .chip-filter.selected:hover{background:var(--bg-blue-light);}
+  .chip-toggle{cursor:pointer;user-select:none;background:#fff;border-color:var(--border-light);color:var(--text-disabled);transition:border-color .12s,color .12s,background-color .12s;}
+  .chip-toggle:hover{border-color:var(--teal);color:var(--teal);}
+  .chip-toggle.selected{background:#fff;border-color:var(--teal);color:var(--teal);}
+  .chip-toggle.selected:hover{background:var(--bg-blue-light);}
   .chip-toggle.disabled{border-color:var(--border);color:var(--text-disabled);cursor:not-allowed;background:var(--bg-page);}
   .chip-add{border-style:solid;color:var(--teal);cursor:pointer;background:#fff;}
   .chip-add:hover{background:var(--bg-blue-light);}
@@ -291,25 +295,25 @@
 
   .date-tabs-row{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;align-items:center;}
   .date-tab{
-    height:30px;padding:0 12px;border-radius:16px;border:1px solid var(--border);background:#fff;
-    font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+    height:30px;padding:0 12px;border-radius:16px;border:1px solid var(--border-light);background:#fff;
+    font-size:13px;font-weight:600;color:var(--text-disabled);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+    transition:border-color .12s,color .12s,background-color .12s;
   }
-  .date-tab:hover{border-color:var(--teal);}
-  .date-tab.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .date-tab:hover{border-color:var(--teal);color:var(--teal);}
+  .date-tab.active{background:#fff;border-color:var(--teal);color:var(--teal);}
+  .date-tab.active:hover{background:var(--bg-blue-light);}
   .date-tab-count{font-size:11px;font-weight:700;border-radius:10px;padding:1px 6px;background:var(--bg-page);color:var(--text-secondary);}
-  .date-tab.active .date-tab-count{background:rgba(255,255,255,0.25);color:#fff;}
+  .date-tab.active .date-tab-count{background:var(--bg-blue-light);color:var(--teal);}
+  .date-tab.active:hover .date-tab-count{background:rgba(255,255,255,0.6);color:var(--teal);}
   .date-tab-add{padding:0 12px;color:var(--teal);border-style:dashed;}
   .date-tab.drop-hover{background:var(--bg-blue-light);border-color:var(--teal);outline:2px dashed var(--teal);outline-offset:3px;}
   .date-section-meta{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
-  .date-row-inline{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;}
-  .date-row-inline input[type=date]{width:150px;height:32px;flex:0 0 auto;}
-  .date-row-inline .field-error{flex-basis:100%;margin:4px 0 0;}
-  .date-section-meta-text{font-size:14px;font-weight:600;color:var(--navy);}
-  .collapsed-summary{
-    margin-top:14px;padding:14px 16px;background:var(--bg-page);border-radius:var(--radius-int);
-    border:1px dashed var(--border);font-size:13px;color:var(--navy);display:flex;flex-direction:column;gap:2px;
-  }
-  .collapsed-summary.drop-hover{background:var(--bg-blue-light);border-color:var(--teal);outline:2px dashed var(--teal);outline-offset:6px;}
+  .date-tabs-title{font-size:13px;font-weight:600;color:var(--navy);margin-top:14px;margin-bottom:8px;}
+  .see-other-learners-btn{margin-top:10px;}
+  .cohort-learners-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .cohort-learners-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);padding:8px 10px;border-bottom:1px solid var(--border);}
+  .cohort-learners-table td{padding:9px 10px;border-bottom:1px solid var(--border-light);color:var(--navy);}
+  .cohort-learners-table tr:last-child td{border-bottom:none;}
   .date-row{
     display:inline-flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;
     background:var(--bg-page);border-radius:var(--radius-int);padding:14px 16px;font-size:14px;
@@ -429,7 +433,6 @@
   .builder-wrap{display:flex;gap:24px;align-items:flex-start;}
   .learners-col{width:400px;flex:0 0 400px;position:sticky;top:24px;}
   .groups-col{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:16px;}
-
   .group-card{
     background:var(--bg-white);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:26px 28px;
     border:2px dashed transparent;outline:none;transition:border-color .12s,background .12s;
@@ -448,10 +451,6 @@
   .group-drop-hint{font-size:12px;color:var(--text-disabled);}
   .group-card-actions{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;}
   .group-card.collapsed{padding-bottom:20px;}
-  .programs-empty-hint{
-    border:1.5px dashed var(--border);border-radius:var(--radius-card);background:var(--bg-page);color:var(--text-secondary);
-    font-size:14px;padding:32px 24px;text-align:center;line-height:1.5;
-  }
 
   .learners-card{padding:26px 28px;}
   .learners-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
@@ -744,7 +743,6 @@ let addModalTab = 'individual';
 let editingLearnerId = null; // set when a "ready" learner in the Add modal is clicked to edit
 let editOnlyMode = false; // true when opened to edit one specific learner (from the panel row) — no batch ready-list shown
 let learnerJustAdded = false;  // whether Confirm was actually clicked this modal session, for the "nothing added" warning
-let addLearnerProgramState = null; // program-assignment state (existing-program checklist + new-program cascade) for the Add Learner modal
 let amEmailChips = [];         // committed email chips in the Add Learner modal (Outlook-style entry)
 let bulkAssignState = null;    // cascade state for the "Assign Selected to a Program" modal
 let bulkAssignCheckedProgramIds = new Set(); // existing programs checked in that modal's checklist
@@ -833,10 +831,6 @@ function removeSelectedRows(){
 ===================================================== */
 function renderGroupsCol(){
   const col = document.getElementById('groupsCol');
-  if(groups.length === 0){
-    col.innerHTML = `<div class="programs-empty-hint">Programs will appear here once you add a learner and assign them to one.</div>`;
-    return;
-  }
   col.innerHTML = groups.map(g=>renderGroupCard(g)).join('');
 }
 function renderGroupUI(groupId){
@@ -846,7 +840,6 @@ function renderGroupUI(groupId){
 function renderGroupCard(g){
   const resolved = !!g.entryId;
   const collapsed = resolved && !g.uiExpanded;
-  const bodyCollapsed = !!g.bodyCollapsed;
 
   const headTitle = resolved
     ? `${esc(entryLabel(g))} · ${esc(g.service)}${g.funded?'<span class="funded-badge">FUNDED</span>':''}`
@@ -857,15 +850,11 @@ function renderGroupCard(g){
       <h3>${headTitle}</h3>
       ${!resolved ? `<button class="link-sm" style="margin-top:6px;" onclick="openCatalogModal('${g.id}')">See Everything Available →</button>` : ''}
     </div>
-    <div style="display:flex;align-items:center;gap:6px;">
-      ${resolved ? `<button class="icon-btn" title="${bodyCollapsed?'Expand':'Collapse'}" onclick="toggleBodyCollapsed('${g.id}')">${iconChevron('#5d7682', bodyCollapsed)}</button>` : ''}
-      <button class="icon-btn" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);" title="Remove program" onclick="confirmRemoveGroup('${g.id}')">${iconX('#5d7682')}</button>
-    </div>
   </div>`;
 
   const picker = collapsed ? '' : renderGroupPicker(g);
   const availability = renderGroupAvailability(g);
-  const dateArea = resolved ? (bodyCollapsed ? renderCollapsedSummary(g) : renderDateTabsArea(g)) : '';
+  const dateArea = resolved ? renderDateTabsArea(g) : '';
 
   return `<div class="group-card ${collapsed?'collapsed':''}">
     ${head}
@@ -886,7 +875,7 @@ function renderDateTabsArea(g){
   }).join('');
   const addTab = `<button class="date-tab date-tab-add" title="Add an extra starting date" onclick="duplicateDateSection('${g.id}')" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onAddDateTabDrop(event,'${g.id}')">+ Add New Date</button>`;
   const ds = g.dateSections.find(x=>x.id===g.activeSectionId);
-  return `<div class="date-tabs-row">${tabs}${addTab}</div>${renderActiveDateSection(g, ds)}`;
+  return `<div class="date-tabs-title">Existing Start Dates (or cohorts)</div><div class="date-tabs-row">${tabs}${addTab}</div>${renderActiveDateSection(g, ds)}`;
 }
 function onDateTabDrop(e, groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
@@ -909,15 +898,33 @@ function renderActiveDateSection(g, ds){
   const canRemoveSection = g.dateSections.length > 1;
   const justDropped = dropHighlightSectionId === ds.id;
   return `<div class="date-section ${justDropped?'drop-flash':''}" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onDateSectionDrop(event,'${g.id}','${ds.id}')">
-    <div class="date-section-meta">
-      <span class="date-row-inline" id="dateRow-${ds.id}">
-        <span class="date-section-meta-text">Starts ${fmtDate(ds.startDate)}</span>
-        <button class="icon-btn" title="Change start date" onclick="toggleGroupDateEdit('${g.id}','${ds.id}')">${iconPencil('#0276b1')}</button>
-      </span>
-      ${canRemoveSection ? `<button class="link-sm" style="color:var(--text-error);" onclick="removeDateSection('${g.id}','${ds.id}')">Remove this date</button>` : ''}
-    </div>
+    ${canRemoveSection ? `<div class="date-section-meta"><button class="link-sm" style="color:var(--text-error);" onclick="removeDateSection('${g.id}','${ds.id}')">Remove this date</button></div>` : ''}
     <div class="group-chip-row chip-row">${chips || `<span class="muted" style="font-size:12px;">No one assigned yet.</span>`}</div>
+    ${ds.learnerIds.size > 0 ? `<button class="btn btn-secondary btn-sm see-other-learners-btn" onclick="openCohortLearnersModal('${g.id}','${ds.id}')">See Other Learners In This Cohort</button>` : ''}
   </div>`;
+}
+function openCohortLearnersModal(groupId, sectionId){
+  const g = groups.find(x=>x.id===groupId);
+  if(!g) return;
+  const ds = g.dateSections.find(x=>x.id===sectionId);
+  if(!ds) return;
+  const cohortLearners = learners.filter(l=>ds.learnerIds.has(l.id));
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
+      <div class="modal" style="width:520px;">
+        <div class="modal-head"><h3>${esc(entryLabel(g))} · ${esc(g.service)} — ${fmtDate(ds.startDate)}</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
+        <div class="modal-body">
+          <table class="cohort-learners-table">
+            <thead><tr><th>Email</th><th>Reporting Group</th></tr></thead>
+            <tbody>
+              ${cohortLearners.map(l=>`<tr><td>${esc(l.email)}</td><td>${esc(l.group||'—')}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeGenericModal()">Close</button></div>
+      </div>
+    </div>
+  `;
 }
 function setActiveDateSection(groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
@@ -925,38 +932,6 @@ function setActiveDateSection(groupId, sectionId){
   g.activeSectionId = sectionId;
   renderGroupUI(groupId);
 }
-function toggleBodyCollapsed(groupId){
-  const g = groups.find(x=>x.id===groupId);
-  if(!g) return;
-  g.bodyCollapsed = !g.bodyCollapsed;
-  renderGroupsCol(); renderFooter();
-}
-function renderCollapsedSummary(g){
-  const dateCount = g.dateSections.length;
-  const assignedCount = g.assignedIds.size;
-  return `<div class="collapsed-summary" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onCollapsedCardDrop(event,'${g.id}')">
-    <span>${assignedCount} learner${assignedCount===1?'':'s'} assigned across ${dateCount} starting date${dateCount===1?'':'s'}</span>
-    <span class="muted" style="font-size:12px;">Drop learners here to assign${dateCount>1?' — we\'ll open it up so you can pick the right date':''}</span>
-  </div>`;
-}
-function onCollapsedCardDrop(e, groupId){
-  const g = groups.find(x=>x.id===groupId);
-  if(!g || !g.entryId){ e.preventDefault(); e.currentTarget.classList.remove('drop-hover'); showToast('Choose a program for this card first.'); return; }
-  if(g.dateSections.length === 1){
-    // Only one possible destination — assign directly, no need to expand.
-    onDateSectionDrop(e, groupId, g.dateSections[0].id);
-    return;
-  }
-  // More than one starting date — don't guess which one they meant. Expand instead of assigning.
-  e.preventDefault();
-  e.currentTarget.classList.remove('drop-hover');
-  const payload = parseDragPayload(e);
-  if(!payload || payload.ids.length === 0) return;
-  g.bodyCollapsed = false;
-  renderGroupsCol(); renderFooter();
-  showToast(`${entryLabel(g)} · ${g.service} has ${g.dateSections.length} starting dates — expanded so you can drop onto the right one.`);
-}
-
 function renderGroupPicker(g){
   const services = Object.keys(CATALOG);
   const portfolios = g.service ? Object.keys(CATALOG[g.service]) : [];
@@ -1001,32 +976,6 @@ function renderGroupAvailability(g){
     return `<div class="group-avail-line error">No seats available for ${esc(g.subject)}.</div>`;
   }
   return `<div class="group-avail-line ${zeroSeats?'error':''}">${remaining} seat${remaining===1?'':'s'} left · ${fmtDate(g.start)} – ${fmtDate(g.end)} · ${g.assignedIds.size} assigned</div>`;
-}
-function toggleGroupDateEdit(groupId, sectionId){
-  const g = groups.find(x=>x.id===groupId);
-  const ds = g.dateSections.find(s=>s.id===sectionId);
-  const row = document.getElementById('dateRow-'+sectionId);
-  row.innerHTML = `<input type="date" id="dateInput-${sectionId}" value="${ds.startDate}" min="${g.start}" max="${g.end}" oninput="this.classList.remove('invalid'); document.getElementById('dateError-${sectionId}').classList.remove('show');" />
-    <button class="icon-btn" title="Save" onclick="saveGroupDate('${groupId}','${sectionId}')">${iconCheck('#0276b1')}</button>
-    <div class="field-error" id="dateError-${sectionId}">Starting dates in the same program need to be different.</div>`;
-  document.getElementById('dateInput-'+sectionId).focus();
-}
-function saveGroupDate(groupId, sectionId){
-  const g = groups.find(x=>x.id===groupId);
-  const ds = g.dateSections.find(s=>s.id===sectionId);
-  const input = document.getElementById('dateInput-'+sectionId);
-  const val = input.value;
-  if(!val) return;
-  const collision = g.dateSections.some(other=>other.id!==sectionId && other.startDate===val);
-  if(collision){
-    input.classList.add('invalid');
-    const errEl = document.getElementById('dateError-'+sectionId);
-    if(errEl) errEl.classList.add('show');
-    input.focus();
-    return;
-  }
-  ds.startDate = val;
-  renderGroupUI(groupId);
 }
 /* ---- "See Everything Available" — browse the full catalog and apply
    a pick directly to the card that opened it ---- */
@@ -1134,14 +1083,6 @@ function renderCatalogList(){
 }
 function pickFromCatalog(entryId){
   const entry = getEntry(entryId);
-  if(catalogModalTarget === 'addLearnerProgram'){
-    resolveAddLearnerProgramEntry(entry);
-    addLearnerProgramState.service = entry.service;
-    addLearnerProgramState.portfolio = entry.portfolio;
-    addLearnerProgramState.subjectName = entry.subject;
-    closeCatalogModal();
-    return;
-  }
   if(catalogModalTarget === 'bulkAssign'){
     resolveBulkAssignEntry(entry);
     bulkAssignState.service = entry.service;
@@ -1165,49 +1106,29 @@ function closeCatalogModal(){
   catalogModalGroupId = null;
   catalogModalTarget = null;
   document.getElementById('modalRoot').innerHTML = '';
-  if(target === 'addLearnerProgram') renderAddLearnersModal();
-  else if(target === 'bulkAssign') renderBulkAssignModal();
+  if(target === 'bulkAssign') renderBulkAssignModal();
 }
 
 function makeDateSection(startDate){
   return { id:'d'+(nextDateSectionId++), startDate, learnerIds:new Set() };
+}
+function ensureAllProgramsExist(){
+  getAllEntries().forEach(entry=>{
+    if(groups.some(g=>g.entryId===entry.id)) return; // already exists — don't duplicate
+    const candidateStartDate = todayISO() > entry.start ? todayISO() : entry.start;
+    groups.push({
+      id:'g'+(nextGroupId++), service:entry.service, portfolio:entry.portfolio, subjectName:entry.subject,
+      entryId:entry.id, subject:entry.subject, hours:entry.hours, funded:!!entry.funded, seats:entry.seats,
+      start:entry.start, end:entry.end, assignedIds:new Set(),
+      dateSections:[ makeDateSection(candidateStartDate) ], uiExpanded:false,
+    });
+  });
 }
 function assignLearnerToSection(group, ds, learnerId){
   // A learner can only be on one starting date within the same program at a time.
   group.dateSections.forEach(other=>{ if(other!==ds) other.learnerIds.delete(learnerId); });
   ds.learnerIds.add(learnerId);
   group.assignedIds.add(learnerId);
-}
-function confirmRemoveGroup(id){
-  const g = groups.find(x=>x.id===id);
-  if(!g) return;
-  const resolved = !!g.entryId;
-  const count = g.assignedIds.size;
-  const sectionCount = g.dateSections ? g.dateSections.length : 0;
-  const message = !resolved
-    ? `This program hasn't been set up yet — removing it just clears this empty card.`
-    : count === 0
-      ? `This will remove ${esc(entryLabel(g))} · ${esc(g.service)}${sectionCount>1?` and all ${sectionCount} of its starting dates`:''}. Nobody's assigned to it yet, so nothing else is affected.`
-      : `This will remove ${esc(entryLabel(g))} · ${esc(g.service)}${sectionCount>1?` and all ${sectionCount} of its starting dates`:''}. <strong>${count} learner${count===1?'':'s'}</strong> currently assigned here will become unassigned — they'll stay on your Learners list, just without this program.`;
-  document.getElementById('modalRoot').innerHTML = `
-    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
-      <div class="modal" style="width:440px;">
-        <div class="modal-head"><h3>Remove this program?</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
-        <div class="modal-body">
-          <p class="muted warning-modal-text" style="margin:0;">${message}</p>
-        </div>
-        <div class="modal-foot">
-          <button class="btn btn-secondary" onclick="closeGenericModal()">Cancel</button>
-          <button class="btn btn-primary" style="background:var(--text-error);" onclick="removeGroup('${id}')">Remove Program</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-function removeGroup(id){
-  groups = groups.filter(g=>g.id!==id);
-  closeGenericModal();
-  renderAll();
 }
 function clearGroupAssignmentsIfAny(g, reason){
   if(g.assignedIds.size > 0){
@@ -1703,19 +1624,15 @@ function applyDateSectionDrop(groupId, sectionId, payload){
 /* =====================================================
    ADD LEARNERS MODAL
 ===================================================== */
-function openAddLearnersModal(preselectGroupId){
+function openAddLearnersModal(){
   addModalOpen = true; addModalTab = 'individual'; editOnlyMode = false;
   learnerJustAdded = false;
   amEmailChips = [];
-  const preselect = preselectGroupId ? new Set([preselectGroupId]) : new Set();
-  addLearnerProgramState = { checkedExistingGroupIds:preselect, service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null };
   renderAddLearnersModal();
 }
 function openAddLearnersModalForEdit(id){
   addModalOpen = true; addModalTab = 'individual'; editOnlyMode = true;
   editingLearnerId = id;
-  const currentGroupIds = groups.filter(g=>g.assignedIds.has(id)).map(g=>g.id);
-  addLearnerProgramState = { checkedExistingGroupIds:new Set(currentGroupIds), service:null, portfolio:null, subjectName:null, entryId:null, subject:null, hours:null, funded:false, start:null, end:null, startDate:null };
   renderAddLearnersModal();
 }
 function closeAddLearnersModal(){
@@ -1781,7 +1698,6 @@ function renderAddModalIndividual(){
         <button class="link-sm" onclick="cancelNewGroup()">Cancel</button>
       </div>
     </div>
-    <div id="addLearnerProgramSection">${editing ? renderAddLearnerProgramSection() : ''}</div>
     <div style="margin-top:18px;display:flex;gap:8px;justify-content:flex-end;">
       ${editing ? `
         <button class="btn btn-secondary btn-sm" onclick="cancelEditLearner()">Cancel</button>
@@ -1844,121 +1760,6 @@ function refreshAmEmailField(){
   if(hintWrap){
     hintWrap.innerHTML = isMulti ? `<p class="muted" style="font-size:12px;margin:4px 0 12px;">Adding ${amEmailChips.length} learners at once — first and last name will be left blank for now.</p>` : '';
   }
-  refreshAddLearnerProgramSection();
-}
-function renderAddLearnerProgramSection(){
-  const s = addLearnerProgramState;
-  const existingPrograms = groups.filter(g=>g.entryId);
-  const services = Object.keys(CATALOG);
-  const portfolios = s.service ? Object.keys(CATALOG[s.service]) : [];
-  const subjectNames = (s.service && s.portfolio) ? distinctSubjects(s.service, s.portfolio) : [];
-
-  const emailCount = editingLearnerId ? 1 : amEmailChips.length;
-  let hoursHtml = '', availHtml = '';
-  if(s.subjectName){
-    const entries = getEntriesFor(s.service, s.portfolio, s.subjectName);
-    const hoursOptions = [...new Set(entries.map(e=>e.hours).filter(h=>h!=null))];
-    if(hoursOptions.length > 0){
-      hoursHtml = `<div class="filter-group"><span class="filter-label">Hours</span><div class="chip-row">${hoursOptions.map(h=>`<span class="chip chip-filter ${s.hours===h?'selected':''}" onclick="setAddLearnerProgramHours(${h})">${h}h</span>`).join('')}</div></div>`;
-    }
-  }
-  if(s.entryId){
-    const remaining = remainingSeatsToAdd(s.entryId);
-    availHtml = remaining<=0
-      ? `<div class="info-box error"><strong>No seats left for ${esc(s.subject)}</strong></div>`
-      : `<div class="info-box"><strong>${remaining} available seat${remaining===1?'':'s'}${s.funded?' <span class="funded-badge">FUNDED</span>':''}</strong><span>${fmtDate(s.start)} – ${fmtDate(s.end)}</span></div>
-        ${emailCount>1 && emailCount>remaining ? `<div class="cap-note show">Only ${remaining} of ${emailCount} being added will fit here.</div>` : ''}`;
-  }
-
-  return `
-    <div class="add-learner-program-section">
-      ${existingPrograms.length > 0 ? `
-        <label>Assign to an Available Program (optional)</label>
-        <span class="filter-label" style="display:block;margin-top:10px;">Recent Programs</span>
-        <div class="roster-list" style="margin-top:8px;max-height:150px;">
-          ${existingPrograms.map(g=>{
-            const checked = s.checkedExistingGroupIds.has(g.id);
-            const remaining = remainingSeatsToAdd(g.entryId);
-            const zeroSeats = remaining <= 0;
-            const disabled = !checked && (zeroSeats || (emailCount > 0 && remaining < emailCount));
-            const disabledTitle = zeroSeats ? 'No seats left in this program' : `Not enough seats for ${emailCount} learner${emailCount===1?'':'s'}`;
-            return `<div>
-              <div class="roster-row selectable ${checked?'selected':''} ${disabled?'disabled':''}" ${disabled?'':`onclick="toggleAddLearnerProgramCheck('${g.id}')"`} ${disabled?`title="${disabledTitle}"`:''}>
-                <span class="check">${checked?iconCheck('#fff'):''}</span>
-                <span class="email">${esc(entryLabel(g))} · ${esc(g.service)}</span>
-                <span class="badge ${zeroSeats?'zero':''}">${remaining} left</span>
-              </div>
-              ${zeroSeats && !checked ? `<div class="seat-request-note">No seats left — request more seats to assign learners here.</div>` : ''}
-            </div>`;
-          }).join('')}
-        </div>
-      ` : ''}
-
-      <div class="add-learner-program-cascade ${existingPrograms.length===0?'no-divider':''}">
-        <div class="row-between" style="align-items:baseline;">
-          <label style="margin-bottom:0;">Select a Program</label>
-          <button class="link-sm" onclick="commitAmEmailTyping(); openCatalogModalForTarget('addLearnerProgram')">See Everything Available →</button>
-        </div>
-        <div class="filter-group" style="margin-top:8px;">
-          <span class="filter-label">Service</span>
-          <div class="chip-row">${services.map(sv=>`<span class="chip chip-filter ${s.service===sv?'selected':''}" onclick="setAddLearnerProgramService('${sv}')">${sv}</span>`).join('')}</div>
-        </div>
-        ${s.service ? `<div class="filter-group"><span class="filter-label">Portfolio</span>
-          <div class="chip-row">${portfolios.map(p=>`<span class="chip chip-filter ${s.portfolio===p?'selected':''}" onclick="setAddLearnerProgramPortfolio('${esc(p)}')">${esc(p)}</span>`).join('')}</div></div>` : ''}
-        ${s.portfolio ? `<div class="filter-group"><span class="filter-label">Subject</span>
-          <select onchange="setAddLearnerProgramSubjectName(this.value)">
-            <option value="">Select a subject</option>
-            ${subjectNames.map(name=>{
-              const funded = getEntriesFor(s.service, s.portfolio, name).some(e=>e.funded);
-              return `<option value="${esc(name)}" ${s.subjectName===name?'selected':''}>${esc(name)}${funded?' (Funded)':''}</option>`;
-            }).join('')}
-          </select></div>` : ''}
-        ${hoursHtml}
-        ${availHtml}
-      </div>
-    </div>
-  `;
-}
-function refreshAddLearnerProgramSection(){
-  const el = document.getElementById('addLearnerProgramSection');
-  if(el) el.innerHTML = renderAddLearnerProgramSection();
-}
-function toggleAddLearnerProgramCheck(groupId){
-  const s = addLearnerProgramState;
-  if(s.checkedExistingGroupIds.has(groupId)) s.checkedExistingGroupIds.delete(groupId);
-  else s.checkedExistingGroupIds.add(groupId);
-  refreshAddLearnerProgramSection();
-}
-function setAddLearnerProgramService(sv){
-  const s = addLearnerProgramState;
-  s.service=sv; s.portfolio=null; s.subjectName=null; s.entryId=null;
-  refreshAddLearnerProgramSection();
-}
-function setAddLearnerProgramPortfolio(p){
-  const s = addLearnerProgramState;
-  s.portfolio=p; s.subjectName=null; s.entryId=null;
-  refreshAddLearnerProgramSection();
-}
-function setAddLearnerProgramSubjectName(name){
-  const s = addLearnerProgramState;
-  s.subjectName = name || null; s.entryId=null; s.subject=null; s.hours=null; s.funded=false;
-  if(name){
-    const entries = getEntriesFor(s.service, s.portfolio, name);
-    if(entries.length === 1) resolveAddLearnerProgramEntry(entries[0]);
-  }
-  refreshAddLearnerProgramSection();
-}
-function setAddLearnerProgramHours(h){
-  const s = addLearnerProgramState;
-  const entries = getEntriesFor(s.service, s.portfolio, s.subjectName);
-  const entry = entries.find(e=>e.hours===h);
-  if(entry) resolveAddLearnerProgramEntry(entry);
-  refreshAddLearnerProgramSection();
-}
-function resolveAddLearnerProgramEntry(entry){
-  const s = addLearnerProgramState;
-  s.entryId=entry.id; s.subject=entry.subject; s.hours=entry.hours; s.funded=!!entry.funded;
-  s.start=entry.start; s.end=entry.end; s.startDate = todayISO() > entry.start ? todayISO() : entry.start;
 }
 function renderAddModalBulk(){
   if(!bulkImportState) return renderBulkUploadPrompt();
@@ -2055,44 +1856,11 @@ function addLearnerFromModal(){
     return id;
   });
 
-  // Apply program assignment, if the user picked one — shared across everyone just added
-  const s = addLearnerProgramState;
-  const targetGroupIds = new Set(s.checkedExistingGroupIds);
-  if(s.entryId){
-    let group2 = groups.find(g=>g.entryId===s.entryId);
-    if(!group2){
-      const entry = getEntry(s.entryId);
-      group2 = { id:'g'+(nextGroupId++), service:s.service, portfolio:s.portfolio, subjectName:s.subjectName, entryId:s.entryId,
-        subject:s.subject, hours:s.hours, funded:s.funded, seats:entry.seats, start:entry.start, end:entry.end,
-        assignedIds:new Set(), dateSections:[ makeDateSection(s.startDate) ], uiExpanded:false };
-      groups.unshift(group2);
-    } else if(group2.dateSections.length === 0){
-      group2.dateSections.push(makeDateSection(s.startDate));
-    }
-    targetGroupIds.add(group2.id);
-  }
-  let totalAssigned = 0;
-  const assignedProgramNames = [];
-  targetGroupIds.forEach(gid=>{
-    const group2 = groups.find(g=>g.id===gid);
-    if(!group2 || !group2.dateSections.length) return;
-    const ds = group2.dateSections[0];
-    const remaining = remainingSeatsToAdd(group2.entryId);
-    const toAssign = newIds.filter(id=>!group2.assignedIds.has(id)).slice(0, remaining);
-    toAssign.forEach(id=>assignLearnerToSection(group2, ds, id));
-    if(toAssign.length > 0){
-      totalAssigned += toAssign.length;
-      assignedProgramNames.push(`${entryLabel(group2)} · ${group2.service} (${toAssign.length})`);
-    }
-  });
-
   learnerJustAdded = true;
   closeAddLearnersModal();
   renderGroupsCol(); renderFooter();
   const countLabel = `${newIds.length} learner${newIds.length===1?'':'s'}`;
-  showToast(assignedProgramNames.length > 0
-    ? `Added ${countLabel} — assigned to ${assignedProgramNames.join(', ')}.`
-    : `Added ${countLabel}.`);
+  showToast(`Added ${countLabel}.`);
 }
 function cancelEditLearner(){
   editingLearnerId = null;
@@ -2121,42 +1889,6 @@ function saveLearnerEdits(){
   l.lastName = document.getElementById('amLast').value.trim();
   l.group = document.getElementById('amGroup').value;
 
-  const s = addLearnerProgramState;
-  const targetGroupIds = new Set(s.checkedExistingGroupIds);
-  if(s.entryId){
-    let newGroup = groups.find(g=>g.entryId===s.entryId);
-    if(!newGroup){
-      const entry = getEntry(s.entryId);
-      newGroup = { id:'g'+(nextGroupId++), service:s.service, portfolio:s.portfolio, subjectName:s.subjectName, entryId:s.entryId,
-        subject:s.subject, hours:s.hours, funded:s.funded, seats:entry.seats, start:entry.start, end:entry.end,
-        assignedIds:new Set(), dateSections:[ makeDateSection(s.startDate) ], uiExpanded:false };
-      groups.unshift(newGroup);
-    } else if(newGroup.dateSections.length === 0){
-      newGroup.dateSections.push(makeDateSection(s.startDate));
-    }
-    targetGroupIds.add(newGroup.id);
-  }
-  const currentGroupIds = new Set(groups.filter(g=>g.entryId && g.assignedIds.has(l.id)).map(g=>g.id));
-  const allRelevantIds = new Set([...currentGroupIds, ...targetGroupIds]);
-  let addedCount = 0, removedCount = 0;
-  allRelevantIds.forEach(gid=>{
-    const g = groups.find(x=>x.id===gid);
-    if(!g) return;
-    const shouldBeIn = targetGroupIds.has(gid);
-    const isIn = g.assignedIds.has(l.id);
-    if(shouldBeIn && !isIn){
-      const remaining = remainingSeatsToAdd(g.entryId);
-      if(remaining > 0 && g.dateSections.length > 0){
-        assignLearnerToSection(g, g.dateSections[0], l.id);
-        addedCount++;
-      }
-    } else if(!shouldBeIn && isIn){
-      g.dateSections.forEach(ds=>ds.learnerIds.delete(l.id));
-      g.assignedIds.delete(l.id);
-      removedCount++;
-    }
-  });
-
   editingLearnerId = null;
   if(editOnlyMode){
     closeAddLearnersModal();
@@ -2165,11 +1897,7 @@ function saveLearnerEdits(){
     renderLearnersCol(); renderFooter();
     document.getElementById('amEmail').focus();
   }
-  renderGroupsCol(); renderFooter();
-  const parts = [];
-  if(addedCount>0) parts.push(`added to ${addedCount} program${addedCount===1?'':'s'}`);
-  if(removedCount>0) parts.push(`removed from ${removedCount} program${removedCount===1?'':'s'}`);
-  showToast(parts.length>0 ? `Learner updated — ${parts.join(', ')}.` : 'Learner updated.');
+  showToast('Learner updated.');
 }
 
 /* =====================================================
@@ -2764,7 +2492,7 @@ function serializeGroupsForStorage(){
   return groups.map(g => ({
     id: g.id, service: g.service, portfolio: g.portfolio, subjectName: g.subjectName,
     entryId: g.entryId, subject: g.subject, hours: g.hours, funded: g.funded, seats: g.seats,
-    start: g.start, end: g.end, uiExpanded: g.uiExpanded, bodyCollapsed: g.bodyCollapsed, activeSectionId: g.activeSectionId,
+    start: g.start, end: g.end, uiExpanded: g.uiExpanded, activeSectionId: g.activeSectionId,
     assignedIds: [...g.assignedIds],
     dateSections: g.dateSections.map(ds => ({ id: ds.id, startDate: ds.startDate, learnerIds: [...ds.learnerIds] })),
   }));
@@ -2932,6 +2660,7 @@ window.addEventListener('resize', () => {
 });
 
 restorePendingLearnersIfAny();
+ensureAllProgramsExist();
 renderAll();
 </script>
 </body>
