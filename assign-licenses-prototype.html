@@ -263,6 +263,7 @@
   }
   .roster-row .email{flex:1;color:var(--navy);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .roster-row .badge{font-size:11px;color:var(--text-secondary);background:var(--bg-page);padding:2px 8px;border-radius:10px;white-space:nowrap;flex:0 0 auto;}
+  .roster-row .badge.zero{color:var(--text-error);background:var(--bg-error);}
   .roster-row .roster-remove{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;cursor:pointer;opacity:.5;}
   .roster-row .roster-remove:hover{opacity:1;background:var(--bg-page);}
   .roster-row.selectable{cursor:pointer;}
@@ -451,6 +452,7 @@
 
   .learners-card{padding:26px 28px;}
   .learners-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .learners-card-subtitle{font-size:13px;color:var(--text-secondary);margin:0 0 14px;}
   .learner-search-input{
     width:100%;height:36px;border:1px solid var(--border);border-radius:var(--radius-int);
     padding:0 12px;font-size:14px;font-family:'Fira Sans',sans-serif;color:var(--navy);margin-bottom:14px;
@@ -501,6 +503,7 @@
   .add-modal-tabs .tab.active{color:var(--teal);border-bottom-color:var(--teal);}
   .add-learner-program-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--border-light);}
   .add-learner-program-cascade{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-light);}
+  .add-learner-program-cascade.no-divider{margin-top:0;padding-top:0;border-top:none;}
   .chip.editing{background:var(--teal);color:#fff;}
   .email-chip-box{
     display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:38px;
@@ -645,7 +648,7 @@
     <div class="toolbar-row">
       <div>
         <h1>Assign Licenses</h1>
-        <p class="subtitle">Add learners and set up programs in any order, then assign them — one at a time or several at once.</p>
+        <p class="subtitle">Add your learners, assign them to programs, then send.</p>
       </div>
     </div>
 
@@ -740,7 +743,7 @@ let bulkAssignCheckedProgramIds = new Set(); // existing programs checked in tha
 ===================================================== */
 function fmtDate(iso){ const d = new Date(iso+'T00:00:00'); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
 function fmtDateShort(iso){ const d = new Date(iso+'T00:00:00'); return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
-function todayISO(){ return '2026-08-11'; }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
 function emailValid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 function esc(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function showToast(msg){
@@ -996,10 +999,11 @@ function renderGroupHoursRow(g){
 function renderGroupAvailability(g){
   if(!g.entryId) return '';
   const remaining = remainingSeatsToAdd(g.entryId);
-  if(remaining <= 0 && g.assignedIds.size === 0){
+  const zeroSeats = remaining <= 0;
+  if(zeroSeats && g.assignedIds.size === 0){
     return `<div class="group-avail-line error">No seats available for ${esc(g.subject)}.</div>`;
   }
-  return `<div class="group-avail-line">${remaining} seat${remaining===1?'':'s'} left · ${fmtDate(g.start)} – ${fmtDate(g.end)} · ${g.assignedIds.size} assigned</div>`;
+  return `<div class="group-avail-line ${zeroSeats?'error':''}">${remaining} seat${remaining===1?'':'s'} left · ${fmtDate(g.start)} – ${fmtDate(g.end)} · ${g.assignedIds.size} assigned</div>`;
 }
 function toggleGroupDateEdit(groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
@@ -1471,6 +1475,7 @@ function renderLearnersCol(){
         <h3>Learners (${learners.length})</h3>
         <button class="btn btn-primary btn-sm" id="addLearnersBtn" onclick="openAddLearnersModal()">+ Add Learners</button>
       </div>
+      ${learners.length > 0 ? `<p class="learners-card-subtitle">Drag learners onto a program to assign them. Click a learner to edit their info or change their programs.</p>` : ''}
       ${learners.length > 7 ? `<input class="learner-search-input" type="text" id="learnerSearchInput" placeholder="Search learners…" value="${esc(learnerSearchQuery)}" oninput="onLearnerSearchInput(this.value)" />` : ''}
       <div id="learnersListArea"></div>
     </div>
@@ -1510,7 +1515,7 @@ function renderLearnersListArea(){
 }
 function renderLearnerListBody(list){
   if(learners.length === 0){
-    return `<p class="muted" style="text-align:left;padding:24px 0;">No learners yet. Click "+ Add Learners" to bring people into this batch.</p>`;
+    return `<p class="muted" style="text-align:left;padding:24px 0;">No learners yet.</p>`;
   }
   if(list.length === 0){
     return `<p class="muted" style="text-align:center;padding:24px 0;">No learners match "${esc(learnerSearchQuery)}".</p>`;
@@ -1541,17 +1546,40 @@ function renderLearnerRow(l){
   const badges = progs.map(g=>`<span class="assign-badge">${esc(entryLabel(g))} · ${esc(g.service)}<span class="x" onclick="event.stopPropagation();removeFromGroup('${g.id}',${l.id})">${iconX('#0276b1')}</span></span>`).join('');
   return `<div class="learner-row" draggable="true" ondragstart="onLearnerDragStart(event,${l.id})" ondragend="onLearnerDragEnd(event)">
     <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation()" onchange="toggleRowSelect(${l.id})" />
-    <div class="learner-row-body" style="cursor:pointer;" title="Click to edit" onclick="openAddLearnersModalForEdit(${l.id})">
+    <div class="learner-row-body" style="cursor:pointer;" title="Click to edit or assign to a program" onclick="openAddLearnersModalForEdit(${l.id})">
       <div class="l-email">${esc(l.email)}</div>
       ${badges ? `<div class="l-badges">${badges}</div>` : `<div class="l-unassigned">Not assigned yet</div>`}
     </div>
-    <span class="learner-remove" title="Remove learner" onclick="event.stopPropagation(); removeLearnerEverywhere(${l.id})">${iconX('#5d7682')}</span>
+    <span class="learner-remove" title="Remove learner" onclick="event.stopPropagation(); confirmRemoveLearner(${l.id})">${iconX('#5d7682')}</span>
   </div>`;
+}
+function confirmRemoveLearner(id){
+  const l = learners.find(x=>x.id===id);
+  if(!l) return;
+  const progs = programsOf(id);
+  const message = progs.length === 0
+    ? `This will remove <strong>${esc(l.email)}</strong> from your list. They aren't assigned to any program, so nothing else is affected.`
+    : `This will remove <strong>${esc(l.email)}</strong> from your list entirely — including ${progs.length} program assignment${progs.length===1?'':'s'}: ${progs.map(g=>`${esc(entryLabel(g))} · ${esc(g.service)}`).join(', ')}.`;
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
+      <div class="modal" style="width:440px;">
+        <div class="modal-head"><h3>Remove this learner?</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
+        <div class="modal-body">
+          <p class="muted warning-modal-text" style="margin:0;">${message}</p>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" onclick="closeGenericModal()">Cancel</button>
+          <button class="btn btn-primary" style="background:var(--text-error);" onclick="removeLearnerEverywhere(${id})">Remove Learner</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 function removeLearnerEverywhere(id){
   learners = learners.filter(l=>l.id!==id);
   purgeLearnerFromAllGroups(id);
   selectedIds.delete(id);
+  closeGenericModal();
   renderAll();
 }
 
@@ -1817,7 +1845,7 @@ function renderAddModalIndividual(){
     ? `<input id="amEmail" type="email" placeholder="email" class="field-gap" value="${esc(editing.email)}" />`
     : `<div class="email-chip-box field-gap" id="amEmailChipBox" onclick="document.getElementById('amEmailTyping').focus()">
         ${amEmailChips.map((email,i)=>`<span class="chip removable">${esc(email)} <span class="x" tabindex="0" role="button" onclick="event.stopPropagation(); removeAmEmailChip(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">${iconX('#0276b1')}</span></span>`).join('')}
-        <input id="amEmailTyping" type="text" placeholder="${amEmailChips.length===0?'email — press comma after each one':'add another…'}" autocomplete="off" onkeydown="onAmEmailTypingKeydown(event)" oninput="this.classList.remove('invalid'); document.getElementById('amEmailError').classList.remove('show');" />
+        <input id="amEmailTyping" type="text" placeholder="email" autocomplete="off" onkeydown="onAmEmailTypingKeydown(event)" oninput="this.classList.remove('invalid'); document.getElementById('amEmailError').classList.remove('show');" />
       </div>`;
   return `
     <label>email <span class="req">*</span></label>
@@ -1891,7 +1919,7 @@ function refreshAmEmailField(){
   if(!box) return;
   box.innerHTML = `
     ${amEmailChips.map((email,i)=>`<span class="chip removable">${esc(email)} <span class="x" tabindex="0" role="button" onclick="event.stopPropagation(); removeAmEmailChip(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">${iconX('#0276b1')}</span></span>`).join('')}
-    <input id="amEmailTyping" type="text" placeholder="${amEmailChips.length===0?'email — press comma after each one':'add another…'}" autocomplete="off" onkeydown="onAmEmailTypingKeydown(event)" oninput="this.classList.remove('invalid'); document.getElementById('amEmailError').classList.remove('show');" />
+    <input id="amEmailTyping" type="text" placeholder="email" autocomplete="off" onkeydown="onAmEmailTypingKeydown(event)" oninput="this.classList.remove('invalid'); document.getElementById('amEmailError').classList.remove('show');" />
   `;
   document.getElementById('amEmailTyping').focus();
   const isMulti = amEmailChips.length > 1;
@@ -1931,8 +1959,9 @@ function renderAddLearnerProgramSection(){
 
   return `
     <div class="add-learner-program-section">
-      <label>Assign to a Program (optional)</label>
       ${existingPrograms.length > 0 ? `
+        <label>Assign to an Available Program (optional)</label>
+        <span class="filter-label" style="display:block;margin-top:10px;">Recent Programs</span>
         <div class="roster-list" style="margin-top:8px;max-height:150px;">
           ${existingPrograms.map(g=>{
             const checked = s.checkedExistingGroupIds.has(g.id);
@@ -1944,15 +1973,15 @@ function renderAddLearnerProgramSection(){
               <div class="roster-row selectable ${checked?'selected':''} ${disabled?'disabled':''}" ${disabled?'':`onclick="toggleAddLearnerProgramCheck('${g.id}')"`} ${disabled?`title="${disabledTitle}"`:''}>
                 <span class="check">${checked?iconCheck('#fff'):''}</span>
                 <span class="email">${esc(entryLabel(g))} · ${esc(g.service)}</span>
-                <span class="badge">${remaining} left</span>
+                <span class="badge ${zeroSeats?'zero':''}">${remaining} left</span>
               </div>
               ${zeroSeats && !checked ? `<div class="seat-request-note">No seats left — request more seats to assign learners here.</div>` : ''}
             </div>`;
           }).join('')}
         </div>
-      ` : `<p class="muted" style="font-size:12.5px;margin:8px 0 0;">No programs set up yet — create one below.</p>`}
+      ` : ''}
 
-      <div class="add-learner-program-cascade">
+      <div class="add-learner-program-cascade ${existingPrograms.length===0?'no-divider':''}">
         <div class="row-between" style="align-items:baseline;">
           <label style="margin-bottom:0;">Select a Program</label>
           <button class="link-sm" onclick="commitAmEmailTyping(); openCatalogModalForTarget('addLearnerProgram')">See Everything Available →</button>
@@ -2523,7 +2552,7 @@ function renderBulkAssignModal(){
           <div class="roster-row selectable ${checked?'selected':''} ${disabled?'disabled':''}" ${disabled?'':`onclick="toggleBulkAssignProgramCheck('${g.id}')"`} ${disabled?'title="No seats left in this program"':''}>
             <span class="check">${checked?iconCheck('#fff'):''}</span>
             <span class="email">${esc(entryLabel(g))} · ${esc(g.service)}</span>
-            <span class="badge">${remaining} left</span>
+            <span class="badge ${zeroSeats?'zero':''}">${remaining} left</span>
           </div>
           ${zeroSeats && !checked ? `<div class="seat-request-note">No seats left — request more seats to assign learners here.</div>` : ''}
         </div>`;
