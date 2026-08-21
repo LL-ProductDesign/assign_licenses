@@ -152,7 +152,7 @@
   .chip.chip-disabled{opacity:.4;pointer-events:none;}
   .chip.removable{padding-right:8px;}
   .chip.removable:focus-within{padding-right:7px;}
-  .chip .x{cursor:pointer;font-size:15px;line-height:1;color:var(--teal);opacity:.7;border-radius:50%;}
+  .chip .x{cursor:pointer;font-size:15px;line-height:1;color:var(--teal);opacity:.7;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;}
   .chip .x:hover{opacity:1;}
   .chip .x:focus{outline:none;opacity:1;box-shadow:0 0 0 2px var(--bg-blue-light);}
   .chip-filter{cursor:pointer;user-select:none;background:#fff;border-color:var(--border-light);color:var(--text-disabled);transition:border-color .12s,color .12s,background-color .12s;}
@@ -309,11 +309,6 @@
   .date-tab.drop-hover{background:var(--bg-blue-light);border-color:var(--teal);outline:2px dashed var(--teal);outline-offset:3px;}
   .date-section-meta{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
   .date-tabs-title{font-size:13px;font-weight:600;color:var(--navy);margin-top:14px;margin-bottom:8px;}
-  .see-other-learners-btn{margin-top:10px;}
-  .cohort-learners-table{width:100%;border-collapse:collapse;font-size:13px;}
-  .cohort-learners-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-secondary);padding:8px 10px;border-bottom:1px solid var(--border);}
-  .cohort-learners-table td{padding:9px 10px;border-bottom:1px solid var(--border-light);color:var(--navy);}
-  .cohort-learners-table tr:last-child td{border-bottom:none;}
   .date-row{
     display:inline-flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;
     background:var(--bg-page);border-radius:var(--radius-int);padding:14px 16px;font-size:14px;
@@ -900,31 +895,7 @@ function renderActiveDateSection(g, ds){
   return `<div class="date-section ${justDropped?'drop-flash':''}" ondragover="onGroupCardDragOver(event)" ondragleave="onGroupCardDragLeave(event)" ondrop="onDateSectionDrop(event,'${g.id}','${ds.id}')">
     ${canRemoveSection ? `<div class="date-section-meta"><button class="link-sm" style="color:var(--text-error);" onclick="removeDateSection('${g.id}','${ds.id}')">Remove this date</button></div>` : ''}
     <div class="group-chip-row chip-row">${chips || `<span class="muted" style="font-size:12px;">No one assigned yet.</span>`}</div>
-    ${ds.learnerIds.size > 0 ? `<button class="btn btn-secondary btn-sm see-other-learners-btn" onclick="openCohortLearnersModal('${g.id}','${ds.id}')">See Other Learners In This Cohort</button>` : ''}
   </div>`;
-}
-function openCohortLearnersModal(groupId, sectionId){
-  const g = groups.find(x=>x.id===groupId);
-  if(!g) return;
-  const ds = g.dateSections.find(x=>x.id===sectionId);
-  if(!ds) return;
-  const cohortLearners = learners.filter(l=>ds.learnerIds.has(l.id));
-  document.getElementById('modalRoot').innerHTML = `
-    <div class="modal-overlay" onclick="if(event.target===this) closeGenericModal()">
-      <div class="modal" style="width:520px;">
-        <div class="modal-head"><h3>${esc(entryLabel(g))} · ${esc(g.service)} — ${fmtDate(ds.startDate)}</h3><button class="modal-close" onclick="closeGenericModal()">✕</button></div>
-        <div class="modal-body">
-          <table class="cohort-learners-table">
-            <thead><tr><th>Email</th><th>Reporting Group</th></tr></thead>
-            <tbody>
-              ${cohortLearners.map(l=>`<tr><td>${esc(l.email)}</td><td>${esc(l.group||'—')}</td></tr>`).join('')}
-            </tbody>
-          </table>
-        </div>
-        <div class="modal-foot"><button class="btn btn-secondary" onclick="closeGenericModal()">Close</button></div>
-      </div>
-    </div>
-  `;
 }
 function setActiveDateSection(groupId, sectionId){
   const g = groups.find(x=>x.id===groupId);
